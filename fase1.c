@@ -4,11 +4,11 @@
 
 typedef struct{
     char *name;
-    float mass;
-    float pos_x;
-    float pos_y;
-    float vel_x;
-    float vel_y;
+    double mass;
+    double pos_x;
+    double pos_y;
+    double vel_x;
+    double vel_y;
 }nave;
 
 void read_entry_file(nave *s1, nave *s2);
@@ -29,7 +29,7 @@ int main(){
 void read_entry_file(nave *s1, nave *s2){
     char aux_name[30];
     int aux_int;
-    float aux_float;
+    double aux_double;
     FILE *arq;
     arq = fopen("entry.dat", "r");
     if( !arq ){
@@ -37,47 +37,47 @@ void read_entry_file(nave *s1, nave *s2){
 	exit(EXIT_FAILURE);
     }
     /*	Planet		*/
-    fscanf(arq, "%f", &aux_float);
-    printf("%f ", aux_float);
-    fscanf(arq, "%f", &aux_float);
-    printf("%f ", aux_float);
-    fscanf(arq, "%f", &aux_float);
-    printf("%f \n", aux_float);
+    fscanf(arq, "%lf", &aux_double);
+    printf("%lf ", aux_double);
+    fscanf(arq, "%lf", &aux_double);
+    printf("%lf ", aux_double);
+    fscanf(arq, "%lf", &aux_double);
+    printf("%lf \n", aux_double);
     /*	Spacecraft 1	*/
     fscanf(arq, " %s", aux_name);
     s1->name = mallocSafe( (1+strlen(aux_name))*sizeof(char) );
     string_copy( aux_name , s1->name );
     printf("%s ", aux_name);
-    fscanf(arq, "%f", &aux_float);
-    printf("%f ", aux_float);
-    fscanf(arq, "%f", &aux_float);
-    printf("%f ", aux_float);
-    fscanf(arq, "%f", &aux_float);
-    printf("%f ", aux_float);
-    fscanf(arq, "%f", &aux_float);
-    printf("%f ", aux_float);
-    fscanf(arq, "%f", &aux_float);
-    printf("%f\n", aux_float);
+    fscanf(arq, "%lf", &(s1->mass));
+    printf("%lf ", s1->mass);
+    fscanf(arq, "%lf", &(s1->pos_x));
+    printf("%lf ", s1->pos_x);
+    fscanf(arq, "%lf", &(s1->pos_y));
+    printf("%lf ", s1->pos_y);
+    fscanf(arq, "%lf", &(s1->vel_x));
+    printf("%lf ", s1->vel_x);
+    fscanf(arq, "%lf", &(s1->vel_y));
+    printf("%lf\n", s1->vel_y);
     /*	Spacecraft 2	*/
     fscanf(arq, " %s", aux_name);
     s2->name = mallocSafe( (1+strlen(aux_name))*sizeof(char) );
     string_copy( aux_name , s2->name );
     printf("%s ", aux_name);
-    fscanf(arq, "%f", &aux_float);
-    printf("%f ", aux_float);
-    fscanf(arq, "%f", &aux_float);
-    printf("%f ", aux_float);
-    fscanf(arq, "%f", &aux_float);
-    printf("%f ", aux_float);
-    fscanf(arq, "%f", &aux_float);
-    printf("%f ", aux_float);
-    fscanf(arq, "%f", &aux_float);
-    printf("%f\n", aux_float);
+    fscanf(arq, "%lf", &(s2->mass));
+    printf("%lf ", s2->mass);
+    fscanf(arq, "%lf", &(s2->pos_x));
+    printf("%lf ", s2->pos_x);
+    fscanf(arq, "%lf", &(s2->pos_y));
+    printf("%lf ", s2->pos_y);
+    fscanf(arq, "%lf", &(s2->vel_x));
+    printf("%lf ", s2->vel_x);
+    fscanf(arq, "%lf", &(s2->vel_y));
+    printf("%lf\n", s2->vel_y);
     /*	Projectiles	*/
     fscanf(arq, "%d", &aux_int);
     printf("%d ", aux_int);
-    fscanf(arq, "%f", &aux_float);
-    printf("%f\n", aux_float);
+    fscanf(arq, "%lf", &aux_double);
+    printf("%lf\n", aux_double);
     fclose(arq);
     return;
 }
