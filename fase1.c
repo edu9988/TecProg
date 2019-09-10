@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define Mt 6.02e24
+#define Rt 6.4e6
+#define G 6.67e-11
+
 typedef struct{
     char *name;
     double mass;
@@ -15,7 +19,18 @@ void read_entry_file(nave *s1, nave *s2);
 void *mallocSafe(int nbytes);
 void string_copy(char *a, char *b);
 
-int main(){
+int main(int argc, char *argv[]){
+    double delta_t;
+    if( argc == 1 ){
+	printf("Specify step length\n>>>");
+	scanf("%lf", &delta_t);
+    }
+    else if( argc == 2 )
+	delta_t = atof( argv[1] );
+    else{
+	printf("Expected fewer arguments\n");
+	return 0;
+    }
     nave ship1;
     nave ship2;
     read_entry_file( &ship1 , &ship2 );
