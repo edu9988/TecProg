@@ -7,15 +7,6 @@
 #define G 6.67e-11
 
 typedef struct{
-    char *name;
-    double mass;
-    double pos_x;
-    double pos_y;
-    double vel_x;
-    double vel_y;
-}nave;
-
-typedef struct{
     double mass;
     double pos_x;
     double pos_y;
@@ -27,14 +18,20 @@ typedef struct{
     double planet_mass;
     double planet_radius;
     double total_time;
+    char *name1;
+    char *name2;
     int projectiles_quantity;
     double projectiles_lifespan;
-}global_params;
+}constants;
 
-void read_entry_file(global_params *p0, nave *s1, nave *s2, corpo **corpos);
-void *mallocSafe(int nbytes);
-void string_copy(char *a, char *b);
-void next_pos(global_params *p0, nave *s1, nave *s2, corpo **corpos);
+void read_entry_file(constants *, corpo **);
+void *mallocSafe(int);
+void string_copy(char *, char *);
+void next_pos(constants *, corpo **);
+void corpo_copy(corpo, corpo *);
+void print_constants(constants);
+void print_bodies(corpo *, int);
+void print_positions(corpo *, int);
 
 int main(int argc, char *argv[]){
     double delta_t;
@@ -48,25 +45,30 @@ int main(int argc, char *argv[]){
 	printf("Expected fewer arguments\n");
 	return 0;
     }
-    nave ship1;
-    nave ship2;
     corpo *body_list;
-    global_params parametros;
-    read_entry_file( &parametros , &ship1 , &ship2 , &body_list );
+    constants parametros;
+    read_entry_file( &parametros , &body_list );
+    print_constants(parametros);/*for debugging*/
+    print_bodies(body_list, parametros.projectiles_quantity+2);/*for debugging*/
+    printf("===============================================================\n");
+    printf("			    Beginning simulation                   \n");
+    printf("===============================================================\n");
+    print_positions(body_list, parametros.projectiles_quantity+2);
 
     /*	free's section	*/
-    free( ship1.name );
-    ship1.name = NULL;
-    free( ship2.name );
-    ship2.name = NULL;
+    free( parametros.name1 );
+    parametros.name1 = NULL;
+    free( parametros.name2 );
+    parametros.name2 = NULL;
     free( body_list );
     body_list = NULL;
     return 0;
 }
 
-void read_entry_file(global_params *p0, nave *s1, nave *s2, corpo **corpos){
+void read_entry_file(constants *p0, corpo **bodies){
     char aux_name[30];
     FILE *arq;
+    corpo s1, s2;
     arq = fopen("entry.dat", "r");
     if( !arq ){
 	printf("Error opening entry file\n");
@@ -78,36 +80,45 @@ void read_entry_file(global_params *p0, nave *s1, nave *s2, corpo **corpos){
     fscanf(arq, "%lf", &(p0->total_time));
     /*	Spacecraft 1	*/
     fscanf(arq, " %s", aux_name);
-    s1->name = mallocSafe( (1+strlen(aux_name))*sizeof(char) );
-    string_copy( aux_name , s1->name );
-    fscanf(arq, "%lf", &(s1->mass));
-    fscanf(arq, "%lf", &(s1->pos_x));
-    fscanf(arq, "%lf", &(s1->pos_y));
-    fscanf(arq, "%lf", &(s1->vel_x));
-    fscanf(arq, "%lf", &(s1->vel_y));
+    p0->name1 = mallocSafe( (1+strlen(aux_name))*sizeof(char) );
+    string_copy( aux_name , p0->name1 );
+    fscanf(arq, "%lf", &(s1.mass));
+    fscanf(arq, "%lf", &(s1.pos_x));
+    fscanf(arq, "%lf", &(s1.pos_y));
+    fscanf(arq, "%lf", &(s1.vel_x));
+    fscanf(arq, "%lf", &(s1.vel_y));
     /*	Spacecraft 2	*/
     fscanf(arq, " %s", aux_name);
-    s2->name = mallocSafe( (1+strlen(aux_name))*sizeof(char) );
-    string_copy( aux_name , s2->name );
-    fscanf(arq, "%lf", &(s2->mass));
-    fscanf(arq, "%lf", &(s2->pos_x));
-    fscanf(arq, "%lf", &(s2->pos_y));
-    fscanf(arq, "%lf", &(s2->vel_x));
-    fscanf(arq, "%lf", &(s2->vel_y));
+    p0->name2 = mallocSafe( (1+strlen(aux_name))*sizeof(char) );
+    string_copy( aux_name , p0->name2 );
+    fscanf(arq, "%lf", &(s2.mass));
+    fscanf(arq, "%lf", &(s2.pos_x));
+    fscanf(arq, "%lf", &(s2.pos_y));
+    fscanf(arq, "%lf", &(s2.vel_x));
+    fscanf(arq, "%lf", &(s2.vel_y));
     /*	Projectiles	*/
     fscanf(arq, "%d", &(p0->projectiles_quantity));
-    *corpos = mallocSafe( p0->projectiles_quantity*sizeof(corpo) );
-    printf("%d ", p0->projectiles_quantity);
+    *bodies = mallocSafe( ((p0->projectiles_quantity)+2)*sizeof(corpo) );
+    corpo_copy(s1,*bodies);
+    corpo_copy(s2,(*bodies)+1);
     fscanf(arq, "%lf", &(p0->projectiles_lifespan));
-    printf("%lf\n", p0->projectiles_lifespan);
     for( int i=0; i<p0->projectiles_quantity ; i++ ){
-	fscanf(arq, "%lf", &((*corpos)[i].mass));
-	fscanf(arq, "%lf", &((*corpos)[i].pos_x));
-	fscanf(arq, "%lf", &((*corpos)[i].pos_y));
-	fscanf(arq, "%lf", &((*corpos)[i].vel_x));
-	fscanf(arq, "%lf", &((*corpos)[i].vel_y));
+	fscanf(arq, "%lf", &((*bodies)[i+2].mass));
+	fscanf(arq, "%lf", &((*bodies)[i+2].pos_x));
+	fscanf(arq, "%lf", &((*bodies)[i+2].pos_y));
+	fscanf(arq, "%lf", &((*bodies)[i+2].vel_x));
+	fscanf(arq, "%lf", &((*bodies)[i+2].vel_y));
     }
     fclose(arq);
+    return;
+}
+
+void corpo_copy(corpo a, corpo *b){
+    b->mass = a.mass;
+    b->pos_x = a.pos_x;
+    b->pos_y = a.pos_y;
+    b->vel_x = a.vel_x;
+    b->vel_y = a.vel_y;
     return;
 }
 
@@ -129,6 +140,24 @@ void string_copy(char *a, char *b){
     return;
 }
 
-void next_pos(global_params *p0, nave *s1, nave *s2, corpo **corpos){
+void next_pos(constants *p0, corpo **bodies){
     return;  /*to be done*/
+}
+
+void print_constants(constants p0){
+    printf("%lf %lf %lf %s %s %d %lf\n", p0.planet_mass, p0.planet_radius, p0.total_time, p0.name1, p0.name2, p0.projectiles_quantity, p0.projectiles_lifespan);
+    return;
+}
+
+void print_bodies(corpo *bodies, int n){
+    for( int i=0 ; i<n ; i++ )
+	printf("%lf %lf %lf %lf %lf\n", (bodies[i]).mass, (bodies[i]).pos_x, (bodies[i]).pos_y, (bodies[i]).vel_x, (bodies[i]).vel_y);
+    return;
+}
+
+void print_positions(corpo *bodies, int n){
+    for( int i=0 ; i<n ; i++ )
+	printf("%lf %lf ", (bodies[i]).pos_x, (bodies[i]).pos_y);
+    printf("\n");
+    return;
 }
