@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #define Mt 6.02e24
 #define Rt 6.4e6
@@ -27,7 +28,7 @@ typedef struct{
 void read_entry_file(constants *, corpo **);
 void *mallocSafe(int);
 void string_copy(char *, char *);
-void next_pos(constants *, corpo **);
+void next_pos(constants *, corpo *, int);
 void corpo_copy(corpo, corpo *);
 void print_constants(constants);
 void print_bodies(corpo *, int);
@@ -54,6 +55,7 @@ int main(int argc, char *argv[]){
     printf("			    Beginning simulation                   \n");
     printf("===============================================================\n");
     print_positions(body_list, parametros.projectiles_quantity+2);
+    next_pos(&parametros, body_list, (parametros.projectiles_quantity)+2);
 
     /*	free's section	*/
     free( parametros.name1 );
@@ -140,7 +142,32 @@ void string_copy(char *a, char *b){
     return;
 }
 
-void next_pos(constants *p0, corpo **bodies){
+void next_pos(constants *p0, corpo *bodies, int n){
+    double pos_x_next, pos_y_next, vel_x_next, vel_y_next;
+    double *a_x = mallocSafe(n*sizeof(double));
+    double *a_y = mallocSafe(n*sizeof(double));
+    double r;
+    for( int i=0 ; i<n ; i++ ){/*inicializa vetores a_x e a_y*/
+	a_x[i] = 0;
+	a_y[i] = 0;
+    }
+    for( int i=0 ; i<n ; i++ ){/*calcula aceleracoes*/
+	for( int j=0 ; j<i ; j++ ){
+	    r = pow(   (bodies[j]).pos_x - (bodies[i]).pos_x    , 2) +  pow(   (bodies[j]).pos_y - (bodies[i]).pos_y    , 2);
+	    r = pow( r , 1.5) ;
+	    a_x[i] += ((bodies[j]).mass) * (((bodies[j]).pos_x) - ((bodies[i]).pos_x)) / r;
+	    printf("%lf\n", a_x[i]);
+	    a_y[i] += ((bodies[j]).mass) * (((bodies[j]).pos_y) - ((bodies[i]).pos_y)) / pow( pow(((bodies[j]).pos_y) - ((bodies[i]).pos_y),2)+pow(((bodies[j]).pos_y) - ((bodies[i]).pos_y),2) ,1.5);
+	    printf("%lf\n", a_y[i]);
+	}
+    }
+    for( int i=0 ; i<n ; i++ ){
+	/*atualiza pos, vel*/
+    }
+    free(a_x);
+    free(a_y);
+    a_x = NULL;
+    a_y = NULL;
     return;  /*to be done*/
 }
 
