@@ -16,6 +16,7 @@ typedef struct{
 }corpo;
 
 typedef struct{
+    double delta_t;
     double planet_mass;
     double planet_radius;
     double total_time;
@@ -35,27 +36,25 @@ void print_bodies(corpo *, int);
 void print_positions(corpo *, int);
 
 int main(int argc, char *argv[]){
-    double delta_t;
+    constants parametros;
     if( argc == 1 ){
 	printf("Specify step length\n>>>");
-	scanf("%lf", &delta_t);
+	scanf("%lf", &(parametros.delta_t));
     }
     else if( argc == 2 )
-	delta_t = atof( argv[1] );
+	parametros.delta_t = atof( argv[1] );
     else{
 	printf("Expected fewer arguments\n");
 	return 0;
     }
     corpo *body_list;
-    constants parametros;
     read_entry_file( &parametros , &body_list );
-    print_constants(parametros);/*for debugging*/
-    print_bodies(body_list, parametros.projectiles_quantity+2);/*for debugging*/
-    printf("===============================================================\n");
-    printf("			    Beginning simulation                   \n");
-    printf("===============================================================\n");
-    print_positions(body_list, parametros.projectiles_quantity+2);
-    next_pos(&parametros, body_list, (parametros.projectiles_quantity)+2);
+    
+    for( int i=0 ; i<5 ; i++){
+	print_positions(body_list, parametros.projectiles_quantity+2);
+	next_pos(&parametros, body_list, (parametros.projectiles_quantity)+2);
+    }
+    printf("%lf %.16lf\n", parametros.planet_mass, G);
 
     /*	free's section	*/
     free( parametros.name1 );
@@ -77,8 +76,8 @@ void read_entry_file(constants *p0, corpo **bodies){
 	exit(EXIT_FAILURE);
     }
     /*	Planet		*/
-    fscanf(arq, "%lf", &(p0->planet_mass));
-    fscanf(arq, "%lf", &(p0->planet_radius));
+    fscanf(arq, "%le", &(p0->planet_mass));
+    fscanf(arq, "%le", &(p0->planet_radius));
     fscanf(arq, "%lf", &(p0->total_time));
     /*	Spacecraft 1	*/
     fscanf(arq, " %s", aux_name);
@@ -143,7 +142,6 @@ void string_copy(char *a, char *b){
 }
 
 void next_pos(constants *p0, corpo *bodies, int n){
-    double pos_x_next, pos_y_next, vel_x_next, vel_y_next;
     double *a_x = mallocSafe(n*sizeof(double));
     double *a_y = mallocSafe(n*sizeof(double));
     double r;
@@ -152,23 +150,37 @@ void next_pos(constants *p0, corpo *bodies, int n){
 	a_y[i] = 0;
     }
     for( int i=0 ; i<n ; i++ ){/*calcula aceleracoes*/
+	r = pow((bodies[i]).pos_x ,2) + pow((bodies[i]).pos_y , 2);
+	r = pow( r , 1.5);
+	a_x[i] -= (p0->planet_mass) * (bodies[i]).pos_x  / r;
+	a_y[i] -= (p0->planet_mass) * (bodies[i]).pos_y  / r;
 	for( int j=0 ; j<i ; j++ ){
-	    r = pow(   (bodies[j]).pos_x - (bodies[i]).pos_x    , 2) +  pow(   (bodies[j]).pos_y - (bodies[i]).pos_y    , 2);
+	    r = pow((bodies[j]).pos_x-(bodies[i]).pos_x,2)+pow((bodies[j]).pos_y-(bodies[i]).pos_y , 2);
 	    r = pow( r , 1.5) ;
 	    a_x[i] += ((bodies[j]).mass) * (((bodies[j]).pos_x) - ((bodies[i]).pos_x)) / r;
-	    printf("%lf\n", a_x[i]);
-	    a_y[i] += ((bodies[j]).mass) * (((bodies[j]).pos_y) - ((bodies[i]).pos_y)) / pow( pow(((bodies[j]).pos_y) - ((bodies[i]).pos_y),2)+pow(((bodies[j]).pos_y) - ((bodies[i]).pos_y),2) ,1.5);
-	    printf("%lf\n", a_y[i]);
+	    a_y[i] += ((bodies[j]).mass) * (((bodies[j]).pos_y) - ((bodies[i]).pos_y)) / r;
 	}
+ 	for( int j=i+1 ; j<n ; j++ ){
+	    r = pow((bodies[j]).pos_x-(bodies[i]).pos_x,2)+pow((bodies[j]).pos_y-(bodies[i]).pos_y , 2);
+	    r = pow( r , 1.5) ;
+	    a_x[i] += ((bodies[j]).mass) * (((bodies[j]).pos_x) - ((bodies[i]).pos_x)) / r;
+	    a_y[i] += ((bodies[j]).mass) * (((bodies[j]).pos_y) - ((bodies[i]).pos_y)) / r;
+	}
+	a_x[i] *= G;
+	a_y[i] *= G;
+	printf("%lf\n", a_x[i]);
     }
-    for( int i=0 ; i<n ; i++ ){
-	/*atualiza pos, vel*/
+    for( int i=0 ; i<n ; i++ ){	/*atualiza pos, vel*/
+	(bodies[i]).pos_x += (bodies[i].vel_x)*(p0->delta_t) + (a_x[i])*(p0->delta_t)*(p0->delta_t)/2;
+	(bodies[i]).pos_y += (bodies[i].vel_y)*(p0->delta_t) + (a_y[i])*(p0->delta_t)*(p0->delta_t)/2;
+	(bodies[i]).vel_x += (a_x[i])*(p0->delta_t);
+	(bodies[i]).vel_y += (a_y[i])*(p0->delta_t);
     }
     free(a_x);
     free(a_y);
     a_x = NULL;
     a_y = NULL;
-    return;  /*to be done*/
+    return;
 }
 
 void print_constants(constants p0){
@@ -184,7 +196,7 @@ void print_bodies(corpo *bodies, int n){
 
 void print_positions(corpo *bodies, int n){
     for( int i=0 ; i<n ; i++ )
-	printf("%lf %lf ", (bodies[i]).pos_x, (bodies[i]).pos_y);
+	printf("%.2lf %.2lf ", (bodies[i]).pos_x, (bodies[i]).pos_y);
     printf("\n");
     return;
 }

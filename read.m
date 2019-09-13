@@ -7,7 +7,9 @@ close all;
 data2 = load('saida.txt');
 
 %plot data
-plot(data2(:,3),data2(:,4)  );   %,data2(:,3),data2(:,4)); 
+x = data2(:,3)
+y = data2(:,4)
+scatter(x,y );   %,data2(:,3),data2(:,4)); 
 
 printf('Pause. Press any key.\n');
 pause;
