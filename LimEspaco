@@ -13,6 +13,7 @@ void draw(vetor objeto, vetor velocidade);
 void addVetor(vetor *a, vetor b);
 float normaVetor(vetor a);
 void versorVetor(vetor *a);
+void atualizarPosicao(vetor *objeto, vetor velocidade);
 
 int main(){
     vetor objeto;
@@ -23,7 +24,7 @@ int main(){
     velocidade.x = 1;
     velocidade.y = 3.3;
 
-    draw(objeto, velocidade);
+    //draw(objeto, velocidade);
 
     return 0;
 }
@@ -53,8 +54,13 @@ float normaVetor(vetor a){
     return (sqrt(a.x * a.x + a.y * a.y));
 }
 
-void versorVetor(vetor *a){ //CUIDADO COM DIVISAO POR ZERO
+void versorVetor(vetor *a){
     float norma = normaVetor(*a);
     a->x = a->x/norma;
     a->y = a->y/norma;
+}
+
+void atualizarPosicao(vetor *objeto, vetor velocidade){
+    // INSERIR CODIGO PARA ATUALIZAR A ACELERAÇÃO
+    addVetor(objeto, velocidade);
 }
