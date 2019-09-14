@@ -1,4 +1,6 @@
 // EXEMPLO DE FUNCAO QUE LIMITA O ESPAÇO
+// LIMITE ESTA ENTRE 400 DE ALTURA E 400 DE LARGURA
+
 #include <stdio.h>
 
 typedef struct{
