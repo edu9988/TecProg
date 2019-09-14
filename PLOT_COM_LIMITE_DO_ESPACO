@@ -9,7 +9,7 @@ typedef struct{
     float y;
 }vetor;
 
-void draw(vetor objeto, vetor velocidade);
+void draw(vetor objeto, vetor velocidade, vetor aceleracao);
 void addVetor(vetor *a, vetor b);
 float normaVetor(vetor a);
 void versorVetor(vetor *a);
@@ -17,20 +17,26 @@ void atualizarPosicao(vetor *objeto, vetor velocidade);
 
 int main(){
     vetor objeto;
-    objeto.x=10;
-    objeto.y=10;
+    objeto.x=99;
+    objeto.y=200;
 
     vetor velocidade;
-    velocidade.x = 1;
-    velocidade.y = 3.3;
+    velocidade.x = 0;
+    velocidade.y = 0;
 
-    draw(objeto, velocidade);
+    vetor aceleracao;
+    aceleracao.x = -0.001;
+    aceleracao.y = 0.01;
+
+    draw(objeto, velocidade, aceleracao);
 
     return 0;
 }
 
-void draw(vetor objeto, vetor velocidade) {
-    
+void draw(vetor objeto, vetor velocidade, vetor aceleracao){
+    if(objeto.x <100)
+        addVetor(&velocidade, aceleracao);
+
     addVetor(&objeto, velocidade);
     
     if ((objeto.x > 400) || (objeto.x < 0)) {   // O QUE VAI ACONTECER COM A NAVE QUANDO ELA CHEGAR NA FRONTEIRA
@@ -42,7 +48,7 @@ void draw(vetor objeto, vetor velocidade) {
 
     printf("%.2lf %.2lf\n", objeto.x, objeto.y);
 
-    draw(objeto, velocidade);
+    draw(objeto, velocidade, aceleracao);
 }
 
 void addVetor(vetor *a, vetor b){
