@@ -24,7 +24,7 @@ int main(){
     velocidade.x = 1;
     velocidade.y = 3.3;
 
-    //draw(objeto, velocidade);
+    draw(objeto, velocidade);
 
     return 0;
 }
@@ -33,14 +33,14 @@ void draw(vetor objeto, vetor velocidade) {
     
     addVetor(&objeto, velocidade);
     
-    if ((objeto.x > 400) || (objeto.x < 0)) {
-        velocidade.x = velocidade.x * -1;
+    if ((objeto.x > 400) || (objeto.x < 0)) {   // O QUE VAI ACONTECER COM A NAVE QUANDO ELA CHEGAR NA FRONTEIRA
+        velocidade.x = velocidade.x * -1;       //PODE SER INSERIDO NESSES BLOCOS
     }
     if ((objeto.y> 400) || (objeto.y < 0)) {
         velocidade.y = velocidade.y * -1;
     }
 
-    printf("%lf %lf\n", objeto.x, objeto.y);
+    printf("%.2lf %.2lf\n", objeto.x, objeto.y);
 
     draw(objeto, velocidade);
 }
