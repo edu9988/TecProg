@@ -1,6 +1,3 @@
-// EXEMPLO DE FUNCAO RECURSIVA QUE LIMITA O ESPAÇO
-// LIMITE ESTA ENTRE 400 DE ALTURA E 400 DE LARGURA
-
 #include <stdio.h>
 #include <math.h>
 
@@ -9,65 +6,82 @@ typedef struct{
     float y;
 }vetor;
 
-void draw(vetor objeto, vetor velocidade, vetor aceleracao);
-void addVetor(vetor *a, vetor b);
-float normaVetor(vetor a);
-void versorVetor(vetor *a);
-void atualizarPosicao(vetor *objeto, vetor velocidade);
+typedef struct {
+    vetor velObj;
+    vetor posObj;
+}objeto;
+
+typedef struct {
+    char nome[80];
+    float massa;
+    objeto valor;
+}nave;
+
+typedef struct {
+    objeto valor;
+}projetil;
+
+void draw(objeto objeto1, vetor velocidade, vetor aceleracao);
+void addVetorAB(vetor *a, vetor b);
+float normaVetor(vetor A);
+void versorVetor(vetor *A);
+void printVetor(vetor A);
 
 int main(){
-    vetor objeto;
-    objeto.x=99;
-    objeto.y=200;
+    nave nave1;
+    vetor velAux;
+    vetor acelAux;
 
-    vetor velocidade;
-    velocidade.x = 1;
-    velocidade.y = 3.3;
+    nave1.valor.posObj.x = 99;
+    nave1.valor.posObj.y = 200;
 
-    vetor aceleracao;
-    aceleracao.x = -0.001;
-    aceleracao.y = 0.01;
+    nave1.valor.velObj.x = 1;
+    nave1.valor.velObj.y = 3.3;
 
-    draw(objeto, velocidade, aceleracao);
+    acelAux.x = -0.001; // ACELERACAO NEGATIVA DEIXA POSSIVEL QUE O OBJETO SAIA DO LIMITE
+    acelAux.y = 0.01;
+
+    velAux.x = 1;
+    velAux.y = 3.3;
+
+    draw(nave1.valor, velAux, acelAux);
 
     return 0;
 }
 
-void draw(vetor objeto, vetor velocidade, vetor aceleracao){
-    if(objeto.x < 100)
-        addVetor(&velocidade, aceleracao);
+void draw(objeto objeto1, vetor velocidade, vetor aceleracao){
+    if(objeto1.posObj.x < 100)
+        addVetorAB(&objeto1.velObj, aceleracao);
 
-    addVetor(&objeto, velocidade);
-    
-    if ((objeto.x > 400) || (objeto.x < 0)) {   // O QUE VAI ACONTECER COM A NAVE QUANDO ELA CHEGAR NA FRONTEIRA
-        velocidade.x = velocidade.x * -1;       //PODE SER INSERIDO NESSES BLOCOS
+    addVetorAB(&objeto1.posObj, velocidade);
+
+    if ((objeto1.posObj.x > 400) || (objeto1.posObj.x < 0)) {   // O QUE VAI ACONTECER COM A NAVE QUANDO ELA CHEGAR NA FRONTEIRA
+        velocidade.x = velocidade.x * -1;                       //PODE SER INSERIDO NESSES BLOCOS
     }
-    if ((objeto.y> 400) || (objeto.y < 0)) {
+    if ((objeto1.posObj.y> 400) || (objeto1.posObj.y < 0)) {
         velocidade.y = velocidade.y * -1;
     }
-    if(objeto.x )
 
-    printf("%.2lf %.2lf\n", objeto.x, objeto.y);
+    printVetor(objeto1.posObj);
 
-    draw(objeto, velocidade, aceleracao);
+    draw(objeto1, velocidade, aceleracao);
 }
 
-void addVetor(vetor *a, vetor b){
-    a->x = a->x + b.x;
-    a->y = a->y + b.y;
+void addVetorAB(vetor *A, vetor B){
+    A->x = A->x + B.x;
+    A->y = A->y + B.y;
 }
 
-float normaVetor(vetor a){
-    return (sqrt(a.x * a.x + a.y * a.y));
+float normaVetor(vetor A){
+    return (sqrt(A.x * A.x + A.y * A.y));
 }
 
-void versorVetor(vetor *a){
-    float norma = normaVetor(*a);
-    a->x = a->x/norma;
-    a->y = a->y/norma;
+void versorVetor(vetor *A){
+    float norma = normaVetor(*A);
+    A->x = A->x/norma;
+    A->y = A->y/norma;
 }
 
-void atualizarPosicao(vetor *objeto, vetor velocidade){
-    // INSERIR CODIGO PARA ATUALIZAR A ACELERAÇÃO
-    addVetor(objeto, velocidade);
+void printVetor(vetor A){
+    printf("%.2lf %.2lf\n", A.x, A.y);
 }
