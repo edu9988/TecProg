@@ -1,7 +1,8 @@
-// EXEMPLO DE FUNCAO QUE LIMITA O ESPAÇO
+// EXEMPLO DE FUNCAO RECURSIVA QUE LIMITA O ESPAÇO
 // LIMITE ESTA ENTRE 400 DE ALTURA E 400 DE LARGURA
 
 #include <stdio.h>
+#include <math.h>
 
 typedef struct{
     float x;
@@ -10,6 +11,8 @@ typedef struct{
 
 void draw(vetor objeto, vetor velocidade);
 void addVetor(vetor *a, vetor b);
+float normaVetor(vetor a);
+void versorVetor(vetor *a);
 
 int main(){
     vetor objeto;
@@ -44,4 +47,14 @@ void draw(vetor objeto, vetor velocidade) {
 void addVetor(vetor *a, vetor b){
     a->x = a->x + b.x;
     a->y = a->y + b.y;
+}
+
+float normaVetor(vetor a){
+    return (sqrt(a.x * a.x + a.y * a.y));
+}
+
+void versorVetor(vetor *a){ //CUIDADO COM DIVISAO POR ZERO
+    float norma = normaVetor(*a);
+    a->x = a->x/norma;
+    a->y = a->y/norma;
 }
