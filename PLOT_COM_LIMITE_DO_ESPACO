@@ -21,8 +21,8 @@ int main(){
     objeto.y=200;
 
     vetor velocidade;
-    velocidade.x = 0;
-    velocidade.y = 0;
+    velocidade.x = 1;
+    velocidade.y = 3.3;
 
     vetor aceleracao;
     aceleracao.x = -0.001;
@@ -34,7 +34,7 @@ int main(){
 }
 
 void draw(vetor objeto, vetor velocidade, vetor aceleracao){
-    if(objeto.x <100)
+    if(objeto.x < 100)
         addVetor(&velocidade, aceleracao);
 
     addVetor(&objeto, velocidade);
@@ -45,6 +45,7 @@ void draw(vetor objeto, vetor velocidade, vetor aceleracao){
     if ((objeto.y> 400) || (objeto.y < 0)) {
         velocidade.y = velocidade.y * -1;
     }
+    if(objeto.x )
 
     printf("%.2lf %.2lf\n", objeto.x, objeto.y);
 
