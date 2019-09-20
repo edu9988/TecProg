@@ -27,7 +27,7 @@ typedef struct{
 }constants;
 
 void read_entry_file(constants *, corpo **);
-void *mallocSafe(int);
+void *mallocSafe(unsigned int);
 void string_copy(char *, char *);
 void next_pos(constants *, corpo *, int);
 void corpo_copy(corpo, corpo *);
@@ -50,11 +50,10 @@ int main(int argc, char *argv[]){
     corpo *body_list;
     read_entry_file( &parametros , &body_list );
     
-    for( int i=0 ; i<5 ; i++){
-	print_positions(body_list, parametros.projectiles_quantity+2);
+    for( int i=0 ; i<10 ; i++){
+	//print_positions(body_list, parametros.projectiles_quantity+2);
 	next_pos(&parametros, body_list, (parametros.projectiles_quantity)+2);
     }
-    printf("%lf %.16lf\n", parametros.planet_mass, G);
 
     /*	free's section	*/
     free( parametros.name1 );
@@ -123,12 +122,12 @@ void corpo_copy(corpo a, corpo *b){
     return;
 }
 
-void *mallocSafe(int nbytes){
+void *mallocSafe(unsigned int nbytes){
     void *pointer;
     pointer = malloc(nbytes);
     if( pointer == NULL ){
-	printf("Malloc failed\n");
-	exit(EXIT_FAILURE);
+	fprintf(stderr, "Failed to malloc %u bytes\n", nbytes);
+	exit(-1);
     }
     return pointer;
 }
@@ -168,14 +167,16 @@ void next_pos(constants *p0, corpo *bodies, int n){
 	}
 	a_x[i] *= G;
 	a_y[i] *= G;
-	printf("%lf\n", a_x[i]);
+	//printf("%lf\n", a_x[i]);
     }
     for( int i=0 ; i<n ; i++ ){	/*atualiza pos, vel*/
+	printf("%lf %lf %lf %lf %lf %lf %lf\n", bodies[i].mass, bodies[i].pos_x, bodies[i].pos_y, bodies[i].vel_x, bodies[i].vel_y, a_x[i], a_y[i]);
 	(bodies[i]).pos_x += (bodies[i].vel_x)*(p0->delta_t) + (a_x[i])*(p0->delta_t)*(p0->delta_t)/2;
 	(bodies[i]).pos_y += (bodies[i].vel_y)*(p0->delta_t) + (a_y[i])*(p0->delta_t)*(p0->delta_t)/2;
 	(bodies[i]).vel_x += (a_x[i])*(p0->delta_t);
 	(bodies[i]).vel_y += (a_y[i])*(p0->delta_t);
     }
+    printf("\n");
     free(a_x);
     free(a_y);
     a_x = NULL;
@@ -196,7 +197,7 @@ void print_bodies(corpo *bodies, int n){
 
 void print_positions(corpo *bodies, int n){
     for( int i=0 ; i<n ; i++ )
-	printf("%.2lf %.2lf ", (bodies[i]).pos_x, (bodies[i]).pos_y);
+	printf("%.2lf\t\t%.2lf\t\t\t", (bodies[i]).pos_x, (bodies[i]).pos_y);
     printf("\n");
     return;
 }
