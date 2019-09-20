@@ -165,8 +165,8 @@ void next_pos(constants *p0, corpo *bodies, int n){
 	    a_x[i] += ((bodies[j]).mass) * (((bodies[j]).pos_x) - ((bodies[i]).pos_x)) / r;
 	    a_y[i] += ((bodies[j]).mass) * (((bodies[j]).pos_y) - ((bodies[i]).pos_y)) / r;
 	}
-	a_x[i] *= G;
-	a_y[i] *= G;
+	//a_x[i] *= G;
+	//a_y[i] *= G;
 	//printf("%lf\n", a_x[i]);
     }
     for( int i=0 ; i<n ; i++ ){	/*atualiza pos, vel*/
