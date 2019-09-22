@@ -1,4 +1,3 @@
-# LIBDIR = /usr/local/lib
  CFLAGS = -Wall
  CC = gcc
  EXECUTABLE = exec
@@ -6,11 +5,10 @@
 ###########################################################################
 
 plot: $(EXECUTABLE) $(SAIDA)
-	./$(EXECUTABLE) 0.1 > $(SAIDA)
 	./read.m
 
-run: $(EXECUTABLE)
-	./$(EXECUTABLE) 0.1
+$(SAIDA): $(EXECUTABLE) entry.dat
+	./$(EXECUTABLE) 0.001 > $(SAIDA)
 
-comp: fase1.c 
-	$(CC) $(CFLAGS) $^ -o $(EXECUTABLE) -lm
+$(EXECUTABLE): fase1.c 
+	$(CC) $(CFLAGS) $? -o $@ -lm
