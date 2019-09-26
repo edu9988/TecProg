@@ -1,20 +1,4 @@
-/*
-  \__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__
 
-  AO PREENCHER ESSE CABEÇALHO COM O MEU NOME E O MEU NÚMERO USP,
-  DECLARO QUE SOU O ÚNICO AUTOR E RESPONSÁVEL POR ESSE PROGRAMA.
-  TODAS AS PARTES ORIGINAIS DESSE EXERCÍCIO PROGRAMA (EP) FORAM
-  DESENVOLVIDAS E IMPLEMENTADAS POR MIM SEGUINDO AS INSTRUÇÕES DESSE EP
-  E QUE PORTANTO NÃO CONSTITUEM PLÁGIO. DECLARO TAMBÉM QUE SOU RESPONSÁVEL
-  POR TODAS AS CÓPIAS DESSE PROGRAMA E QUE EU NÃO DISTRIBUI OU FACILITEI A
-  SUA DISTRIBUIÇÃO. ESTOU CIENTE QUE OS CASOS DE PLÁGIO SÃO PUNIDOS COM
-  REPROVAÇÃO DIRETA NA DISCIPLINA.
-
-  Nome: MARCELO NASCIMENTO DOS SANTOS JUNIOR
-  NUSP: 11222012
-
-  \__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__
-*/
 
 #include <stdio.h>  /* fprintf(), printf() */
 #include <stdlib.h> /* malloc(), free(),  */
@@ -75,7 +59,7 @@ luminosidadePixel(Imagem *img, int col, int lin);
 */
 
 Imagem *
-mallocImagem(int width, int height)
+mallocImagem(int width, int height) //FUNCAO EDITADA
 {
     Imagem *img = mallocSafe(sizeof(Imagem));
 
@@ -139,7 +123,7 @@ freeRegioes(CelRegiao *iniRegioes)
 */
 
 void
-copieImagem(Imagem *destino, Imagem *origem)
+copieImagem(Imagem *destino, Imagem *origem) //FUNCAO EDITADA
 {
     int i,j;
 
@@ -169,7 +153,7 @@ copieImagem(Imagem *destino, Imagem *origem)
 */
 
 Pixel
-getPixel(Imagem *img, int col, int lin)
+getPixel(Imagem *img, int col, int lin) // FUNCAO EDITADA
 {
     Pixel pixelX;
 
@@ -317,7 +301,7 @@ repinteRegioes(Imagem *img, CelRegiao *iniRegioes, int col, int lin,
 */
 
 static Bool
-pixelBorda(Imagem *img, int limiar, int col, int lin)
+pixelBorda(Imagem *img, int limiar, int col, int lin) // FUNCAO EDITADA 
 {
   double gX, gY, resultado;
 
