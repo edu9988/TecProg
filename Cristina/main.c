@@ -1,6 +1,3 @@
-/*FUNCOES EDITADAS
-  
-
 #include <stdio.h>  /* fprintf() */
 #include <stdlib.h> /* exit(), EXIT_FAILURE  */
 
@@ -11,7 +8,6 @@
                      */
 #include "graphic.h" /* myInit() */
 #include "main.h"    /* quit(), graveImagem() */
-
 /*---------------------------------------------------------------*/
 /* 
  *  C O N S T A N T E S 
@@ -30,7 +26,7 @@ mostreUso(char *nomePrograma);
 
 /*---------------------------------------------------------------*/
 /* 
- *  M A I N 
+ *  M A I N
  */
 
 int 
@@ -49,20 +45,20 @@ main(int argc, char *argv[])
 
     copieImagem(tela, imgOriginal);
 
-    /* 5 segmente a imagem corrente (tela) criando a lista de regioes */
+    iniRegioes = segmenteImagem(tela, LIMIAR);
 
-    if (iniRegioes == NULL) 
+    printf("AAAAA: %lu", sizeof(CelRegiao));
+
+    if (iniRegioes == NULL)
     {
         AVISO(main: Vixe! ainda nao segmentei a imagem.);
         /* apesar disso ainda e possivel visualizar a imagem lida,
            vamos em frente */
     }
 
-    /* 6 passe a bola para a parte grafica */  
     myInit(&argc, argv, tela, imgOriginal, iniRegioes);
   
-    return 0; /* we never return here; this just keeps the compiler happy
-                 http://www.cs.umd.edu/class/fall2011/cmsc427/lectures.shtml */
+    return 0;
 }
 
 /*---------------------------------------------------------------*/
@@ -70,7 +66,6 @@ main(int argc, char *argv[])
  *  I M P L E M E N T A Ç Ã O   D A S   F U N Ç Õ E S   
  *                 O B R I G A T O R I A S
  */
-
 /*---------------------------------------------------------------*/
 
 /* 
@@ -132,4 +127,3 @@ mostreUso(char *nomePrograma)
             "    <nome arq. image> = nome arq. com Portable PixMap Binary.\n",
             nomePrograma, nomePrograma);
 }
-
