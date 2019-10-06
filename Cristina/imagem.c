@@ -1,3 +1,30 @@
+/*
+  \__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__
+
+  AO PREENCHER ESSE CABEÇALHO COM O MEU NOME E O MEU NÚMERO USP,
+  DECLARO QUE SOU O ÚNICO AUTOR E RESPONSÁVEL POR ESSE PROGRAMA.
+  TODAS AS PARTES ORIGINAIS DESSE EXERCÍCIO PROGRAMA (EP) FORAM
+  DESENVOLVIDAS E IMPLEMENTADAS POR MIM SEGUINDO AS INSTRUÇÕES DESSE EP
+  E QUE PORTANTO NÃO CONSTITUEM PLÁGIO. DECLARO TAMBÉM QUE SOU RESPONSÁVEL
+  POR TODAS AS CÓPIAS DESSE PROGRAMA E QUE EU NÃO DISTRIBUI OU FACILITEI A
+  SUA DISTRIBUIÇÃO. ESTOU CIENTE QUE OS CASOS DE PLÁGIO SÃO PUNIDOS COM
+  REPROVAÇÃO DIRETA NA DISCIPLINA.
+
+  Nome: MARCELO NASCIMENTO DOS SANTOS JUNIOR
+  NUSP: 11222012
+
+  Comentarios: Os testes para descobrir o comportamento do executavel
+  fornecido foram feitos atraves do GIMP. Muitas figuras, apesar de
+  estarem em branco, depois do processamento, tinham regioes de borda
+  equivalentes ao perimetro da imagem. Cada pixel foi adicionado um a
+  um para testar o comportamento da segmentacao, porém o teste mais
+  eficaz foi o de utilizar figuras somente de uma cor. Quando o fundo
+  da imagem era branco, as bordas eram destacadas nos
+
+
+  \__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__\__
+*/
+
 #include <stdio.h>  /* fprintf(), printf() */
 #include <stdlib.h> /* malloc(), free(),  */
 #include <math.h>   /* sqrt() */
@@ -34,6 +61,13 @@ pixelBorda(Imagem *img, int limiar, int col, int lin);
 static int
 pixelsRegiao(Imagem *img, int limiar, int col, int lin, CelRegiao *regiao);
 
+static void
+adicionarPixelRegiao(int col, int lin, CelRegiao *regiao);
+
+int corB = 0;
+
+CelRegiao *teste = NULL;
+
 /*-------------------------------------------------------------
   Funcoes locais que ja estao escritas
 */
@@ -57,7 +91,7 @@ luminosidadePixel(Imagem *img, int col, int lin);
 */
 
 Imagem *
-mallocImagem(int width, int height) //EDITADO
+mallocImagem(int width, int height)
 {
     int i,j;
     Imagem *img = mallocSafe(sizeof(Imagem));
@@ -68,7 +102,9 @@ mallocImagem(int width, int height) //EDITADO
         img->pixel[i] = mallocSafe(width * sizeof(Pixel));
 
         for(j=0; j<width; j++)
+        {
             img->pixel[i][j].regiao = NULL;
+        }
     }
 
     return img;
@@ -137,19 +173,6 @@ copieImagem(Imagem *destino, Imagem *origem) // EDITADO
                 destino->pixel[j][i].cor[GREEN] = origem->pixel[i][j].cor[GREEN];
                 destino->pixel[j][i].cor[BLUE] = origem->pixel[i][j].cor[BLUE];
         }
-
-
-    for(i = 0; i < destino->width; i++) /* RETIRANDO O NULL DOS PIXELS ONDE O CALCULO DE pixelBorda NAO E VALIDO*/
-    {
-        destino->pixel[i][0].regiao = mallocSafe(1);
-        destino->pixel[i][destino->height-1].regiao = mallocSafe(1);
-    }
-
-    for(i = 1; i < destino->height-1; i++) /* RETIRANDO O NULL DOS PIXELS ONDE O CALCULO DE pixelBorda NAO E VALIDO*/
-    {
-        destino->pixel[0][i].regiao = mallocSafe(1);
-        destino->pixel[destino->width-1][i].regiao = mallocSafe(1);
-    }
 }
 
 /*-------------------------------------------------------------
@@ -249,7 +272,13 @@ pinteImagem(Imagem *img, Byte cor[])
 void
 pinteRegioes(Imagem *img, CelRegiao *iniRegioes, Bool borda)
 {
-    AVISO(imagem: Vixe! Ainda nao fiz a funcao pinteRegioes.);
+    int i,j, aux = 0;
+
+    CelRegiao *p = iniRegioes;
+    CelPixel *q = p->iniPixels;
+    
+    printf("A: %\n", p->nPixels);
+    printf("A: %\n", p->nPixels);
 }
 
 /*-------------------------------------------------------------
@@ -272,7 +301,13 @@ pinteRegioes(Imagem *img, CelRegiao *iniRegioes, Bool borda)
 void
 repinteRegiao(Imagem *img, int col, int lin, Byte cor[])
 {
-    AVISO(imagem: Vixe! Ainda nao fiz a funcao pinteRegiao.);
+    CelRegiao *p = img->pixel[col][lin].regiao;
+    CelPixel *q = p->iniPixels;
+
+    for (int i = 0; i < p->nPixels; ++i) {
+        setPixel(img, q->col, q->lin, cor);
+        q = q->proxPixel;
+    }
 }
 
 /*-------------------------------------------------------------
@@ -322,21 +357,86 @@ repinteRegioes(Imagem *img, CelRegiao *iniRegioes, int col, int lin,
 static Bool
 pixelBorda(Imagem *img, int limiar, int col, int lin)
 {
-  double gX, gY, resultado;
+    double gX, gY, resultado;
+    double gx1 = -1, gx2= -1, gx3= -1, gx4= -1, gx5= -1, gx6= -1;
+    double gy1= -1, gy2= -1, gy3= -1, gy4= -1, gy5= -1, gy6= -1;
 
-  gX = luminosidadePixel(img, lin-1, col+1) + 2*luminosidadePixel(img, lin, col+1) + luminosidadePixel(img, lin+1,col+1)
-          - luminosidadePixel(img, lin-1,col-1) - 2*luminosidadePixel(img, lin, col-1) - luminosidadePixel(img, lin+1, col-1);
+    if(lin <= 0)
+    {
+        gx1 = 0.0;
+        gx4 = 0.0;
+        gy4 = 0.0;
+        gy5 = 0.0;
+        gy6 = 0.0;
+    }
 
-  gY = luminosidadePixel(img, lin+1, col-1) + 2*luminosidadePixel(img, lin+1, col) + luminosidadePixel(img, lin+1, col+1)
-          - luminosidadePixel(img, lin-1, col-1) - 2*luminosidadePixel(img, lin-1, col) - luminosidadePixel(img, lin-1, col+1);
+    if(lin >= img->height-1)
+    {
+        gx3 = 0.0;
+        gx6 = 0.0;
+        gy1 = 0.0;
+        gy2 = 0.0;
+        gy3 = 0.0;
+    }
 
-  resultado = sqrt(gX*gX + gY*gY);
+    if(col <= 0)
+    {
+        gx4 = 0.0;
+        gx5 = 0.0;
+        gx6 = 0.0;
+        gy1 = 0.0;
+        gy4 = 0.0;
+    }
 
-  if(resultado > limiar)
-      return TRUE;
-  else
-      return FALSE;
+    if(col >= img->width-1)
+    {
+        gx1 = 0.0;
+        gx2 = 0.0;
+        gx3 = 0.0;
+        gy3 = 0.0;
+        gy6 = 0.0;
+    }
+
+
+    if(gx1 == -1)
+        gx1 = luminosidadePixel(img, lin-1, col+1);
+    if(gx2 == -1)
+        gx2 = 2*luminosidadePixel(img, lin, col+1);
+    if(gx3 == -1)
+        gx3 = luminosidadePixel(img, lin+1,col+1);
+    if(gx4 == -1)
+        gx4 = luminosidadePixel(img, lin-1,col-1);
+    if(gx5 == -1)
+        gx5 = 2*luminosidadePixel(img, lin, col-1);
+    if(gx6 == -1)
+        gx6 = luminosidadePixel(img, lin+1, col-1);
+    if(gy1 == -1)
+        gy1 = luminosidadePixel(img, lin+1, col-1);
+    if(gy2 == -1)
+        gy2 = 2*luminosidadePixel(img, lin+1, col);
+    if(gy3 == -1)
+        gy3 = luminosidadePixel(img, lin+1, col+1);
+    if(gy4 == -1)
+        gy4 = luminosidadePixel(img, lin-1, col-1);
+    if(gy5 == -1)
+        gy5 = 2*luminosidadePixel(img, lin-1, col);
+    if(gy6 == -1)
+        gy6 = luminosidadePixel(img, lin-1, col+1);
+
+    gX = gx1 + gx2 + gx3 - gx4 - gx5 - gx6;
+
+    gY = gy1 + gy2 + gy3 - gy4 - gy5 - gy6;
+
+    resultado = sqrt(gX*gX + gY*gY);
+
+    if(resultado > limiar) {
+        return TRUE;
+    }
+    else {
+        return FALSE;
+    }
 }
+
 /*-------------------------------------------------------------
   segmenteImagem
 
@@ -351,69 +451,43 @@ pixelBorda(Imagem *img, int limiar, int col, int lin)
   _segmentacao_ da imagem.
 
   . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-  Regioes
-  --------
-
-  Cada regiao da imagem deve ser formada:
-
-      -  _apenas_ por pixels de uma _mesma_ regiao de borda  ou
-      -  _apenas_ por pixels de uma _mesma_ regiao da imagem
-         limitada por:
-
-          . pixels de borda ou
-          . pela fronteira da imagem.
-
-  Lista de regioes
-  ----------------
-
-  Cada celula da lista de regioes devolvida e do tipo CelRegiao.
-  Os campos de cada nova celula que devem ser preenchidos pela
-  funcao sao:
-
-      - nPixels: contem o numero de pixels na regiao (pixelsRegiao())
-      - borda: indica se a regiao e de borda (pixelBorda())
-      - iniPixels: ponteiro para o inicio da lista de pixels que
-            formam a regiao (pixelsRegiao())
-      - proxRegiao: ponteiro para proxima celula
-
-  Em particular, esta funcao nao deve preencher o campo
-
-      - cor: cor dos pixels da regiao,
-
-  (Esse tarefa sera feita pela funcao pinteRegioes().)
-
-  Lista de pixels de uma regiao
-  -----------------------------
-
-  Para obter a lista de pixels em uma mesma regiao, esta funcao
-  deve utilizar a funcao pixelsRegiao() que cria e devolve a
-  lista de pixels de uma mesma regiao.
-
-  O servico feito pela funcao pixelsRegiao() sera utilizado
-  para atribuir os valores dos campos nPixels e iniPixels de
-  cada celula da lista de regioes.
-
 */
 
-CelRegiao *
-segmenteImagem(Imagem *img, int limiar) //EDITADO
-{
-    CelRegiao *iniRegioes = mallocSafe(sizeof(CelRegiao));
 
-    int x = img->width, y=img->height;
+CelRegiao *
+segmenteImagem(Imagem *img, int limiar)
+{
     int i,j;
 
-    for(i=1; i<(y-1); i++)
-        for(j=1; j<(x-1); j++)
-            if(img->pixel[j][i].regiao == NULL)
+    CelRegiao *regiao = NULL;
+    CelPixel *cabeca = NULL;
+
+    for(i = 0; i<img->height; i++)
+    {
+        for (j = 0; j<img->width; ++j)
+        {
+            if (img->pixel[j][i].regiao == NULL)
             {
-                iniRegioes->borda = pixelBorda(img, limiar, j, i);
-                iniRegioes->nPixels = pixelsRegiao(img, limiar, j, i, iniRegioes);
-                iniRegioes->iniPixels = img->pixel[j][i].regiao->iniPixels;
-                iniRegioes->proxRegiao = NULL; /*iniRegioes->proxRegiao = segmenteImagem(img, limiar).;*/
+                regiao = mallocSafe(sizeof(CelRegiao));
+                regiao->borda = pixelBorda(img, limiar, j, i);
+                regiao->nPixels = cabeca;
+                regiao->nPixels = pixelsRegiao(img, limiar, j, i, regiao);
+
+                i = img->height;
+                j = img->width;
             }
 
-    return iniRegioes;
+        }
+    }
+
+    if(regiao != NULL)
+    {
+        regiao->proxRegiao = segmenteImagem(img, limiar);
+        return regiao;
+    }
+
+    return NULL;
+
 }
 
 /*-------------------------------------------------------------
@@ -435,105 +509,38 @@ segmenteImagem(Imagem *img, int limiar) //EDITADO
   popular, ainda nao foram visitados pela funcao) e que estao na
   regiao representada por REGIAO.
 
-  A funcao retorna o numero de (novas) celulas inseridas na lista
-  REGIAO->iniPixels.
-
-  . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-  Recursao
-  --------
-
-  Os pixels inseridos na lista REGIAO->iniPixels devem ser obtidos
-  RECURSIVAMENTE visitando-se (=examinando-se)
-
-      - o pixel da posicao [LIN][COL]
-
-      - os vizinhos do pixel da posicao [LIN][COL] que sao
-        do mesmo tipo de REGIAO->borda (borda ou nao borda)
-        e ainda nao foram visitados
-
-      - os vizinhos dos vizinhos da posicao [LIN][COL] que sao do
-        mesmo tipo de REGIAO->borda (borda ou nao borda) e ainda
-        nao foram visitados
-
-      - os vizinhos, dos vizinhos, dos vizinhos ...
-
-      - ...
-
-  Vizinhanca de um pixel
-  ----------------------
-
-  O conjunto de vizinhos de um pixel depende do tipo da regiao
-  (valor de REGIAO->borda) e da sua posicao (canto ou centro ou
-  ...).
-
-  Se REGIAO-BORDA == FALSE, os vizinhos de um pixel sao os pixels
-  de cima, de baixo, da esquerda e direita (vizinha da torre no
-  EP4 de MAC2166, edicao 2014).
-  Nessa caso um pixel pode ter ate 4 vizinhos.
-
-  Se REGIAO-BORDA == TRUE, os vizinhos de um pixel sao os pixels
-  de cima, de baixo, da esquerda e direita e das quatro diagonais
-  (vizinha do rei no EP4 de MAC2166, edicao 2014).
-
-  Nessa caso um pixel pode ter ate 8 vizinhos.
-
-  Regiao
-  ------
-
-  O tipo dos pixels que devem ser inseridos em REGIAO->iniPixels
-  depende do valor de REGIAO->borda:
-
-     TRUE:  os pixels     devem ser de borda
-     FALSE: os pixels nao devem ser de borda.
-
-  Cada celula da lista REGIAO->iniPixels eh do tipo CelPixel.
-  Assim, os campos de cada nova celula a serem preenchidos sao:
-
-      - col, lin: [lin][col] e posicao do pixel na imagem
-      - proxPixel: ponteiro para a proxima celula
-
-  Ponteiros de pixels para regioes
-  --------------------------------
-
-  O campo _regiao_ de cada pixel [lin][col] da imagem IMG devera
-  ser utilizado para indicar se o pixel [lin][col] ja pertencem a
-  uma regiao (ja foi ou nao visitado):
-
-     - IMG->pixel[lin][col].regiao == NULL
-
-       indica que o pixel [lin][col] ainda nao foi atribuido a
-       uma regiao (= nao foi visitado)
-
-     - IMG->pixel[lin][col].regiao != NULL
-
-       significa que o pixel [lin][col] esta na regiao
-       correspondente a celula IMG->pixel[lin][col].regiao da
-       lista de regioes (= ja foi visitado).
-
-  Assim que um pixel [lin][col] e inserido em uma regiao o
-  seu campo regiao deve ser atualizado.
-
 */
 
 static int
-pixelsRegiao(Imagem *img, int limiar, int col, int lin, CelRegiao *regiao) //EDITADO
+pixelsRegiao(Imagem *img, int limiar, int col, int lin, CelRegiao *regiao)
 {
-    int numPixels = 0;
+    int i,j;
+    i=lin;
+    j=col;
+    int contador = 0;
 
-    img->pixel[col][lin].regiao = mallocSafe(sizeof(CelRegiao));
-    img->pixel[col][lin].regiao->iniPixels = mallocSafe(sizeof(CelPixel));
+    if(lin >= 0 && lin <= img->height-1 && col >=0 && col <= img->width-1 && img->pixel[j][i].regiao == NULL){
+        if(pixelBorda(img, limiar, j, i) == regiao->borda){
+            img->pixel[j][i].regiao = regiao;
+            adicionarPixelRegiao(j, i, regiao);
+            contador++;
 
-    img->pixel[col][lin].regiao->borda = regiao->borda;
-    img->pixel[col][lin].regiao->iniPixels->col = col;
-    img->pixel[col][lin].regiao->iniPixels->lin = lin;
-    img->pixel[col][lin].regiao->iniPixels = regiao->iniPixels;
+            contador += pixelsRegiao(img, limiar, j, i+1, regiao);
+            contador += pixelsRegiao(img, limiar, j, i-1, regiao);
+            contador += pixelsRegiao(img, limiar, j+1, i, regiao);
+            contador += pixelsRegiao(img, limiar, j-1, i, regiao);
 
-    /*Escolher qual pixel e iniciar a funcao (recursivo)*/
-
-    return numPixels;
+            if(regiao->borda == TRUE)
+            {
+                contador += pixelsRegiao(img, limiar, j+1, i+1, regiao);
+                contador += pixelsRegiao(img, limiar, j-1, i+1, regiao);
+                contador += pixelsRegiao(img, limiar, j+1, i-1, regiao);
+                contador += pixelsRegiao(img, limiar, j+1, i-1, regiao);
+            }
+        }
+    }
+    return contador;
 }
-
-
 
 /*
    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -589,8 +596,17 @@ mallocSafe(size_t nbytes)
 static double
 luminosidadePixel(Imagem *img, int col, int lin)
 {
-    return  ( 0.21 * img->pixel[lin][col].cor[RED]
-              + 0.72 * img->pixel[lin][col].cor[GREEN]
-              + 0.07 * img->pixel[lin][col].cor[BLUE] );
+    return  ( 0.21 * img->pixel[lin][col].cor[RED]+0.72 * img->pixel[lin][col].cor[GREEN]+ 0.07 * img->pixel[lin][col].cor[BLUE] );
 }
 
+static void
+adicionarPixelRegiao(int col, int lin, CelRegiao *regiao)
+{
+    CelPixel *p = regiao->iniPixels;
+    CelPixel *q = mallocSafe(sizeof(CelPixel));
+    q->lin = lin;
+    q->col = col;
+
+    q->proxPixel = p;
+    regiao->iniPixels = q;
+}
