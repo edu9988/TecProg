@@ -11,6 +11,7 @@
 #include <string.h>
 #include <math.h>
 #include "space.h"
+#include "xwc.h"
 
 /*
 Programa fase1.c
@@ -22,6 +23,13 @@ novas posições de cada corpo, imprimindo-as para stdout.
 */
 
 int main(int argc, char *argv[]){
+    WINDOW *w;
+    w = InitGraph( 800, 600, "Janelao");
+    Color c;
+    c = WNamedColor("gold");
+    WFillRect(w,20,20, 80, 230, c);
+    char palavra[30];
+
     constants parametros;
     if( argc == 1 ){//sem argumentos, o programa recebe delta_t por scanf
 	printf("Specify step length\n>>>");
@@ -38,7 +46,7 @@ int main(int argc, char *argv[]){
 	int N = (int) parametros.total_time/parametros.delta_t;
     
     for( int i=0 ; i<N ; i++){
-	print_positions(body_list, parametros.projectiles_quantity+2);
+	/*print_positions(body_list, parametros.projectiles_quantity+2);*/
 	next_pos(&parametros, body_list, (parametros.projectiles_quantity)+2);
     }
 
@@ -49,5 +57,12 @@ int main(int argc, char *argv[]){
     parametros.name2 = NULL;
     free( body_list );
     body_list = NULL;
+
+    for(;;){
+	int nada = fscanf(stdin, "%s", palavra);
+	if( palavra[0] == 'q' && palavra[1] == '\0' )
+	    break;
+    }
+    CloseGraph();
     return 0;
 }
