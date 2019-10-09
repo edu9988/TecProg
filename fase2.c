@@ -13,6 +13,7 @@
 #include "space.h"
 #include "xwc.h"
 #include <unistd.h>
+#include "background.h"
 
 /*
 Programa fase2.c
@@ -26,9 +27,10 @@ int main(int argc, char *argv[]){
     WINDOW *w;
     Color c;
     char palavra[30];
-    int N;
+    int N_iteracoes;
     int nada;
     int i;
+    PIC p1;
 
     nada = 0; /*So para manter o compilador feliz*/
     nada++;/*                  "                 */
@@ -45,15 +47,17 @@ int main(int argc, char *argv[]){
 
     /*Inicializacoes de variaveis*/
     w = InitGraph( 400, 300, "Janelao");
+    WCor(w, 0x00FF00);/*Tentando colorir o fundo*/
     c = WNamedColor("gold");
     WFillRect(w,20,20, 80, 230, c);
     InitKBD(w);
+    p1 = MountPic(w , nose , NULL);
 
     read_entry_file( &parametros , &body_list );
-    N = (int) parametros.total_time/parametros.delta_t;
+    N_iteracoes = (int) parametros.total_time/parametros.delta_t;
     
     /*Execucao*/
-    for( i=0 ; i<N ; i++){
+    for( i=0 ; i<N_iteracoes ; i++){
 	/*print_positions(body_list, parametros.projectiles_quantity+2);*/
 	next_pos(&parametros, body_list, (parametros.projectiles_quantity)+2);
     }
@@ -62,6 +66,8 @@ int main(int argc, char *argv[]){
 	nada = fscanf(stdin, "%s", palavra);
 	if( palavra[0] == 'q' && palavra[1] == '\0' )
 	    break;
+	c = WNamedColor(palavra);
+	WFillRect(w,20,20, 80, 230, c);
     }
 
     CloseGraph();
