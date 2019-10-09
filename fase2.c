@@ -20,15 +20,21 @@ Programa fase2.c
 */
 int main(int argc, char *argv[]){
 
+    /*Declaracoes de variaveis*/
     constants parametros;
     corpo *body_list;
     WINDOW *w;
     Color c;
     char palavra[30];
+    int N;
+    int nada;
+    int i;
 
-     if( argc == 1 ){/*sem argumentos, o programa recebe delta_t por scanf*/
+    nada = 0; /*So para manter o compilador feliz*/
+    nada++;/*                  "                 */
+    if( argc == 1 ){/*sem argumentos, o programa recebe delta_t por scanf*/
 	printf("Specify step length\n>>>");
-	scanf("%lf", &(parametros.delta_t));
+	nada = scanf("%lf", &(parametros.delta_t));
     }
     else if( argc == 2 )/*se o programa recebeu um argumento, o valor é convertido para float e armazenado em delta_t*/
 	parametros.delta_t = atof( argv[1] );
@@ -37,21 +43,23 @@ int main(int argc, char *argv[]){
 	return 0;
     }
 
-    w = InitGraph( 800, 600, "Janelao");
+    /*Inicializacoes de variaveis*/
+    w = InitGraph( 400, 300, "Janelao");
     c = WNamedColor("gold");
     WFillRect(w,20,20, 80, 230, c);
     InitKBD(w);
 
     read_entry_file( &parametros , &body_list );
-    int N = (int) parametros.total_time/parametros.delta_t;
+    N = (int) parametros.total_time/parametros.delta_t;
     
-    for( int i=0 ; i<N ; i++){
+    /*Execucao*/
+    for( i=0 ; i<N ; i++){
 	/*print_positions(body_list, parametros.projectiles_quantity+2);*/
 	next_pos(&parametros, body_list, (parametros.projectiles_quantity)+2);
     }
 
     for(;;){
-	int nada = fscanf(stdin, "%s", palavra);
+	nada = fscanf(stdin, "%s", palavra);
 	if( palavra[0] == 'q' && palavra[1] == '\0' )
 	    break;
     }
