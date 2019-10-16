@@ -1,4 +1,4 @@
-CFLAGS = -Wall -ansi -pedantic -O2
+CFLAGS = -Wall -ansi -pedantic -O2 -Wno-unused-result
 CLIBS = -lm -lXpm -lX11
  CC = gcc
  EXECUTABLE = exec

@@ -28,15 +28,12 @@ int main(int argc, char *argv[]){
     Color c;
     char palavra[30];
     int N_iteracoes;
-    int nada;
     int i;
     PIC p1;
 
-    nada = 0; /*So para manter o compilador feliz*/
-    nada++;/*                  "                 */
     if( argc == 1 ){/*sem argumentos, o programa recebe delta_t por scanf*/
 	printf("Specify step length\n>>>");
-	nada = scanf("%lf", &(parametros.delta_t));
+	scanf("%lf", &(parametros.delta_t));
     }
     else if( argc == 2 )/*se o programa recebeu um argumento, o valor é convertido para float e armazenado em delta_t*/
 	parametros.delta_t = atof( argv[1] );
@@ -49,9 +46,7 @@ int main(int argc, char *argv[]){
     w = InitGraph( 400, 300, "Janelao");
     WCor(w, 0x00FF00);/*Tentando colorir o fundo*/
     c = WNamedColor("gold");
-    WFillRect(w,20,20, 80, 230, c);
     InitKBD(w);
-    p1 = MountPic(w , nose , NULL);
 
     read_entry_file( &parametros , &body_list );
     N_iteracoes = (int) parametros.total_time/parametros.delta_t;
@@ -60,14 +55,6 @@ int main(int argc, char *argv[]){
     for( i=0 ; i<N_iteracoes ; i++){
 	/*print_positions(body_list, parametros.projectiles_quantity+2);*/
 	next_pos(&parametros, body_list, (parametros.projectiles_quantity)+2);
-    }
-
-    for(;;){
-	nada = fscanf(stdin, "%s", palavra);
-	if( palavra[0] == 'q' && palavra[1] == '\0' )
-	    break;
-	c = WNamedColor(palavra);
-	WFillRect(w,20,20, 80, 230, c);
     }
 
     CloseGraph();

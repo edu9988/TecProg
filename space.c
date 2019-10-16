@@ -21,6 +21,7 @@ especificado em enunciado, e os armazena nas structs definidas
 no arquivo interface
 */
 void read_entry_file(constants *p0, corpo **bodies){
+    int i;
     char aux_name[30];
     FILE *arq;
     corpo s1, s2;
@@ -61,7 +62,7 @@ void read_entry_file(constants *p0, corpo **bodies){
     corpo_copy(s1,*bodies);
     corpo_copy(s2,(*bodies)+1);
     fscanf(arq, "%lf", &(p0->projectiles_lifespan));
-    for( int i=0; i<p0->projectiles_quantity ; i++ ){
+    for( i=0; i<p0->projectiles_quantity ; i++ ){
 	fscanf(arq, "%lf", &((*bodies)[i+2].mass));
 	(*bodies)[i+2].size = 3.0;
 	(*bodies)[i+2].alive = 1;
@@ -140,11 +141,12 @@ void next_pos(constants *p0, corpo *bodies, int n){
     double *a_x = mallocSafe(n*sizeof(double));
     double *a_y = mallocSafe(n*sizeof(double));
     double r;
-    for( int i=0 ; i<n ; i++ ){/*inicializa vetores a_x e a_y*/
+    int i, j;
+    for( i=0 ; i<n ; i++ ){/*inicializa vetores a_x e a_y*/
 	a_x[i] = 0.0;
 	a_y[i] = 0.0;
     }
-    for( int i=0 ; i<n ; i++ ){/*calcula aceleracoes*/
+    for( i=0 ; i<n ; i++ ){/*calcula aceleracoes*/
 	if( bodies[i].alive ){/*se alive==0, pula essa etapa*/
 	    r = pow(bodies[i].pos_x ,2) + pow(bodies[i].pos_y , 2);
 	    if( r <= pow( p0->planet_radius ,2 ) ){
@@ -158,7 +160,7 @@ void next_pos(constants *p0, corpo *bodies, int n){
 	    r = pow( r , 1.5);
 	    a_x[i] -= (p0->planet_mass) * bodies[i].pos_x  / r;
 	    a_y[i] -= (p0->planet_mass) * bodies[i].pos_y  / r;
-	    for( int j=0 ; j<i ; j++ ){
+	    for( j=0 ; j<i ; j++ ){
 		r = pow(bodies[j].pos_x-bodies[i].pos_x,2)+pow(bodies[j].pos_y-bodies[i].pos_y , 2);
 		if( r <= pow( bodies[i].size ,2 ) ){
 		    a_x[i] = 0.0;
@@ -172,7 +174,7 @@ void next_pos(constants *p0, corpo *bodies, int n){
 		a_x[i] += (bodies[j].mass) * ((bodies[j].pos_x) - (bodies[i].pos_x)) / r;
 		a_y[i] += (bodies[j].mass) * ((bodies[j].pos_y) - (bodies[i].pos_y)) / r;
 	    }
-	    for( int j=i+1 ; j<n ; j++ ){
+	    for( j=i+1 ; j<n ; j++ ){
 		r = pow(bodies[j].pos_x-bodies[i].pos_x,2)+pow(bodies[j].pos_y-bodies[i].pos_y , 2);
 		if( r <= pow( bodies[i].size ,2 ) ){
 		    a_x[i] = 0.0;
@@ -190,7 +192,7 @@ void next_pos(constants *p0, corpo *bodies, int n){
 	    a_y[i] *= G;
 	}
     }
-    for( int i=0 ; i<n ; i++ ){	/*atualiza pos, vel*/
+    for( i=0 ; i<n ; i++ ){	/*atualiza pos, vel*/
 	if( bodies[i].alive ){/*se alive==0, pula essa etapa*/
 	    bodies[i].pos_x += (bodies[i].vel_x)*(p0->delta_t) + a_x[i]*(p0->delta_t)*(p0->delta_t)/2;
 	    bodies[i].pos_y += (bodies[i].vel_y)*(p0->delta_t) + a_y[i]*(p0->delta_t)*(p0->delta_t)/2;
@@ -211,7 +213,7 @@ função criada para depuração; imprime
 os valores armazenados na constants p0
 */
 void print_constants(constants p0){
-    printf("%lf %lf %lf %s %s %d %lf\n", p0.planet_mass, p0.planet_radius, p0.total_time, p0.name1, p0.name2, p0.projectiles_quantity, p0.projectiles_lifespan);
+    printf("%f %f %f %s %s %d %f\n", p0.planet_mass, p0.planet_radius, p0.total_time, p0.name1, p0.name2, p0.projectiles_quantity, p0.projectiles_lifespan);
     return;
 }
 
@@ -221,8 +223,9 @@ função criada para depuração; imprime
 valores armazenados no vetor de corpos bodies
 */
 void print_bodies(corpo *bodies, int n){
-    for( int i=0 ; i<n ; i++ )
-	printf("%lf %lf %lf %lf %lf\n", (bodies[i]).mass, (bodies[i]).pos_x, (bodies[i]).pos_y, (bodies[i]).vel_x, (bodies[i]).vel_y);
+    int i;
+    for( i=0 ; i<n ; i++ )
+	printf("%f %f %f %f %f\n", (bodies[i]).mass, (bodies[i]).pos_x, (bodies[i]).pos_y, (bodies[i]).vel_x, (bodies[i]).vel_y);
     return;
 }
 
@@ -233,8 +236,9 @@ imprime a coordenada x e y da posição de cada um
 dos n primeiros corpos do vetor
 */
 void print_positions(corpo *bodies, int n){
-    for( int i=0 ; i<n ; i++ )
-	printf("%.2le %.2le  ", (bodies[i]).pos_x, (bodies[i]).pos_y);
+    int i;
+    for( i=0 ; i<n ; i++ )
+	printf("%.2e %.2e  ", (bodies[i]).pos_x, (bodies[i]).pos_y);
     printf("\n");
     return;
 }
