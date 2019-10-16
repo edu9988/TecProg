@@ -13,7 +13,6 @@
 #include "space.h"
 #include "xwc.h"
 #include <unistd.h>
-#include "background.h"
 
 /*
 Programa fase2.c
@@ -25,12 +24,11 @@ int main(int argc, char *argv[]){
     constants parametros;
     corpo *body_list;
     WINDOW *w;
-    Color c;
-    char palavra[30];
-    int N_iteracoes;
-    int i;
-    PIC p1;
+    PIC P1;
+    Color player1;
+    int i, N_iteracoes, xx, yy;
 
+    /* tratar argumentos */
     if( argc == 1 ){/*sem argumentos, o programa recebe delta_t por scanf*/
 	printf("Specify step length\n>>>");
 	scanf("%lf", &(parametros.delta_t));
@@ -43,19 +41,32 @@ int main(int argc, char *argv[]){
     }
 
     /*Inicializacoes de variaveis*/
-    w = InitGraph( 400, 300, "Janelao");
+    w = InitGraph( 800, 300, "Janelao");
+    player1 = WNamedColor("gold");
     WCor(w, 0x00FF00);/*Tentando colorir o fundo*/
-    c = WNamedColor("gold");
     InitKBD(w);
+    P1 = NewPic( w , 20 , 200 );
+    WPlot(P1, 0 , 0 , player1 );
 
     read_entry_file( &parametros , &body_list );
     N_iteracoes = (int) parametros.total_time/parametros.delta_t;
     
     /*Execucao*/
+    xx = 0;
+    yy = 300;
+    WFillRect( w , 0,0 , 400,300 , 0xFFFFFF );
     for( i=0 ; i<N_iteracoes ; i++){
+	WPlot( w , (int) body_list[0].pos_x , (int) body_list[0].pos_y , player1 );
+	/*WPlot( w , xx , yy , c );*/
+	PutPic( w , P1 ,0,0 , 5,5, xx,yy);
+	xx += 2;
+	yy -= 1;
 	/*print_positions(body_list, parametros.projectiles_quantity+2);*/
 	next_pos(&parametros, body_list, (parametros.projectiles_quantity)+2);
     }
+    WCor(w, 0x00FF00);/*Tentando colorir o fundo*/
+    while( !WCheckKBD(w) )
+	WPrint( w , 20 , 200 , "Pressione uma tecla para terminar:" );
 
     CloseGraph();
     /*	free's section	*/
