@@ -21,7 +21,7 @@ Programa fase2.c
 int main(int argc, char *argv[]){
 
     /*Declaracoes de variaveis*/
-    constants parametros;
+    constants params;
     corpo *body_list;
     WINDOW *w;
     PIC P1;
@@ -31,49 +31,48 @@ int main(int argc, char *argv[]){
     /* tratar argumentos */
     if( argc == 1 ){/*sem argumentos, o programa recebe delta_t por scanf*/
 	printf("Specify step length\n>>>");
-	scanf("%lf", &(parametros.delta_t));
+	scanf("%lf", &(params.delta_t));
     }
     else if( argc == 2 )/*se o programa recebeu um argumento, o valor é convertido para float e armazenado em delta_t*/
-	parametros.delta_t = atof( argv[1] );
+	params.delta_t = atof( argv[1] );
     else{/* se recebe mais de um argumento, o programa termina*/
 	printf("Expected fewer arguments\n");
 	return 0;
     }
 
     /*Inicializacoes de variaveis*/
-    w = InitGraph( 800, 300, "Janelao");
+    params.SCR_larg = 1366;
+    params.SCR_alt = 768;
+    w = InitGraph( params.SCR_larg, params.SCR_alt, "Janelao");
     player1 = WNamedColor("gold");
-    WCor(w, 0x00FF00);/*Tentando colorir o fundo*/
     InitKBD(w);
-    P1 = NewPic( w , 20 , 200 );
+    P1 = NewPic( w , 10 , 10 );
     WPlot(P1, 0 , 0 , player1 );
 
-    read_entry_file( &parametros , &body_list );
-    N_iteracoes = (int) parametros.total_time/parametros.delta_t;
+    read_entry_file( &params , &body_list );
+    N_iteracoes = (int) params.total_time/params.delta_t;
     
     /*Execucao*/
     xx = 0;
     yy = 300;
-    WFillRect( w , 0,0 , 400,300 , 0xFFFFFF );
+    WFillRect( w , 0,0 , 1366,768 , 0x000000 );
     for( i=0 ; i<N_iteracoes ; i++){
-	WPlot( w , (int) body_list[0].pos_x , (int) body_list[0].pos_y , player1 );
-	/*WPlot( w , xx , yy , c );*/
+	WPlot( w , body_list[0].SCR_pos_x , body_list[0].SCR_pos_y , player1 );
 	PutPic( w , P1 ,0,0 , 5,5, xx,yy);
 	xx += 2;
 	yy -= 1;
-	/*print_positions(body_list, parametros.projectiles_quantity+2);*/
-	next_pos(&parametros, body_list, (parametros.projectiles_quantity)+2);
+	next_pos(&params, body_list, (params.projectiles_quantity)+2);
     }
-    WCor(w, 0x00FF00);/*Tentando colorir o fundo*/
+    WCor(w, 0x00FF00);
     while( !WCheckKBD(w) )
 	WPrint( w , 20 , 200 , "Pressione uma tecla para terminar:" );
 
     CloseGraph();
     /*	free's section	*/
-    free( parametros.name1 );
-    parametros.name1 = NULL;
-    free( parametros.name2 );
-    parametros.name2 = NULL;
+    free( params.name1 );
+    params.name1 = NULL;
+    free( params.name2 );
+    params.name2 = NULL;
     free( body_list );
     body_list = NULL;
 

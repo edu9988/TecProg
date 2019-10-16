@@ -34,6 +34,8 @@ void read_entry_file(constants *p0, corpo **bodies){
     fscanf(arq, "%lf", &(p0->planet_radius));
     fscanf(arq, "%lf", &(p0->planet_mass));
     fscanf(arq, "%lf", &(p0->total_time));
+    p0->L = 1.5e7;
+    p0->H = 1.5e7;
     /*	Spacecraft 1	*/
     fscanf(arq, " %s", aux_name);
     p0->name1 = mallocSafe( (1+strlen(aux_name))*sizeof(char) );
@@ -45,6 +47,12 @@ void read_entry_file(constants *p0, corpo **bodies){
     fscanf(arq, "%lf", &(s1.pos_y));
     fscanf(arq, "%lf", &(s1.vel_x));
     fscanf(arq, "%lf", &(s1.vel_y));
+    if( s1.pos_x >= p0->L ) 
+	s1.pos_x -= 2*p0->L;
+    s1.SCR_pos_x = Tx(s1.pos_x, p0);
+    if( s1.pos_y >= p0->H ) 
+	s1.pos_y -= 2*p0->H;
+    s1.SCR_pos_y = Ty(s1.pos_y, p0);
     /*	Spacecraft 2	*/
     fscanf(arq, " %s", aux_name);
     p0->name2 = mallocSafe( (1+strlen(aux_name))*sizeof(char) );
@@ -56,6 +64,12 @@ void read_entry_file(constants *p0, corpo **bodies){
     fscanf(arq, "%lf", &(s2.pos_y));
     fscanf(arq, "%lf", &(s2.vel_x));
     fscanf(arq, "%lf", &(s2.vel_y));
+    if( s2.pos_x >= p0->L ) 
+	s2.pos_x -= 2*p0->L;
+    s2.SCR_pos_x = Tx(s2.pos_x, p0);
+    if( s2.pos_y >= p0->H ) 
+	s2.pos_y -= 2*p0->H;
+    s2.SCR_pos_y = Ty(s2.pos_y, p0);
     /*	Projectiles	*/
     fscanf(arq, "%d", &(p0->projectiles_quantity));
     *bodies = mallocSafe( ((p0->projectiles_quantity)+2)*sizeof(corpo) );
@@ -70,6 +84,12 @@ void read_entry_file(constants *p0, corpo **bodies){
 	fscanf(arq, "%lf", &((*bodies)[i+2].pos_y));
 	fscanf(arq, "%lf", &((*bodies)[i+2].vel_x));
 	fscanf(arq, "%lf", &((*bodies)[i+2].vel_y));
+	if( (*bodies)[i+2].pos_x >= p0->L ) 
+	    (*bodies)[i+2].pos_x -= 2*p0->L;
+	(*bodies)[i+2].SCR_pos_x = Tx( (*bodies)[i+2].pos_x , p0 );
+	if( (*bodies)[i+2].pos_y >= p0->H ) 
+	    (*bodies)[i+2].pos_y -= 2*p0->H;
+	(*bodies)[i+2].SCR_pos_y = Ty( (*bodies)[i+2].pos_y , p0 );
     }
     fclose(arq);
     return;
@@ -88,6 +108,8 @@ void corpo_copy(corpo a, corpo *b){
     b->pos_y = a.pos_y;
     b->vel_x = a.vel_x;
     b->vel_y = a.vel_y;
+    b->SCR_pos_x = a.SCR_pos_x;
+    b->SCR_pos_y = a.SCR_pos_y;
     return;
 }
 
@@ -241,4 +263,36 @@ void print_positions(corpo *bodies, int n){
 	printf("%.2e %.2e  ", (bodies[i]).pos_x, (bodies[i]).pos_y);
     printf("\n");
     return;
+}
+
+/*
+Tx():
+Recebe um double pos_x e um ponteiro para constants
+params;
+Calcula a posicao na tela, Tx, atraves de uma
+transformacao de variaveis.
+Tx pertence ao intervalo [0,SCR_larg];
+*/
+int Tx(double pos_x, constants *params){
+    int transf_x;
+    double tx;
+    tx = params->SCR_larg/2 +pos_x/params->L;
+    transf_x = (int) tx;
+    return transf_x;
+}
+
+/*
+Ty():
+Recebe um double pos_y e um ponteiro para constants
+params;
+Calcula a posicao na tela, Ty, atraves de uma
+transformacao de variaveis.
+Ty pertence ao intervalo [0,SCR_alt];
+*/
+int Ty(double pos_y, constants *params){
+    int transf_y;
+    double ty;
+    ty = params->SCR_alt/2 +pos_y/params->L;
+    transf_y = (int) ty;
+    return transf_y;
 }

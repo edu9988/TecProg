@@ -24,6 +24,8 @@ typedef struct{
     double pos_y;
     double vel_x;
     double vel_y;
+    int SCR_pos_x;
+    int SCR_pos_y;
 }corpo;
 
 /*
@@ -41,6 +43,10 @@ typedef struct{
     char *name2;
     int projectiles_quantity;
     double projectiles_lifespan;
+    int SCR_larg;/*largura da tela (ex:1366)*/
+    int SCR_alt;/*altura da tela*/
+    double L;/*largura do universo*/
+    double H;/*altura do universo*/
 }constants;
 
 /*
@@ -57,3 +63,5 @@ void corpo_copy(corpo, corpo *);
 void print_constants(constants);
 void print_bodies(corpo *, int);
 void print_positions(corpo *, int);
+int Tx(double, constants *);
+int Ty(double, constants *);
