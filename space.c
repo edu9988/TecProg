@@ -47,11 +47,15 @@ void read_entry_file(constants *p0, corpo **bodies){
     fscanf(arq, "%lf", &(s1.pos_y));
     fscanf(arq, "%lf", &(s1.vel_x));
     fscanf(arq, "%lf", &(s1.vel_y));
-    if( s1.pos_x >= p0->L ) 
+    if( s1.pos_x >= p0->L ) /*passou da borda da direita?*/
 	s1.pos_x -= 2*p0->L;
+    if( s1.pos_x <= -p0->L ) /*passou da borda da esquerda?*/
+	s1.pos_x += 2*p0->L;
     s1.SCR_pos_x = Tx(s1.pos_x, p0);
-    if( s1.pos_y >= p0->H ) 
+    if( s1.pos_y >= p0->H ) /*passou da borda de cima?*/
 	s1.pos_y -= 2*p0->H;
+    if( s1.pos_y <= -p0->H ) /*passou da borda de baixo?*/
+	s1.pos_y += 2*p0->H;
     s1.SCR_pos_y = Ty(s1.pos_y, p0);
     /*	Spacecraft 2	*/
     fscanf(arq, " %s", aux_name);
@@ -64,11 +68,15 @@ void read_entry_file(constants *p0, corpo **bodies){
     fscanf(arq, "%lf", &(s2.pos_y));
     fscanf(arq, "%lf", &(s2.vel_x));
     fscanf(arq, "%lf", &(s2.vel_y));
-    if( s2.pos_x >= p0->L ) 
+    if( s2.pos_x >= p0->L ) /*passou da borda da direita?*/
 	s2.pos_x -= 2*p0->L;
+    if( s2.pos_x <= -p0->L ) /*passou da borda da esquerda?*/
+	s2.pos_x += 2*p0->L;
     s2.SCR_pos_x = Tx(s2.pos_x, p0);
-    if( s2.pos_y >= p0->H ) 
+    if( s2.pos_y >= p0->H ) /*passou da borda de cima?*/
 	s2.pos_y -= 2*p0->H;
+    if( s2.pos_y <= -p0->H ) /*passou da borda de baixo?*/
+	s2.pos_y += 2*p0->H;
     s2.SCR_pos_y = Ty(s2.pos_y, p0);
     /*	Projectiles	*/
     fscanf(arq, "%d", &(p0->projectiles_quantity));
@@ -84,11 +92,15 @@ void read_entry_file(constants *p0, corpo **bodies){
 	fscanf(arq, "%lf", &((*bodies)[i+2].pos_y));
 	fscanf(arq, "%lf", &((*bodies)[i+2].vel_x));
 	fscanf(arq, "%lf", &((*bodies)[i+2].vel_y));
-	if( (*bodies)[i+2].pos_x >= p0->L ) 
+	if( (*bodies)[i+2].pos_x >= p0->L ) /*passou da borda da direita?*/
 	    (*bodies)[i+2].pos_x -= 2*p0->L;
+	if( (*bodies)[i+2].pos_x <= -p0->L ) /*passou da borda da esquerda?*/
+	    (*bodies)[i+2].pos_x += 2*p0->L;
 	(*bodies)[i+2].SCR_pos_x = Tx( (*bodies)[i+2].pos_x , p0 );
-	if( (*bodies)[i+2].pos_y >= p0->H ) 
+	if( (*bodies)[i+2].pos_y >= p0->H ) /*passou da borda de cima?*/
 	    (*bodies)[i+2].pos_y -= 2*p0->H;
+	if( (*bodies)[i+2].pos_y <= -p0->H ) /*passou da borda de baixo?*/
+	    (*bodies)[i+2].pos_y += 2*p0->H;
 	(*bodies)[i+2].SCR_pos_y = Ty( (*bodies)[i+2].pos_y , p0 );
     }
     fclose(arq);
@@ -213,11 +225,21 @@ void next_pos(constants *p0, corpo *bodies, int n){
 	    a_x[i] *= G;
 	    a_y[i] *= G;
 	}
-    }
+    }/* fim de calcula aproximacoes */
     for( i=0 ; i<n ; i++ ){	/*atualiza pos, vel*/
 	if( bodies[i].alive ){/*se alive==0, pula essa etapa*/
-	    bodies[i].pos_x += (bodies[i].vel_x)*(p0->delta_t) + a_x[i]*(p0->delta_t)*(p0->delta_t)/2;
-	    bodies[i].pos_y += (bodies[i].vel_y)*(p0->delta_t) + a_y[i]*(p0->delta_t)*(p0->delta_t)/2;
+	    bodies[i].pos_x += (bodies[i].vel_x)*(p0->delta_t) + a_x[i]*(p0->delta_t)*(p0->delta_t)/2;/*atualiza pos_x*/
+	    if( bodies[i].pos_x >= p0->L ) /*passou da borda da direita?*/
+		bodies[i].pos_x -= 2*p0->L;
+	    if( bodies[i].pos_x <= -p0->L ) /*passou da borda da esquerda?*/
+		bodies[i].pos_x += 2*p0->L;
+	    bodies[i].SCR_pos_x = Tx( bodies[i].pos_x , p0 );/*converte para tela*/
+	    bodies[i].pos_y += (bodies[i].vel_y)*(p0->delta_t) + a_y[i]*(p0->delta_t)*(p0->delta_t)/2;/*atualiza pos_y*/
+	    if( bodies[i].pos_y >= p0->H ) /*passou da borda de cima?*/
+		bodies[i].pos_y -= 2*p0->H;
+	    if( bodies[i].pos_y <= -p0->H ) /*passou da borda de baixo?*/
+		bodies[i].pos_y += 2*p0->H;
+	    bodies[i].SCR_pos_y = Ty( bodies[i].pos_y , p0 );/*converte para tela*/
 	    bodies[i].vel_x += a_x[i]*(p0->delta_t);
 	    bodies[i].vel_y += a_y[i]*(p0->delta_t);
 	}
@@ -276,7 +298,8 @@ Tx pertence ao intervalo [0,SCR_larg];
 int Tx(double pos_x, constants *params){
     int transf_x;
     double tx;
-    tx = params->SCR_larg/2 +pos_x/params->L;
+    tx = 1 + pos_x/params->L;
+    tx *= params->SCR_larg/2;
     transf_x = (int) tx;
     return transf_x;
 }
@@ -292,7 +315,8 @@ Ty pertence ao intervalo [0,SCR_alt];
 int Ty(double pos_y, constants *params){
     int transf_y;
     double ty;
-    ty = params->SCR_alt/2 +pos_y/params->L;
+    ty = 1 - pos_y/params->H;
+    ty *= params->SCR_alt/2;
     transf_y = (int) ty;
     return transf_y;
 }

@@ -6,13 +6,13 @@
 /* Projeto - Primeira fase - 22 set 2019                      */
 /* Curso MAC0216  - Prof. Marco Dimas Gubitoso		      */
 /**************************************************************/
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 #include "space.h"
 #include "xwc.h"
-#include <unistd.h>
 
 /*
 Programa fase2.c
@@ -26,7 +26,7 @@ int main(int argc, char *argv[]){
     WINDOW *w;
     PIC P1;
     Color player1;
-    int i, N_iteracoes, xx, yy;
+    int i, N_iteracoes;
 
     /* tratar argumentos */
     if( argc == 1 ){/*sem argumentos, o programa recebe delta_t por scanf*/
@@ -53,19 +53,20 @@ int main(int argc, char *argv[]){
     N_iteracoes = (int) params.total_time/params.delta_t;
     
     /*Execucao*/
-    xx = 0;
-    yy = 300;
+    WPlot( P1 , 0,0 , player1 );
     WFillRect( w , 0,0 , 1366,768 , 0x000000 );
     for( i=0 ; i<N_iteracoes ; i++){
-	WPlot( w , body_list[0].SCR_pos_x , body_list[0].SCR_pos_y , player1 );
-	PutPic( w , P1 ,0,0 , 5,5, xx,yy);
-	xx += 2;
-	yy -= 1;
+	PutPic( w , P1 ,0,0 , 5,5, body_list[0].SCR_pos_x,body_list[0].SCR_pos_y);
+	WFillRect( P1 , 0,0 , 5,5 , 255*i );
 	next_pos(&params, body_list, (params.projectiles_quantity)+2);
+	usleep(1000);
+	if( WCheckKBD(w) ) /*se digitaram algo */
+	    break;
     }
     WCor(w, 0x00FF00);
     while( !WCheckKBD(w) )
 	WPrint( w , 20 , 200 , "Pressione uma tecla para terminar:" );
+    /*fim Execucao*/
 
     CloseGraph();
     /*	free's section	*/
