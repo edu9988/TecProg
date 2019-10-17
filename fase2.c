@@ -24,8 +24,8 @@ int main(int argc, char *argv[]){
     constants params;
     corpo *body_list;
     WINDOW *w;
-    PIC P1;
-    Color player1;
+    PIC P1, P2, Ms;
+    Color player1, player2, misseis;
     int i, N_iteracoes;
 
     /* tratar argumentos */
@@ -44,26 +44,37 @@ int main(int argc, char *argv[]){
     params.SCR_larg = 1366;
     params.SCR_alt = 768;
     w = InitGraph( params.SCR_larg, params.SCR_alt, "Janelao");
-    player1 = WNamedColor("gold");
+    player1 = WNamedColor("red");
+    player2 = WNamedColor("blue");
+    misseis = WNamedColor("white");
     InitKBD(w);
     P1 = NewPic( w , 10 , 10 );
-    WPlot(P1, 0 , 0 , player1 );
+    P2 = NewPic( w , 10 , 10 );
+    Ms = NewPic( w , 10 , 10 );
+    WFillRect(P1, 0,0 , 5,5 ,player1 );
+    WFillRect(P2, 0,0 , 5,5 ,player2 );
+    WFillRect(Ms, 0,0 , 5,5 ,misseis );
 
     read_entry_file( &params , &body_list );
     N_iteracoes = (int) params.total_time/params.delta_t;
     
     /*Execucao*/
     WPlot( P1 , 0,0 , player1 );
+    WPlot( P2 , 0,0 , player1 );
     WFillRect( w , 0,0 , 1366,768 , 0x000000 );
     for( i=0 ; i<N_iteracoes ; i++){
 	PutPic( w , P1 ,0,0 , 5,5, body_list[0].SCR_pos_x,body_list[0].SCR_pos_y);
-	WFillRect( P1 , 0,0 , 5,5 , 255*i );
+	PutPic( w , P2 ,0,0 , 5,5, body_list[1].SCR_pos_x,body_list[1].SCR_pos_y);
+	PutPic( w , Ms ,0,0 , 5,5, body_list[2].SCR_pos_x,body_list[2].SCR_pos_y);
+	PutPic( w , Ms ,0,0 , 5,5, body_list[3].SCR_pos_x,body_list[3].SCR_pos_y);
+	PutPic( w , Ms ,0,0 , 5,5, body_list[4].SCR_pos_x,body_list[4].SCR_pos_y);
+	PutPic( w , Ms ,0,0 , 5,5, body_list[5].SCR_pos_x,body_list[5].SCR_pos_y);
 	next_pos(&params, body_list, (params.projectiles_quantity)+2);
-	usleep(1000);
+	usleep(500);
 	if( WCheckKBD(w) ) /*se digitaram algo */
 	    break;
     }
-    WCor(w, 0x00FF00);
+    WCor(w, WNamedColor("gold") );
     while( !WCheckKBD(w) )
 	WPrint( w , 20 , 200 , "Pressione uma tecla para terminar:" );
     /*fim Execucao*/
