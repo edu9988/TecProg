@@ -7,5 +7,5 @@ CLIBS = -lm -lXpm -lX11
 run: $(EXECUTABLE)
 	./$^ 0.001
 
-$(EXECUTABLE): fase2.o space.o xwc.o
+$(EXECUTABLE): fase2.o space.o xwc.o grafico.o
 	$(CC) $(CFLAGS) $^ -o $@ $(CLIBS)
