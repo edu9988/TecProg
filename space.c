@@ -48,8 +48,6 @@ void read_entry_file(){
     fscanf(arq, "%lf", &(s1.pos_y));
     fscanf(arq, "%lf", &(s1.vel_x));
     fscanf(arq, "%lf", &(s1.vel_y));
-    s1.SCR_pos_x = Tx(s1.pos_x);
-    s1.SCR_pos_y = Ty(s1.pos_y);
     /*	Spacecraft 2	*/
     fscanf(arq, " %s", aux_name);
     p0.name2 = mallocSafe( (1+strlen(aux_name))*sizeof(char) );
@@ -61,8 +59,6 @@ void read_entry_file(){
     fscanf(arq, "%lf", &(s2.pos_y));
     fscanf(arq, "%lf", &(s2.vel_x));
     fscanf(arq, "%lf", &(s2.vel_y));
-    s2.SCR_pos_x = Tx(s2.pos_x);
-    s2.SCR_pos_y = Ty(s2.pos_y);
     /*	Projectiles	*/
     fscanf(arq, "%d", &(p0.projectiles_quantity));
     body_list = mallocSafe( ((p0.projectiles_quantity)+2)*sizeof(corpo) );
@@ -77,8 +73,6 @@ void read_entry_file(){
 	fscanf(arq, "%lf", &(body_list[i+2].pos_y));
 	fscanf(arq, "%lf", &(body_list[i+2].vel_x));
 	fscanf(arq, "%lf", &(body_list[i+2].vel_y));
-	body_list[i+2].SCR_pos_x = Tx( body_list[i+2].pos_x );
-	body_list[i+2].SCR_pos_y = Ty( body_list[i+2].pos_y );
     }
     fclose(arq);
     return;
@@ -97,8 +91,8 @@ void corpo_copy(corpo a, corpo *b){
     b->pos_y = a.pos_y;
     b->vel_x = a.vel_x;
     b->vel_y = a.vel_y;
-    b->SCR_pos_x = a.SCR_pos_x;
-    b->SCR_pos_y = a.SCR_pos_y;
+/*    b->SCR_pos_x = a.SCR_pos_x;
+    b->SCR_pos_y = a.SCR_pos_y;*/
     return;
 }
 
@@ -205,9 +199,7 @@ void next_pos(){
     for( i=0 ; i<n ; i++ ){	/*atualiza pos, vel*/
 	if( body_list[i].alive ){/*se alive==0, pula essa etapa*/
 	    body_list[i].pos_x += (body_list[i].vel_x)*(p0.delta_t) + a_x[i]*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_x*/
-	    body_list[i].SCR_pos_x = Tx( body_list[i].pos_x );/*converte para tela*/
 	    body_list[i].pos_y += (body_list[i].vel_y)*(p0.delta_t) + a_y[i]*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_y*/
-	    body_list[i].SCR_pos_y = Ty( body_list[i].pos_y );/*converte para tela*/
 	    body_list[i].vel_x += a_x[i]*(p0.delta_t);
 	    body_list[i].vel_y += a_y[i]*(p0.delta_t);
 	}
@@ -253,38 +245,6 @@ void debug_print_positions(corpo *bodies, int n){
 	printf("%.2e %.2e  ", bodies[i].pos_x, bodies[i].pos_y);
     printf("\n");
     return;
-}
-
-/*
-Tx():
-Recebe um double pos_x;
-Calcula a posicao na tela, Tx, atraves de uma
-transformacao de variaveis.
-Tx pertence ao intervalo [0,SCR_larg];
-*/
-int Tx(double pos_x){
-    int transf_x;
-    double tx;
-    tx = 1 + pos_x/p0.L;
-    tx *= p0.SCR_larg/2;
-    transf_x = (int) tx;
-    return transf_x;
-}
-
-/*
-Ty():
-Recebe um double pos_y;
-Calcula a posicao na tela, Ty, atraves de uma
-transformacao de variaveis.
-Ty pertence ao intervalo [0,SCR_alt];
-*/
-int Ty(double pos_y){
-    int transf_y;
-    double ty;
-    ty = 1 - pos_y/p0.H;
-    ty *= p0.SCR_alt/2;
-    transf_y = (int) ty;
-    return transf_y;
 }
 
 /*

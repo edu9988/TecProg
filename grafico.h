@@ -16,3 +16,5 @@ int Tx(double);
 int Ty(double);
 void init_modulo_grafico();
 void graficos_iteracao();
+int Tx(double);
+int Ty(double);

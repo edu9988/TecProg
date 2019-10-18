@@ -27,6 +27,7 @@ int main(int argc, char *argv[]){
 
     /*Declaracoes de variaveis*/
     int i, N_iteracoes;
+    char aux[30];
 
     /* tratar argumentos */
     if( argc == 1 ){/*sem argumentos, o programa recebe delta_t por scanf*/
@@ -35,25 +36,27 @@ int main(int argc, char *argv[]){
     }
     else if( argc == 2 )/*se o programa recebeu um argumento, o valor é convertido para float e armazenado em delta_t*/
 	p0.delta_t = atof( argv[1] );
-    else{/* se recebe mais de um argumento, o programa termina*/
+    else{/* se recebe mais de um argumento, recebe por scanf*/
 	printf("Expected fewer arguments\n");
-	return 0;
+	printf("Specify step length\n>>>");
+	scanf("%lf", &(p0.delta_t));
     }
 
     /*Inicializacoes de variaveis*/
     p0.SCR_larg = 1366;
     p0.SCR_alt = 768;
 
-    read_entry_file( &p0 , &body_list );
-    N_iteracoes = (int) p0.total_time/p0.delta_t;
-    
     /*Execucao*/
+    read_entry_file();
+    N_iteracoes = (int) p0.total_time/p0.delta_t;
     init_modulo_grafico();
     for( i=0 ; i<N_iteracoes ; i++){
 	border_control();
-	next_pos(&p0, body_list, (p0.projectiles_quantity)+2);
+	next_pos();
 	graficos_iteracao();
-	usleep(500);
+	sprintf(aux, "%d", i);
+	WPrint( w , 20 , 200 , aux );
+	usleep(2000);
 	if( WCheckKBD(w) ) /*se digitaram algo */
 	    break;
     }
