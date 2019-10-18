@@ -55,13 +55,12 @@ armazena os dados do programa fase1.c que não sofrem alterações
 durante os cálculos das trajetórias
 */
 
-void read_entry_file(constants *, corpo **);
+void read_entry_file();
 void *mallocSafe(unsigned int);
 void string_copy(char *, char *);
-void next_pos(constants *, corpo *, int);
-void corpo_copy(corpo, corpo *);
-void print_constants(constants);
-void print_bodies(corpo *, int);
-void print_positions(corpo *, int);
-int Tx(double, constants *);
-int Ty(double, constants *);
+void next_pos();
+void corpo_copy();
+void debug_print_constants();
+void print_bodies();
+void print_positions();
+void border_control();
