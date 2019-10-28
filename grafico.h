@@ -12,17 +12,9 @@ grafico.h
 header file com a interface grafica usada pelo programa fase1.c
 */
 
-typedef struct{
-    int SCR_larg;
-    int SCR_alt;
-    int planeta_x;
-    int planeta_y;
-    int planeta_w;
-    int planeta_h;
-}tela;
-
 int Tx(double);
 int Ty(double);
 void init_modulo_grafico();
 void graficos_iteracao();
-void termina_modulo_grafico();
+int Tx(double);
+int Ty(double);

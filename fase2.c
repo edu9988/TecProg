@@ -18,7 +18,6 @@
 constants p0;
 corpo *body_list;
 WINDOW *w;
-tela t0;
 
 /*
 Programa fase2.c
@@ -44,30 +43,30 @@ int main(int argc, char *argv[]){
     }
 
     /*Inicializacoes de variaveis*/
-    t0.SCR_larg = 1365;
-    t0.SCR_alt = 700;
+    p0.SCR_larg = 1024;
+    p0.SCR_alt = 768;
 
     /*Execucao*/
     read_entry_file();
     N_iteracoes = (int) p0.total_time/p0.delta_t;
     init_modulo_grafico();
-    init_border_check();
+
     for( i=0 ; i<N_iteracoes ; i++){
-	graficos_iteracao();
-	next_pos();
 	border_control();
+	next_pos();
+	graficos_iteracao();
 	sprintf(aux, "%d", i);
-	WPrint( w , 20 , 180 , aux );
+	WPrint( w , 20 , 200 , aux );
 	usleep(2000);
 	if( WCheckKBD(w) ) /*se digitaram algo */
 	    break;
     }
+
     WCor(w, WNamedColor("gold") );
     while( !WCheckKBD(w) )
 	WPrint( w , 20 , 200 , "Pressione uma tecla para terminar:" );
     /*fim Execucao*/
 
-    termina_modulo_grafico();
     CloseGraph();
     /*	free's section	*/
     free( p0.name1 );

@@ -11,11 +11,9 @@
 #include <string.h>
 #include <math.h>
 #include "space.h"
-#include "grafico.h"
 
 extern constants p0;
 extern corpo *body_list;
-extern tela t0;
 
 /*
 read_entry_file():
@@ -24,7 +22,6 @@ especificado em enunciado, e os armazena nas structs p0 e
 body_list
 */
 void read_entry_file(){
-    double Aspect_Ratio;
     int i;
     char aux_name[30];
     FILE *arq;
@@ -38,9 +35,8 @@ void read_entry_file(){
     fscanf(arq, "%lf", &p0.planet_radius);
     fscanf(arq, "%lf", &p0.planet_mass);
     fscanf(arq, "%lf", &p0.total_time);
-    Aspect_Ratio = (double)t0.SCR_alt/(double)t0.SCR_larg;
-    p0.L = 6*p0.planet_radius;
-    p0.H = p0.L*Aspect_Ratio;
+    p0.L = 1.5e7;
+    p0.H = 1.5e7;
     /*	Spacecraft 1	*/
     fscanf(arq, " %s", aux_name);
     p0.name1 = mallocSafe( (1+strlen(aux_name))*sizeof(char) );
@@ -95,6 +91,8 @@ void corpo_copy(corpo a, corpo *b){
     b->pos_y = a.pos_y;
     b->vel_x = a.vel_x;
     b->vel_y = a.vel_y;
+/*    b->SCR_pos_x = a.SCR_pos_x;
+    b->SCR_pos_y = a.SCR_pos_y;*/
     return;
 }
 
@@ -143,65 +141,73 @@ e também o campo alive do corpo recebe valor 0, o que faz com que
 suas posições e velocidades não sejam mais calculadas nem atualizadas
 */
 void next_pos(){
-    double r;
+    double *a_x, *a_y, r;
     int i, j, n;
     n = p0.projectiles_quantity +2;
-    for( i=0 ; i<n ; i++ ){/*zera a_x e a_y*/
-	body_list[i].a_x = 0.0;
-	body_list[i].a_y = 0.0;
+    a_x = mallocSafe(n*sizeof(double));
+    a_y = mallocSafe(n*sizeof(double));
+    for( i=0 ; i<n ; i++ ){/*inicializa vetores a_x e a_y*/
+	a_x[i] = 0.0;
+	a_y[i] = 0.0;
     }
     for( i=0 ; i<n ; i++ ){/*calcula aceleracoes*/
-	if( body_list[i].alive ){/*se alive==0, pula essa iteracao*/
+	if( body_list[i].alive ){/*se alive==0, pula essa etapa*/
 	    r = pow(body_list[i].pos_x ,2) + pow(body_list[i].pos_y , 2);
 	    if( r <= pow( p0.planet_radius ,2 ) ){
+		a_x[i] = 0.0;
+		a_y[i] = 0.0;
 		body_list[i].vel_x = 0.0;
 		body_list[i].vel_y = 0.0;
 		body_list[i].alive = 0;
 		continue;
 	    }
 	    r = pow( r , 1.5);
-	    body_list[i].a_x -= (p0.planet_mass) * body_list[i].pos_x  / r;
-	    body_list[i].a_y -= (p0.planet_mass) * body_list[i].pos_y  / r;
+	    a_x[i] -= (p0.planet_mass) * body_list[i].pos_x  / r;
+	    a_y[i] -= (p0.planet_mass) * body_list[i].pos_y  / r;
 	    for( j=0 ; j<i ; j++ ){
 		r = pow(body_list[j].pos_x-body_list[i].pos_x,2)+pow(body_list[j].pos_y-body_list[i].pos_y , 2);
 		if( r <= pow( body_list[i].size ,2 ) ){
-		    body_list[i].a_x = 0.0;
-		    body_list[i].a_y = 0.0;
+		    a_x[i] = 0.0;
+		    a_y[i] = 0.0;
 		    body_list[i].vel_x = 0.0;
 		    body_list[i].vel_y = 0.0;
 		    body_list[i].alive = 0;
 		    break;
 		}
 		r = pow( r , 1.5) ;
-		body_list[i].a_x += (body_list[j].mass) * ((body_list[j].pos_x) - (body_list[i].pos_x)) / r;
-		body_list[i].a_y += (body_list[j].mass) * ((body_list[j].pos_y) - (body_list[i].pos_y)) / r;
+		a_x[i] += (body_list[j].mass) * ((body_list[j].pos_x) - (body_list[i].pos_x)) / r;
+		a_y[i] += (body_list[j].mass) * ((body_list[j].pos_y) - (body_list[i].pos_y)) / r;
 	    }
 	    for( j=i+1 ; j<n ; j++ ){
 		r = pow(body_list[j].pos_x-body_list[i].pos_x,2)+pow(body_list[j].pos_y-body_list[i].pos_y , 2);
 		if( r <= pow( body_list[i].size ,2 ) ){
-		    body_list[i].a_x = 0.0;
-		    body_list[i].a_y = 0.0;
+		    a_x[i] = 0.0;
+		    a_y[i] = 0.0;
 		    body_list[i].vel_x = 0.0;
 		    body_list[i].vel_y = 0.0;
 		    body_list[i].alive = 0;
 		    break;
 		}
 		r = pow( r , 1.5) ;
-		body_list[i].a_x += (body_list[j].mass) * ((body_list[j].pos_x) - (body_list[i].pos_x)) / r;
-		body_list[i].a_y += (body_list[j].mass) * ((body_list[j].pos_y) - (body_list[i].pos_y)) / r;
+		a_x[i] += (body_list[j].mass) * ((body_list[j].pos_x) - (body_list[i].pos_x)) / r;
+		a_y[i] += (body_list[j].mass) * ((body_list[j].pos_y) - (body_list[i].pos_y)) / r;
 	    }
-	    body_list[i].a_x *= G;
-	    body_list[i].a_y *= G;
+	    a_x[i] *= G;
+	    a_y[i] *= G;
 	}
-    }/* fim de calcula aceleracoes */
+    }/* fim de calcula aproximacoes */
     for( i=0 ; i<n ; i++ ){	/*atualiza pos, vel*/
 	if( body_list[i].alive ){/*se alive==0, pula essa etapa*/
-	    body_list[i].pos_x += (body_list[i].vel_x)*(p0.delta_t) + body_list[i].a_x*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_x*/
-	    body_list[i].pos_y += (body_list[i].vel_y)*(p0.delta_t) + body_list[i].a_y*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_y*/
-	    body_list[i].vel_x += body_list[i].a_x*(p0.delta_t);
-	    body_list[i].vel_y += body_list[i].a_y*(p0.delta_t);
+	    body_list[i].pos_x += (body_list[i].vel_x)*(p0.delta_t) + a_x[i]*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_x*/
+	    body_list[i].pos_y += (body_list[i].vel_y)*(p0.delta_t) + a_y[i]*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_y*/
+	    body_list[i].vel_x += a_x[i]*(p0.delta_t);
+	    body_list[i].vel_y += a_y[i]*(p0.delta_t);
 	}
     }
+    free(a_x);
+    free(a_y);
+    a_x = NULL;
+    a_y = NULL;
     return;
 }
 
@@ -233,11 +239,10 @@ funcao para depuracao;
 imprime a coordenada x e y da posição de cada um
 dos corpos do vetor body_list
 */
-void debug_print_positions(){
-    int i, n;
-    n = p0.projectiles_quantity + 2;
+void debug_print_positions(corpo *bodies, int n){
+    int i;
     for( i=0 ; i<n ; i++ )
-	printf("%.2e %.2e  ", body_list[i].pos_x, body_list[i].pos_y);
+	printf("%.2e %.2e  ", bodies[i].pos_x, bodies[i].pos_y);
     printf("\n");
     return;
 }
@@ -252,47 +257,24 @@ void border_control(){
     int i, n;
     n = p0.projectiles_quantity + 2;
     for( i=0 ; i<n ; i++){
-	if( body_list[i].pos_x > p0.L )  /*passou da borda da direita?*/
-	    body_list[i].pos_x = -p0.L;
-	if( body_list[i].pos_x < -p0.L ) /*passou da borda da esquerda?*/
-	    body_list[i].pos_x = p0.L;
-	if( body_list[i].pos_y > p0.H )  /*passou da borda de cima?*/
-	    body_list[i].pos_y = -p0.H;
-	if( body_list[i].pos_y < -p0.H ) /*passou da borda de baixo?*/
-	    body_list[i].pos_y = p0.H;
-    }
-    return;
-}
-
-/*
-init_border_check():
-Verifica se há algum corpo fora da tela;
-caso positivo, coloca o corpo de volta, na borda do mesmo lado,
-e verifica se o corpo está "virado" pra fora; se estiver
-virado pra fora, é virado pra dentro;
-*/
-void init_border_check(){
-    int i, n;
-    n = p0.projectiles_quantity + 2;
-    for( i=0 ; i<n ; i++){
 	if( body_list[i].pos_x > p0.L ){ /*passou da borda da direita?*/
-	    body_list[i].pos_x = p0.L;
-	    if( body_list[i].vel_x > 0 ) /*está virado pra fora?*/
+	    body_list[i].pos_x = -p0.L;
+	    if( body_list[i].vel_x < 0 ) /*está virado pra fora?*/
 		body_list[i].vel_x *= -1;
 	}
 	if( body_list[i].pos_x < -p0.L ){ /*passou da borda da esquerda?*/
-	    body_list[i].pos_x = -p0.L;
-	    if( body_list[i].vel_x < 0 )/*está virado pra fora?*/
+	    body_list[i].pos_x = p0.L;
+	    if( body_list[i].vel_x > 0 )/*está virado pra fora?*/
 		body_list[i].vel_x *= -1;
 	}
 	if( body_list[i].pos_y > p0.H ){ /*passou da borda de cima?*/
-	    body_list[i].pos_y = p0.H;
-	    if( body_list[i].vel_y > 0 )/*está virado pra fora?*/
+	    body_list[i].pos_y = -p0.H;
+	    if( body_list[i].vel_y < 0 )/*está virado pra fora?*/
 		body_list[i].vel_y *= -1;
 	}
 	if( body_list[i].pos_y < -p0.H ){ /*passou da borda de baixo?*/
-	    body_list[i].pos_y = -p0.H;
-	    if( body_list[i].vel_y < 0 )/*está virado pra fora?*/
+	    body_list[i].pos_y = p0.H;
+	    if( body_list[i].vel_y > 0 )/*está virado pra fora?*/
 		body_list[i].vel_y *= -1;
 	}
     }

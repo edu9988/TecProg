@@ -9,6 +9,3 @@ run: $(EXECUTABLE)
 
 $(EXECUTABLE): fase2.o space.o xwc.o grafico.o
 	$(CC) $(CFLAGS) $^ -o $@ $(CLIBS)
-
-clean:
-	rm -f *.o $(EXECUTABLE)
