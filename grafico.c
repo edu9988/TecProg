@@ -18,6 +18,8 @@
 extern constants p0;
 extern corpo *body_list;
 
+double posX=100, posY=100;
+
 extern WINDOW *w;
 static PIC Ms, pFigura2, pFigura1, pAux, pBackup;
 static Color player1, player2, misseis;
@@ -50,11 +52,20 @@ void init_modulo_grafico(){
 void graficos_iteracao(){
 
     int i, n;
+    double norma;
+
     n = p0.projectiles_quantity;
+
     for( i=0 ; i<n+2 ; i++ ){
         body_list[i].SCR_pos_x = Tx( body_list[i].pos_x );
         body_list[i].SCR_pos_y = Ty( body_list[i].pos_y );
     }
+
+    norma = sqrt( pow(body_list[0].SCR_pos_x - posX, 2) + pow(body_list[0].SCR_pos_y - posY, 2));
+
+    posX += ((body_list[0].SCR_pos_x - posX)/norma)*0.16;
+    posY += ((body_list[0].SCR_pos_y - posY)/norma)*0.16;
+    printf("%d, %d\n", posX, posY);
 
     PutPic(pAux, pBackup, 0, 0, p0.SCR_larg, p0.SCR_alt, 0, 0);
 
@@ -64,12 +75,11 @@ void graficos_iteracao(){
     SetMask(pAux, msk);
 
     PutPic(pAux, pFigura1, 0, 0, 88, 100, body_list[0].SCR_pos_x,body_list[0].SCR_pos_y);
-    PutPic(pAux, pFigura2, 0, 0, 88, 100, body_list[1].SCR_pos_x,body_list[1].SCR_pos_y);
+    PutPic(pAux, pFigura2, 0, 0, 88, 100, posX, posY);
 
     UnSetMask(pAux);
 
     PutPic(w, pAux, 0, 0, p0.SCR_larg, p0.SCR_alt, 0, 0);
-
 
     return;
 }
