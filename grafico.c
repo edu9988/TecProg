@@ -21,8 +21,8 @@ extern corpo *body_list;
 double posX=100, posY=100;
 
 extern WINDOW *w;
-static PIC Ms, pFigura2, pFigura1, pAux, pBackup;
-static Color player1, player2, misseis;
+static PIC Ms, pFigura2, pFigura1, pAux, pBackup, Ms2;
+static Color player1, player2, misseis, teste;
 static MASK msk;
 
 void init_modulo_grafico(){
@@ -34,13 +34,18 @@ void init_modulo_grafico(){
     msk = NewMask(w,p0.SCR_larg, p0.SCR_alt);
 
     Ms = NewPic( w , 10 , 10);
+    Ms2 = NewPic(w, 10, 10);
 
     pFigura2 = ReadPic(w, "teste2.xpm", msk);
     pFigura1 = ReadPic(w, "teste1.xpm", msk);
 
 
     misseis = WNamedColor("gold");
-    WFillRect(Ms, 0,0 , 5,5 ,misseis);
+    teste = WNamedColor("red");
+
+    WFillRect(Ms, 0, 0 , 5,5 , misseis);
+    WFillRect(Ms2, 0, 0, 5, 5, teste);
+
     InitKBD(w);
 
     WFillRect( w , 0,0 , p0.SCR_larg,p0.SCR_alt , 0x000055 );
@@ -61,16 +66,19 @@ void graficos_iteracao(){
         body_list[i].SCR_pos_y = Ty( body_list[i].pos_y );
     }
 
-    norma = sqrt( pow(body_list[0].SCR_pos_x - posX, 2) + pow(body_list[0].SCR_pos_y - posY, 2));
+    norma = sqrt( pow(body_list[0].SCR_pos_x -15 - posX, 2) + pow(body_list[0].SCR_pos_y -15 - posY, 2));
 
     posX += ((body_list[0].SCR_pos_x - posX)/norma)*0.16;
     posY += ((body_list[0].SCR_pos_y - posY)/norma)*0.16;
-    printf("%d, %d\n", posX, posY);
+
 
     PutPic(pAux, pBackup, 0, 0, p0.SCR_larg, p0.SCR_alt, 0, 0);
 
     for( i=0 ; i<n ; i++ )
         PutPic(pAux, Ms ,0,0 , 5,5, body_list[i+2].SCR_pos_x,body_list[i+2].SCR_pos_y);
+
+    PutPic(pAux, Ms2, 0, 0, 5, 5, posX + 30*(((body_list[0].SCR_pos_x - posX)/norma)),
+            posY + 30*(((body_list[0].SCR_pos_y - posY)/norma)));
 
     SetMask(pAux, msk);
 

@@ -56,7 +56,7 @@ int main(int argc, char *argv[]){
 	next_pos();
 	graficos_iteracao();
 	sprintf(aux, "%d", i);
-	WPrint( w , 20 , 200 , aux );
+	WPrint(w , 20 , 200 , aux);
 	usleep(2000);
 	if( WCheckKBD(w) ) /*se digitaram algo */
 	    break;
