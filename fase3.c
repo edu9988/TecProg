@@ -28,7 +28,6 @@ int main(int argc, char *argv[]){
 
     /*Declaracoes de variaveis*/
     int i, N_iteracoes;
-    char aux[30];
 
     /* tratar argumentos */
     if( argc == 1 ){/*sem argumentos, o programa recebe delta_t por scanf*/
@@ -56,8 +55,6 @@ int main(int argc, char *argv[]){
 	graficos_iteracao();
 	next_pos();
 	border_control();
-	sprintf(aux, "%d", i);
-	WPrint( w , 20 , 180 , aux );
 	usleep(2000);
 	if( WCheckKBD(w) ) /*se digitaram algo */
 	    break;
