@@ -15,41 +15,95 @@
 #include "xwc.h"
 #include "grafico.h"
 
+/* XPM */
+/* figura qualquer para tentar implementar transparencia*/
+static char *samp_xpm[] = {
+/* nose pixmap
+ width height ncolors chars_per_pixel */
+"32 32 5 1",
+" 	c None",
+".	c blue",
+"X	c white",
+"o	c gold",
+"O	c yellow",
+/* pixels */
+"           ..XXX..              ",
+"        ..XXXoXXXXX..           ",
+"       .XooOOOooooXXX.          ",
+"      XooOOOOOOOooooXXX         ",
+"     XoOOOOOOOOOOOoooXXX        ",
+"    .ooOOOOOOOOOOOooooXX.       ",
+"   .XoOOOOOOOOOOOOOoooXXX.      ",
+"  ..ooOOOOOOOOOOOOOooooXX..     ",
+"  .XoOOOOOOOOOOOOOOOoooXXX.     ",
+"  .XoOOOOOOOOOOOOOOOoooXXX.     ",
+" ..XoOOOOOOOOOOOOOOOoooXXX..    ",
+" .XoooOOOOOOOOOOOOOoooooXXX.    ",
+" .XXooOOOOOOOOOOOOOooooXXXX.    ",
+" .XXoooOOOOOOOOOOOoooooXXXX.    ",
+" ..XoooOOOOOOOOOOOoooooXXX..    ",
+" ..XoooooOOOOOOOoooooooXXX..    ",
+" ..XXooooooOOOooooooooXXXX..    ",
+"  ..XoooooooooooooooooXXX..     ",
+"  ..XXoooooooooooooooXXXX..     ",
+"  ...XXoooooooooooooXXXX...     ",
+"   ..XXXXoooooooooXXXXXX..      ",
+"    ..XXXXXXXoXXXXXXXXX..       ",
+"     ...XXXXXXXXXXXXX...        ",
+"      ....XXXXXXXXX....         ",
+"         .....X.....            ",
+"          .........             ",
+"           .......              ",
+"                                ",
+"                                ",
+"                                ",
+"                                ",
+"                                "
+};
+
+
 extern constants p0;
 extern corpo *body_list;
 
 extern WINDOW *w;
 extern tela t0;
-static PIC P1, P2, Ms;
-static Color player1, player2, misseis;
+static PIC P1, P2, Ms, Aux, fundo1, fundo2;
+static Color player1, misseis;
+static int indice;
 MASK mascara;
+static int Be(double p);
+void GeraFundo();
 
+/*
+init_modulo_grafico():
+Aloca as estruturas e inicializa as variaveis necessárias 
+*/
 void init_modulo_grafico(){
-    w = InitGraph( t0.SCR_larg, t0.SCR_alt, "Janelao");
-    P1 = NewPic( w , 20 , 20 );
-    P2 = NewPic( w , 20 , 20 );
-    Ms = NewPic( w , 20 , 20 );
-    mascara = NewMask( w , 20 , 20 );
-    WArc( mascara , 0,0 , 0,23040 , 12,12 , 1 );
+    indice = 0;
+    w = InitGraph( t0.SCR_larg, t0.SCR_alt, "SpaceWar");
+    Aux = NewPic( w , t0.SCR_larg,t0.SCR_alt );
+    fundo1 = NewPic( w , t0.SCR_larg,t0.SCR_alt );
+    fundo2 = NewPic( w , t0.SCR_larg,t0.SCR_alt );
+    GeraFundo();
+    mascara = NewMask( w , t0.SCR_larg , t0.SCR_alt );
+    P1 = MountPic( w, samp_xpm, mascara );
+    P2 = ReadPic( w, "starship.xpm" , mascara );
+    Ms = MountPic( w, samp_xpm, mascara );
     t0.planeta_w =(int) ( (p0.planet_radius/p0.L) *(double)t0.SCR_larg ) ;
     t0.planeta_h = t0.planeta_w;
     t0.planeta_x = t0.SCR_larg/2 - t0.planeta_w/2;
     t0.planeta_y = t0.SCR_alt/2 - t0.planeta_w/2;
     player1 = WNamedColor("red");
-    player2 = WNamedColor("blue");
     misseis = WNamedColor("gold");
     InitKBD(w);
-    WArc(P1, 0,0 , 0,23040 , 12,12 ,player1 );
-    WArc(P2, 0,0 , 0,23040 , 12,12 ,player2 );
-    WArc(Ms, 0,0 , 0,23040 , 12,12 ,misseis );
-    SetMask( P1 , mascara );
-    SetMask( P2 , mascara );
-    SetMask( Ms , mascara );
-
-    WFillRect( w , 0,0 , t0.SCR_larg,t0.SCR_alt , 0x000000 );
     return;
 }
 
+/*
+graficos_iteracao():
+Desenha na tela todos os corpos em suas respectivas
+posicoes.
+*/
 void graficos_iteracao(){
     int i, n;
     n = p0.projectiles_quantity;
@@ -57,15 +111,46 @@ void graficos_iteracao(){
 	body_list[i].SCR_pos_x = Tx( body_list[i].pos_x );
 	body_list[i].SCR_pos_y = Ty( body_list[i].pos_y );
     }
-    WFillRect( w , 0,0 , t0.SCR_larg,t0.SCR_alt , 0x000000 );
-    WArc( w , t0.planeta_x,t0.planeta_y  , 0,23040 , t0.planeta_w,t0.planeta_h , 0xFF0000 );
-    PutPic( w , P1 ,0,0 , 13,13, body_list[0].SCR_pos_x,body_list[0].SCR_pos_y);
-    PutPic( w , P2 ,0,0 , 13,13, body_list[1].SCR_pos_x,body_list[1].SCR_pos_y);
+
+    WFillArc( Aux , t0.planeta_x,t0.planeta_y  , 0,23040 , t0.planeta_w,t0.planeta_h , 0x5050FF );
+    SetMask( Aux , mascara );
+    PutPic( Aux , P1 ,0,0 , 40,40, body_list[0].SCR_pos_x,body_list[0].SCR_pos_y);
+    PutPic( Aux , P2 ,0,0 , 40,40, body_list[1].SCR_pos_x,body_list[1].SCR_pos_y);
     for( i=0 ; i<n ; i++ )
-    	PutPic( w , Ms ,0,0 , 13,13, body_list[i+2].SCR_pos_x-5,body_list[i+2].SCR_pos_y-5);
-    return;
+    	PutPic( Aux , Ms ,0,0 , 40,40, body_list[i+2].SCR_pos_x-5,body_list[i+2].SCR_pos_y-5);
+    UnSetMask( Aux );
+    PutPic( w , Aux ,0,0 , t0.SCR_larg,t0.SCR_alt , 0,0 );
+    /* Refaz fundo */
+    if( indice%2 )
+	PutPic( Aux , fundo1 ,0,0 , t0.SCR_larg,t0.SCR_alt , 0,0 );
+    else
+	PutPic( Aux , fundo2 ,0,0 , t0.SCR_larg,t0.SCR_alt , 0,0 );
+	/*WFillRect( Aux , 0,0 , t0.SCR_larg,t0.SCR_alt , 0x000000 );*/
+    indice++;
 }
 
+void GeraFundo(){
+    int x,y;
+    for( y=0 ; y<t0.SCR_alt ; y++ )
+	for( x = 0 ; x<t0.SCR_larg ; x++ )
+	    if( Be( 0.0001 ) ){
+		WFillArc( fundo1 , x,y , 0,23040 , 3,3 , 0x5050FF);
+		WPlot( fundo1 , x+1,y+1 , 0x8080FF );
+		WFillArc( fundo2 , x,y , 0,23040 , 3,3 ,  0x0000FF);
+		WPlot( fundo2 , x+1,y+1 , 0xFF00FF );
+	    }
+}
+
+/*Be():Dado um real p, 0 <= p <= 1, retorna 0 ou 1.*/
+/*A probabilidade de retornar 1 é dada por p.*/
+static int Be(double p){
+    return rand()/(1.0 + RAND_MAX) < p;
+}
+
+/*
+termina_modulo_grafico():
+Libera as estruturas alocadas
+*/
 void termina_modulo_grafico(){
     FreePic( P1 );
     FreePic( P2 );
