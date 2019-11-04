@@ -21,8 +21,6 @@ typedef struct{
     int planeta_h;
 }tela;
 
-int Tx(double);
-int Ty(double);
 void init_modulo_grafico();
 void graficos_iteracao();
 void termina_modulo_grafico();

@@ -9,13 +9,18 @@
 
 /*
 space.h
-header file com a interface usada pelo programa fase1.c
+header file com a interface usada pelo programa fase3.c
 */
 
 #define Rt 6.4e6
 #define Mt 6.02e24
 #define G 6.67e-11
 
+/*
+corpo:
+armazena os dados de cada objeto que terá suas posições atualizadas
+a cada iteração do programa fase3.c
+*/
 typedef struct{
     double mass;
     double size;
@@ -28,19 +33,19 @@ typedef struct{
     double a_y;
     int SCR_pos_x;
     int SCR_pos_y;
+    double angulo;
+    int acelera;
 }corpo;
 
 /*
-corpo
-armazena os dados de cada objeto que terá suas posições atualizadas
-a cada iteração do programa fase1.c
+constants:
+armazena os dados do programa fase3.c que não sofrem alterações
+durante os cálculos das trajetórias
 */
-
 typedef struct{
     double delta_t;
     double planet_radius;
     double planet_mass;
-    double total_time;
     char *name1;
     char *name2;
     int projectiles_quantity;
@@ -49,19 +54,10 @@ typedef struct{
     double H;/*altura do universo*/
 }constants;
 
-/*
-constants
-armazena os dados do programa fase1.c que não sofrem alterações
-durante os cálculos das trajetórias
-*/
-
-void read_entry_file();
-void *mallocSafe(unsigned int);
-void string_copy(char *, char *);
+void init_modulo_space();
 void next_pos();
-void corpo_copy();
 void debug_print_constants();
 void debug_print_bodies();
 void debug_print_positions();
 void border_control();
-void init_border_check();
+void termina_modulo_space();

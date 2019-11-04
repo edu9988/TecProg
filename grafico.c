@@ -61,18 +61,19 @@ static char *samp_xpm[] = {
 "                                "
 };
 
-
-extern constants p0;
-extern corpo *body_list;
+static int Tx(double);
+static int Ty(double);
 
 extern WINDOW *w;
-extern tela t0;
+extern constants p0;
+extern corpo *body_list;
+tela t0;
 static PIC P1, P2, Ms, Aux, fundo1, fundo2, planeta;
 static Color player1, misseis;
 static int indice;
 MASK masc1, masc2, m_planet;
 static int Be(double p);
-void GeraFundo();
+static void GeraFundo();
 static char palavra[30];
 
 /*
@@ -141,7 +142,7 @@ void graficos_iteracao(){
 GeraFundo():
 Preenche as PICs fundo1 e fundo2 com estrelas.
 */
-void GeraFundo(){
+static void GeraFundo(){
     int x,y;
     for( y=0 ; y<t0.SCR_alt ; y++ )
 	for( x = 0 ; x<t0.SCR_larg ; x++ )
@@ -153,10 +154,13 @@ void GeraFundo(){
 	    }
 }
 
-/*Be():Dado um real p, 0 <= p <= 1, retorna 0 ou 1.*/
-/*A probabilidade de retornar 1 é dada por p.*/
+/*
+Be():
+Dado um real p, 0 <= p <= 1, retorna 0 ou 1.
+A probabilidade de retornar 1 é dada por p.
+*/
 /*Funcao fornecida por: Yoshiharu Kohayakawa*/
-static int Be(double p){
+static int Be( double p ){
     return rand()/(1.0 + RAND_MAX) < p;
 }
 
@@ -169,6 +173,7 @@ void termina_modulo_grafico(){
     FreePic( P2 );
     FreePic( Ms );
     WDestroy( w );
+    CloseGraph();
 }
 
 /*
@@ -178,7 +183,7 @@ Calcula a posicao na tela, Tx, atraves de uma
 transformacao de variaveis.
 Tx pertence ao intervalo [0,SCR_larg];
 */
-int Tx(double pos_x){
+static int Tx(double pos_x){
     int transf_x;
     double tx;
     tx = 1 + pos_x/p0.L;
@@ -194,7 +199,7 @@ Calcula a posicao na tela, Ty, atraves de uma
 transformacao de variaveis.
 Ty pertence ao intervalo [0,SCR_alt];
 */
-int Ty(double pos_y){
+static int Ty(double pos_y){
     int transf_y;
     double ty;
     ty = 1 - pos_y/p0.H;
