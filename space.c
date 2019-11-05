@@ -48,8 +48,8 @@ void init_modulo_space(){
     s1.size = 10.0;
     s1.alive = 1;
     s1.pos_x = -1.0e+7;
-    s1.pos_y = -1.0e+7;
-    s1.vel_x = -3.0e+6;
+    s1.pos_y = 0.0;
+    s1.vel_x = 0.0;
     s1.vel_y = 4.0e+6;
     /*	Spacecraft 2	*/
     p0.name2 = mallocSafe( (4)*sizeof(char) );
@@ -196,7 +196,13 @@ void next_pos(){
 	    body_list[i].a_x *= G;
 	    body_list[i].a_y *= G;
 	}
-    }/* fim de calcula aceleracoes */
+    }/* fim de calcula aceleracoes gravitacionais*/
+
+    if( body_list[0].acelera ){
+	body_list[0].a_x += 1.0e+9*cos( body_list[0].angulo );
+	body_list[0].a_y += 1.0e+9*sin( body_list[0].angulo );
+	body_list[0].acelera = 0;
+    }
     for( i=0 ; i<n ; i++ ){	/*atualiza pos, vel*/
 	if( body_list[i].alive ){/*se alive==0, pula essa etapa*/
 	    body_list[i].pos_x += (body_list[i].vel_x)*(p0.delta_t) + body_list[i].a_x*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_x*/
@@ -223,8 +229,8 @@ valores armazenados no vetor de corpos bodies
 */
 void debug_print_bodies(){
     int i, n;
-    for( i=0 , n=p0.projectiles_quantity+2 ; i<n ; i++ )
-	printf("%f %f %f %f %f\n", body_list[i].mass, body_list[i].pos_x, body_list[i].pos_y, body_list[i].vel_x, body_list[i].vel_y);
+    for( i=0 , n=1/*p0.projectiles_quantity+2*/ ; i<n ; i++ )
+	printf("%e %e %e %e %e\n", body_list[i].mass, body_list[i].pos_x, body_list[i].pos_y, body_list[i].vel_x, body_list[i].vel_y);
 }
 
 /*

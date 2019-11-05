@@ -26,13 +26,15 @@ void interacao_teclado(){
     if( WCheckKBD(w) ){ /*se digitaram algo */
         tecla = WGetKey(w);
         botao = WLastKeySym();
-        if( botao == 0xFF51 )
-	    body_list[0].angulo += 1.0;
-        else if( botao == 0xFF53 )
-	    body_list[0].angulo -= 1.0;
-        else if( botao == 0xFF52 )
+        if( botao == 0xFF51 ){/*seta esquerda*/
+	    body_list[0].angulo += 1.0e-1;
+	}
+        else if( botao == 0xFF53 ){/*seta direita*/
+	    body_list[0].angulo -= 1.0e-1;
+	}
+        else if( botao == 0xFF52 )/*seta cima*/
 	    body_list[0].acelera = 1;
-        else if( botao == 0x71 )
+        else if( botao == 0x71 )/*letra q*/
 	    exit(0);
     }
 }
