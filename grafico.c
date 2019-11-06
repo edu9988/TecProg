@@ -61,7 +61,7 @@ void init_modulo_grafico(){
 
 
 
-    pFigura1 = ReadPic(w, "nave.xpm", msk1);
+    pFigura1 = ReadPic(w, "0.xpm", msk1);
     /*pFigura2 = ReadPic(w, "seta.xpm", msk2);*/
 
 
