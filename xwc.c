@@ -112,7 +112,7 @@ MASK NewMask(WINDOW *w, int wd, int h)
   gcv.clip_x_origin = gcv.clip_y_origin = 0;
   gcv.clip_mask = None;
   gcv.foreground = 1;
-  gcv.background = 0;
+  gcv.background = 1;
   gcv.graphics_exposures = False;
 
   nm = (MASK) malloc(sizeof(MASK));

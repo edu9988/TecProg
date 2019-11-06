@@ -26,6 +26,7 @@ typedef struct{
     double vel_y;
     int SCR_pos_x;
     int SCR_pos_y;
+    double angulo;
 }corpo;
 
 /*

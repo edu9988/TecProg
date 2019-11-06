@@ -18,7 +18,7 @@
 constants p0;
 corpo *body_list;
 WINDOW *w;
-
+int k;
 /*
 Programa fase2.c
 <DESCRIÇÃO>
@@ -26,7 +26,7 @@ Programa fase2.c
 int main(int argc, char *argv[]){
 
     /*Declaracoes de variaveis*/
-    int i, N_iteracoes;
+    int N_iteracoes;
     char aux[30];
 
     /* tratar argumentos */
@@ -51,16 +51,14 @@ int main(int argc, char *argv[]){
     N_iteracoes = (int) p0.total_time/p0.delta_t;
     init_modulo_grafico();
 
-    for( i=0 ; i<N_iteracoes ; i++){
-	border_control();
-	next_pos();
-	graficos_iteracao();
-	sprintf(aux, "%d", i);
-	WPrint(w , 20 , 200 , aux);
-	usleep(2000);
-	if( WCheckKBD(w) ) /*se digitaram algo */
-	    break;
+    for( k=0 ; k<N_iteracoes ; k++) {
+        border_control();
+        next_pos();
+        graficos_iteracao();
+        usleep(2000);
     }
+
+
 
     WCor(w, WNamedColor("gold") );
     while( !WCheckKBD(w) )
@@ -73,8 +71,7 @@ int main(int argc, char *argv[]){
     p0.name1 = NULL;
     free( p0.name2 );
     p0.name2 = NULL;
-    free( body_list );
-    body_list = NULL;
+    /* FREE BODY_LIST */
 
     return 0;
 }
