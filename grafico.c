@@ -63,6 +63,7 @@ static char *samp_xpm[] = {
 
 static int Tx(double);
 static int Ty(double);
+static int sprite_x();
 
 extern WINDOW *w;
 extern constants p0;
@@ -71,7 +72,7 @@ tela t0;
 static PIC P1, P2, Ms, Aux, fundo1, fundo2, planeta;
 static Color player1, misseis;
 static int indice;
-MASK masc1, masc2, m_planet;
+MASK masc1, masc2, masc_missiles, masc_planet;
 static int Be(double p);
 static void GeraFundo();
 static char palavra[30];
@@ -84,16 +85,17 @@ void init_modulo_grafico(){
     indice = 0;
     w = InitGraph( t0.SCR_larg, t0.SCR_alt, "SpaceWar");
     Aux = NewPic( w , t0.SCR_larg,t0.SCR_alt );
-    masc1 = NewMask( w , t0.SCR_larg , t0.SCR_alt );
-    masc2 = NewMask( w , t0.SCR_larg , t0.SCR_alt );
-    m_planet = NewMask( w , t0.SCR_larg , t0.SCR_alt );
+    masc1 = NewMask( w , 50,50 );
+    masc2 = NewMask( w , 50,50 );
+    masc_missiles = NewMask( w , 50 , 50 );
+    masc_planet = NewMask( w , t0.SCR_larg , t0.SCR_alt );
     fundo1 = NewPic( w , t0.SCR_larg,t0.SCR_alt );
     fundo2 = NewPic( w , t0.SCR_larg,t0.SCR_alt );
-    planeta = ReadPic( w , "planeta1.xpm" , m_planet );
+    planeta = ReadPic( w , "planeta1.xpm" , masc_planet );
     GeraFundo();
-    P1 = MountPic( w, samp_xpm, masc1 );
+    P1 = ReadPic( w, "spaceshuttle_bw1.xpm", masc1 );
     P2 = ReadPic( w, "teste1.xpm" , masc2 );
-    Ms = MountPic( w, samp_xpm, masc1 );
+    Ms = MountPic( w, samp_xpm , masc_missiles );
     t0.planeta_w =(int) ( (p0.planet_radius/p0.L) *(double)t0.SCR_larg ) ;
     t0.planeta_h = t0.planeta_w;
     t0.planeta_x = t0.SCR_larg/2 - t0.planeta_w/2;
@@ -117,12 +119,13 @@ void graficos_iteracao(){
     }
 
     /*WFillArc( Aux , t0.planeta_x,t0.planeta_y  , 0,23040 , t0.planeta_w,t0.planeta_h , 0x5050FF );*/
-    SetMask( Aux , m_planet );
+    SetMask( Aux , masc_planet );
     PutPic( Aux , planeta ,0,0 , t0.planeta_w,t0.planeta_h , t0.planeta_x,t0.planeta_y );
     SetMask( Aux , masc2 );
     PutPic( Aux , P2 ,0,0 , 50,40, body_list[1].SCR_pos_x,body_list[1].SCR_pos_y);
     SetMask( Aux , masc1 );
-    PutPic( Aux , P1 ,0,0 , 40,40, body_list[0].SCR_pos_x,body_list[0].SCR_pos_y);
+    PutPic( Aux , P1 ,sprite_x(),0 , 50,50, body_list[0].SCR_pos_x-25,body_list[0].SCR_pos_y-25);
+    SetMask( Aux , masc_missiles );
     for( i=0 ; i<n ; i++ )
     	PutPic( Aux , Ms ,0,0 , 40,40, body_list[i+2].SCR_pos_x-5,body_list[i+2].SCR_pos_y-5);
     UnSetMask( Aux );
@@ -130,12 +133,32 @@ void graficos_iteracao(){
     sprintf(palavra, "%d", indice);
     WPrint( Aux , 20 , 180 , palavra );
     PutPic( w , Aux ,0,0 , t0.SCR_larg,t0.SCR_alt , 0,0 );
+    WFillRect( masc1 , 0,0 , 50,50 , WNamedColor( "None" ) );
     /* Refaz fundo */
+    
     if( indice%2 )
 	PutPic( Aux , fundo1 ,0,0 , t0.SCR_larg,t0.SCR_alt , 0,0 );
     else
 	PutPic( Aux , fundo2 ,0,0 , t0.SCR_larg,t0.SCR_alt , 0,0 );
     indice++;
+}
+
+static int sprite_x(){
+    double a;
+    int b;
+    a = body_list[0].angulo;
+    if( a < 0 ){
+	a *= -57.296;
+	a -= 7.5;
+	b = (int) a / 15;
+	return 50*b;
+    }
+    else{
+	a *= 57.296;
+	a -= 7.5;
+	b = (int) a / 15;
+	return (23-b)*50;
+    }
 }
 
 /*

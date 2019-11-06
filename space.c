@@ -50,7 +50,7 @@ void init_modulo_space(){
     s1.pos_x = -1.0e+7;
     s1.pos_y = 0.0;
     s1.vel_x = 0.0;
-    s1.vel_y = 4.0e+6;
+    s1.vel_y = 1.0e+7;
     /*	Spacecraft 2	*/
     p0.name2 = mallocSafe( (4)*sizeof(char) );
     string_copy( "Bar" , p0.name2 );

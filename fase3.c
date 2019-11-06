@@ -50,8 +50,6 @@ int main(int argc, char *argv[]){
 	border_control();
 	usleep(2000);
 	interacao_teclado();
-	debug_print_bodies();
-	printf("angulo = %f\n", body_list[0].angulo );
     }
     WCor(w, WNamedColor("gold") );
     while( !WCheckKBD(w) )

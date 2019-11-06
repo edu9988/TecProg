@@ -37,4 +37,8 @@ void interacao_teclado(){
         else if( botao == 0x71 )/*letra q*/
 	    exit(0);
     }
+    if( body_list[0].angulo > 6.2832 )
+	body_list[0].angulo -= 6.2832;
+    if( body_list[0].angulo < -6.2832 )
+	body_list[0].angulo += 6.2832;
 }
