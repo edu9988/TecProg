@@ -1,191 +1,71 @@
+/**************************************************************/
+/* José Eduardo R. M. Peres y Peres       No. USP:8945332     */
+/* Marcelo Nascimento dos Santos Junior	  No. USP:11222012    */
+/* Gilvane da Silva Sousa		  No. USP:10258726    */
+/*							      */
+/* Projeto - Terceira fase - 22 nov 2019                      */
+/* Curso MAC0216  - Prof. Marco Dimas Gubitoso		      */
+/**************************************************************/
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "space.h"
+#include "xwc.h"
+#include "grafico.h"
+#include "/usr/include/X11/keysym.h"
+#include "teclado.h"
 
-#define G 6.67e-11
+constants p0;
+corpo *body_list;
+WINDOW *w;
 
-double tempoSimulacao;
-double massaPlaneta;
-double raioPlaneta;
-double tempoVidaProjeteis;
+Corpo *cabecaBodyList = NULL, *player01 = NULL, *player02 = NULL;
 
-typedef struct{
-    double x;
-    double y;
-}vetor;
-
-typedef struct {
-    vetor velObj;
-    vetor posObj;
-    double massa;
-}objeto;
-
-typedef struct {
-    char *nome;
-    objeto valor;
-}nave;
-
-typedef struct {
-    objeto valor;
-}projetil;
-
-typedef struct {
-    double raio;
-    objeto valor;
-}planeta;
-
-void draw(nave *nave1, nave *nave2, planeta planeta1);
-void addVetorAB(vetor *a, vetor b);
-double normaVetor(vetor A);
-void versorVetor(vetor *rVetor, vetor A, vetor B);
-void printVetor(vetor A);
-void distanciaAB(vetor *V, vetor A, vetor B);
-void carregarArquivos(nave *nave1, nave *nave2, planeta *planeta, projetil *projetilX);
-void *mallocSafe(int nbytes);
-void string_copy(char *a, char *b);
-void aceleracao(objeto *A, objeto B);
-
+unsigned int Teclas[5];
+int posicaoLivre;
+/*
+Programa fase3.c
+<DESCRIÇÃO>
+*/
 int main(int argc, char *argv[]){
-    nave nave1;
-    nave nave2;
-    vetor velAux;
-    vetor acelAux;
-    planeta planeta1;
-    projetil projetil1X;
-    int i;
+    unsigned int tecla;
 
-    planeta1.valor.posObj.x = 0;
-    planeta1.valor.posObj.y = 0;
+    /* tratar argumentos */
+    if( argc == 1 ){/*sem argumentos, o programa recebe delta_t por scanf*/
+	printf("Specify step length\n>>>");
+	scanf("%lf", &(p0.delta_t));
+    }
+    else if( argc == 2 )/*se o programa recebeu um argumento, o valor é convertido para float e armazenado em delta_t*/
+	p0.delta_t = atof( argv[1] );
+    else{/*se recebe mais de um argumento, recebe por scanf*/
+	printf("Expected fewer arguments\n");
+	printf("Specify step length\n>>>");
+	scanf("%lf", &(p0.delta_t));
+    }
 
-    carregarArquivos(&nave1, &nave2, &planeta1, &projetil1X);
+    /*Execucao*/
+    init_modulo_space();
+    init_modulo_grafico();
+    while(1){
+	graficos_iteracao();
+	next_pos();
 
-    nave1.valor.posObj.x = 6000000;
-    nave1.valor.posObj.y = 6000000;
-    nave1.valor.velObj.x = 0;
-    nave1.valor.velObj.y = 0;
+	borderControl();
+	border_control();
 
-    for(i=0; i<1000; i++)
-        draw(&nave1, &nave2, planeta1);
+	usleep(2000);
+	interacao_teclado();
+    }
+
+    WCor(w, WNamedColor("gold") );
+    while( !WCheckKBD(w) )
+	WPrint( w , 20 , 200 , "Pressione uma tecla para terminar:" );
+    /*fim Execucao*/
+
+    termina_modulo_grafico();
+    termina_modulo_space();
 
     return 0;
-}
-
-void draw(nave *nave1, nave *nave2, planeta planeta1)
-{
-    aceleracao(&nave1->valor, planeta1.valor);
-
-    addVetorAB(&nave1->valor.posObj, nave1->valor.velObj);
-    //printVetor(nave1->valor.velObj);
-    //addVetorAB(&nave2->valor.velObj, );
-
-
-
-    printVetor(nave1->valor.posObj);
-    printf("\n");
-}
-
-void addVetorAB(vetor *A, vetor B){
-    A->x = A->x + B.x;
-    A->y = A->y + B.y;
-}
-
-double normaVetor(vetor A){
-    return (sqrt(A.x * A.x + A.y * A.y));
-}
-
-void versorVetor(vetor *rVetor, vetor A, vetor B){
-    double norma = normaVetor(A);
-
-    distanciaAB(rVetor, B, A);
-    rVetor->x = rVetor->x/norma;
-    rVetor->y = rVetor->y/norma;
-}
-
-void printVetor(vetor A)
-{
-    printf("%.2lf %.2lf", A.x, A.y);
-}
-
-void distanciaAB(vetor *V, vetor A, vetor B)
-{
-    V->x = (A.x - B.x);
-    V->y = (A.y - B.y);
-}
-
-void carregarArquivos(nave *nave1, nave *nave2, planeta *planeta, projetil *projetilX)
-{
-    double quantidadeProjeteis;
-    char auxiliar[80];
-
-    FILE *arquivoDeEntrada;
-    char nomeArquivo[80] = "arquivo.txt";
-
-    arquivoDeEntrada = fopen(nomeArquivo, "r");
-    if(!arquivoDeEntrada){
-        printf("Error opening entry file\n");
-        exit(EXIT_FAILURE);
-    }
-
-    //CONVERTER O NUMERO ANTES DE REGISTRAR, FSCANF NÃO MOSTRA ERROS
-
-    fscanf(arquivoDeEntrada, "%le %le %lf", &planeta->raio, &planeta->valor.massa, &tempoSimulacao);
-
-    fscanf(arquivoDeEntrada, "%s %lf %lf %lf %lf %lf", auxiliar, &nave1->valor.massa, &nave1->valor.posObj.x,
-            &nave1->valor.posObj.y, &nave1->valor.velObj.x, &nave1->valor.velObj.y);
-
-    nave1->nome = mallocSafe((1+strlen(auxiliar))*sizeof(char));
-    string_copy(auxiliar , nave1->nome);
-
-
-    fscanf(arquivoDeEntrada, "%s %lf %lf %lf %lf %lf", auxiliar, &nave2->valor.massa,
-           &nave2->valor.posObj.x, &nave2->valor.posObj.y, &nave2->valor.velObj.x, &nave2->valor.velObj.y);
-
-    nave2->nome = mallocSafe((1+strlen(auxiliar))*sizeof(char));
-    string_copy(auxiliar , nave2->nome);
-
-
-    fscanf(arquivoDeEntrada, "%lf %lf", &quantidadeProjeteis, &tempoVidaProjeteis);
-
-    //LOOPING PARA REGISTRAR OS PROJETEIS
-
-    fclose(arquivoDeEntrada);
-}
-
-void *mallocSafe(int nbytes)
-{
-    void *pointer;
-    pointer = malloc(nbytes);
-    if( pointer == NULL ){
-        printf("Malloc failed\n");
-        exit(EXIT_FAILURE);
-    }
-    return pointer;
-}
-
-void string_copy(char *a, char *b)
-{
-    int i;
-    for( i=0 ; i<strlen(a) ; i++ )
-        b[i] = a[i];
-    b[i] = '\0';
-    return;
-}
-
-void aceleracao(objeto *A, objeto B){
-    vetor rVetor;
-    vetor distancia;
-    versorVetor(&rVetor, A->posObj, B.posObj);
-    distanciaAB(&distancia, A->posObj, B.posObj);
-
-    if(distancia.x == 0 || distancia.y == 0){
-        distancia.y = 10;
-        distancia.x = 10;
-    }
-
-    A->velObj.x += G*(rVetor.x)*(B.massa)/(distancia.x * distancia.x);
-    A->velObj.y += G*(rVetor.y)*(B.massa)/(distancia.y * distancia.y);
-
-    //printVetor(rVetor);
-
 }

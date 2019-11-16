@@ -8,12 +8,12 @@
 typedef unsigned long Color;
 
 typedef struct {
-  GC gc;
-  union {
-	Window window;
-	Pixmap m;
-	Pixmap p;
-  } ptr;	
+    GC gc;
+    union {
+        Window window;
+        Pixmap m;
+        Pixmap p;
+    } ptr;
 } WINDOW;
 
 typedef WINDOW *PIC;
@@ -28,9 +28,9 @@ void WCor(WINDOW *win, Color c);
 
 /* Desenha um ponto de cor c, na posicao (x,y) da janela win */
 void WPlot(WINDOW *win, int x, int y, Color c);
-	
-/* Desenha uma linha de cor c, na janela win, entre os pontos 
- *  (x1,y1) e (x2,y2) 
+
+/* Desenha uma linha de cor c, na janela win, entre os pontos
+ *  (x1,y1) e (x2,y2)
  */
 void WLine(WINDOW *win, int x1, int y1, int x2, int y2, Color c);
 
@@ -63,7 +63,7 @@ PIC NewPic(WINDOW *win, int w, int h);
 /* destroy o PIC */
 void FreePic(PIC pic);
 
-/* desenha o PIC pic2, em pic1, posicao (x,y). x0, y0, w e h indicam 
+/* desenha o PIC pic2, em pic1, posicao (x,y). x0, y0, w e h indicam
  * o pedaco (retangulo) de pic2  a ser usado */
 void PutPic(PIC pic1, PIC pic2, int x0, int y0, int w, int h, int x, int y);
 
@@ -110,7 +110,7 @@ Display *GetDisplay();
  * uma máscara ao mesmo tempo que se indica a figura
  */
 
-/* Lê um arquivo xpm e retorna o PIC correspondente 
+/* Lê um arquivo xpm e retorna o PIC correspondente
  * retorna a mascara associada em 'm', se este for
  * diferente de zero.
  */

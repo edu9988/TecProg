@@ -16,29 +16,78 @@
 #include "grafico.h"
 #include "/usr/include/X11/keysym.h"
 
+
 extern WINDOW *w;
 extern constants p0;
 extern corpo *body_list;
 
-unsigned int tecla, botao;
+extern unsigned int Teclas[5];
 
-void interacao_teclado(){
-    if( WCheckKBD(w) ){ /*se digitaram algo */
-        tecla = WGetKey(w);
-        botao = WLastKeySym();
-        if( botao == 0xFF51 ){/*seta esquerda*/
-	    body_list[0].angulo += 1.0e-1;
-	}
-        else if( botao == 0xFF53 ){/*seta direita*/
-	    body_list[0].angulo -= 1.0e-1;
-	}
-        else if( botao == 0xFF52 )/*seta cima*/
-	    body_list[0].acelera = 1;
-        else if( botao == 0x71 )/*letra q*/
-	    exit(0);
+
+
+extern Corpo *player01;
+
+void interacao_teclado()
+{
+    unsigned int aux;
+    int i = 0;
+
+    if( WCheckKBD(w) )
+    {
+        printf("%x\n", Teclas[0]);
+        printf("%x\n", Teclas[1]);
     }
+
+    if (player01->angulo > 6.2832)
+        player01->angulo -= 6.2832;
+    if (player01->angulo < -6.2832)
+        player01->angulo += 6.2832;
+
     if( body_list[0].angulo > 6.2832 )
-	body_list[0].angulo -= 6.2832;
+	    body_list[0].angulo -= 6.2832;
     if( body_list[0].angulo < -6.2832 )
-	body_list[0].angulo += 6.2832;
+	    body_list[0].angulo += 6.2832;
+}
+
+
+
+void acaoTeclado(unsigned int valor)
+{
+    printf("OK\n");
+
+    if( valor == 0xFF51 ) /*seta esquerda*/
+    {
+        body_list[0].angulo += 1.0e-1;
+    }
+    else
+    if( valor == 0xFF53 ) /*seta direita*/
+    {
+        body_list[0].angulo -= 1.0e-1;
+    }
+    else
+    if( valor == 0xFF52 ) /*seta cima*/
+    {
+        body_list[0].acelera = 1;
+    }
+    else
+    if( valor == 0x71 ) /*letra q*/
+    {
+        exit(0);
+    }
+    else
+    if(valor == 0x61)
+    {
+        player01->angulo += 1.0e-1;
+    }
+    else
+    if(valor == 0x64)
+    {
+        player01->angulo -= 1.0e-1;
+    }
+    else
+    if( valor == 0x0077 )
+    {
+        player01->acelera = 1;
+    }
+
 }

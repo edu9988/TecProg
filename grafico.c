@@ -150,8 +150,6 @@ void graficos_iteracao(){
 
 /**************************************************************************/
 
-
-
     /*WFillArc( Aux , t0.planeta_x,t0.planeta_y  , 0,23040 , t0.planeta_w,t0.planeta_h , 0x5050FF );*/
     SetMask( Aux , masc_planet );
     PutPic( Aux , planeta ,0,0 , t0.planeta_w,t0.planeta_h , t0.planeta_x,t0.planeta_y );
@@ -165,14 +163,12 @@ void graficos_iteracao(){
     SetMask(Aux , mascX1);
     PutPic(Aux, P1x, Sprite_x(player01), 0, 50, 50, player01->SCR_pos_x-25, player01->SCR_pos_y-100);
     UnSetMask(Aux);
-    player01->angulo += 0.001;
-
-    printf("%d %d\n", player01->SCR_pos_x, player01->SCR_pos_y);
 
 
     SetMask(Aux , masc1 );
     PutPic( Aux , P1 ,sprite_x(),0 , 50,50, body_list[0].SCR_pos_x-25,body_list[0].SCR_pos_y-25);
     SetMask( Aux , masc_missiles );
+
     for( i=0 ; i<n ; i++ )
         PutPic( Aux , Ms ,0,0 , 40,40, body_list[i+2].SCR_pos_x-5,body_list[i+2].SCR_pos_y-5);
     UnSetMask( Aux );
