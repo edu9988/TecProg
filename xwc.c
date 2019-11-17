@@ -320,37 +320,12 @@ KeySym key;
 
 int WCheckKBD(WINDOW *w)
 {
-    int r, s;
+    int r;
     XEvent xev;
-    XEvent xev2;
 
-    int verificador = 0;
-
-    s = XCheckWindowEvent(display,w->ptr.window, KeyPressMask ,  &xev2);
-    r = XCheckWindowEvent(display,w->ptr.window, KeyReleaseMask ,  &xev);
-    
-
-    if(xev2.type == KeyPress)
-    {
-        printf( "KeyPress: %x\n", xev.xkey.keycode );
-        Teclas[posicaoLivre] = xev.xkey.keycode;
-        posicaoLivre++;
-        verificador = 0;
-    }
-    else
-    if(xev.type == KeyRelease)
-    {
-        printf( "KeyRelease: %x\n", xev.xkey.keycode );
-        verificador = 1;
-    }
-
-    if(r)
-    {
-        printf("OK\n");
-        XPutBackEvent(display, &xev);
-    }
-
-    return verificador;
+    r = XCheckWindowEvent(display,w->ptr.window, KeyPressMask|KeyReleaseMask, &xev);
+    if (r) XPutBackEvent(display, &xev);
+    return r;
 }
 
 KeyCode WGetKey(WINDOW *w)

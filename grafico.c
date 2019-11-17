@@ -127,7 +127,8 @@ graficos_iteracao():
 Desenha na tela todos os corpos em suas respectivas
 posicoes.
 */
-void graficos_iteracao(){
+void graficos_iteracao()
+{
     Corpo *corpoAux = NULL;
     int i, n;
     n = p0.projectiles_quantity;

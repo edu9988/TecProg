@@ -88,5 +88,6 @@ void addObjLista(Corpo *obj);
 void addProjeteis(double pos_x, double pos_y, double vel_x, double vel_y);
 void mostrarLista();
 void borderControl();
+void nextPos();
 
 /**********************************************/

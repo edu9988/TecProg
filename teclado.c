@@ -29,13 +29,48 @@ extern Corpo *player01;
 
 void interacao_teclado()
 {
-    unsigned int aux;
+    unsigned int valor;
     int i = 0;
 
     if( WCheckKBD(w) )
     {
-        printf("%x\n", Teclas[0]);
-        printf("%x\n", Teclas[1]);
+        valor = WGetKey(w);
+        valor = WLastKeySym();
+
+        if( valor == 0xFF51 ) /*seta esquerda*/
+        {
+            body_list[0].angulo += 1.0e-1;
+        }
+        else
+        if( valor == 0xFF53 ) /*seta direita*/
+        {
+            body_list[0].angulo -= 1.0e-1;
+        }
+        else
+        if( valor == 0xFF52 ) /*seta cima*/
+        {
+            body_list[0].acelera = 1;
+        }
+        else
+        if( valor == 0x71 ) /*letra q*/
+        {
+            exit(0);
+        }
+        else
+        if(valor == 0x61)
+        {
+            player01->angulo += 1.0e-1;
+        }
+        else
+        if(valor == 0x64)
+        {
+            player01->angulo -= 1.0e-1;
+        }
+        else
+        if( valor == 0x0077 )
+        {
+            player01->acelera = 1;
+        }
     }
 
     if (player01->angulo > 6.2832)
@@ -54,40 +89,5 @@ void interacao_teclado()
 void acaoTeclado(unsigned int valor)
 {
     printf("OK\n");
-
-    if( valor == 0xFF51 ) /*seta esquerda*/
-    {
-        body_list[0].angulo += 1.0e-1;
-    }
-    else
-    if( valor == 0xFF53 ) /*seta direita*/
-    {
-        body_list[0].angulo -= 1.0e-1;
-    }
-    else
-    if( valor == 0xFF52 ) /*seta cima*/
-    {
-        body_list[0].acelera = 1;
-    }
-    else
-    if( valor == 0x71 ) /*letra q*/
-    {
-        exit(0);
-    }
-    else
-    if(valor == 0x61)
-    {
-        player01->angulo += 1.0e-1;
-    }
-    else
-    if(valor == 0x64)
-    {
-        player01->angulo -= 1.0e-1;
-    }
-    else
-    if( valor == 0x0077 )
-    {
-        player01->acelera = 1;
-    }
 
 }

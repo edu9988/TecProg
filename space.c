@@ -479,3 +479,74 @@ void borderControl()
         obj = obj->prox;
     }
 }
+
+void nextPos()
+{
+    double r;
+    int i, j, n;
+    n = p0.projectiles_quantity +2;
+    for( i=0 ; i<n ; i++ ){/*zera a_x e a_y*/
+        body_list[i].a_x = 0.0;
+        body_list[i].a_y = 0.0;
+    }
+    for( i=0 ; i<n ; i++ )
+    {/*calcula aceleracoes*/
+        if( body_list[i].alive ){/*se alive==0, pula essa iteracao*/
+            r = pow(body_list[i].pos_x ,2) + pow(body_list[i].pos_y , 2);
+            if( r <= pow( p0.planet_radius ,2 ) ){
+                body_list[i].vel_x = 0.0;
+                body_list[i].vel_y = 0.0;
+                body_list[i].alive = 0;
+                continue;
+            }
+            r = pow( r , 1.5);
+            body_list[i].a_x -= (p0.planet_mass) * body_list[i].pos_x  / r;
+            body_list[i].a_y -= (p0.planet_mass) * body_list[i].pos_y  / r;
+            for( j=0 ; j<i ; j++ )
+            {
+                r = pow(body_list[j].pos_x-body_list[i].pos_x,2)+pow(body_list[j].pos_y-body_list[i].pos_y , 2);
+                if( r <= pow( body_list[i].size ,2 ) ){
+                    body_list[i].a_x = 0.0;
+                    body_list[i].a_y = 0.0;
+                    body_list[i].vel_x = 0.0;
+                    body_list[i].vel_y = 0.0;
+                    body_list[i].alive = 0;
+                    break;
+                }
+                r = pow( r , 1.5) ;
+                body_list[i].a_x += (body_list[j].mass) * ((body_list[j].pos_x) - (body_list[i].pos_x)) / r;
+                body_list[i].a_y += (body_list[j].mass) * ((body_list[j].pos_y) - (body_list[i].pos_y)) / r;
+            }
+            for( j=i+1 ; j<n ; j++ ){
+                r = pow(body_list[j].pos_x-body_list[i].pos_x,2)+pow(body_list[j].pos_y-body_list[i].pos_y , 2);
+                if( r <= pow( body_list[i].size ,2 ) ){
+                    body_list[i].a_x = 0.0;
+                    body_list[i].a_y = 0.0;
+                    body_list[i].vel_x = 0.0;
+                    body_list[i].vel_y = 0.0;
+                    body_list[i].alive = 0;
+                    break;
+                }
+                r = pow( r , 1.5) ;
+                body_list[i].a_x += (body_list[j].mass) * ((body_list[j].pos_x) - (body_list[i].pos_x)) / r;
+                body_list[i].a_y += (body_list[j].mass) * ((body_list[j].pos_y) - (body_list[i].pos_y)) / r;
+            }
+            body_list[i].a_x *= G;
+            body_list[i].a_y *= G;
+        }
+    }/* fim de calcula aceleracoes gravitacionais*/
+
+    if( body_list[0].acelera ){
+        body_list[0].a_x += 1.0e+9*cos( body_list[0].angulo );
+        body_list[0].a_y += 1.0e+9*sin( body_list[0].angulo );
+        body_list[0].acelera = 0;
+    }
+    for( i=0 ; i<n ; i++ ){	/*atualiza pos, vel*/
+        if( body_list[i].alive ){/*se alive==0, pula essa etapa*/
+            body_list[i].pos_x += (body_list[i].vel_x)*(p0.delta_t) + body_list[i].a_x*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_x*/
+            body_list[i].pos_y += (body_list[i].vel_y)*(p0.delta_t) + body_list[i].a_y*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_y*/
+            body_list[i].vel_x += body_list[i].a_x*(p0.delta_t);
+            body_list[i].vel_y += body_list[i].a_y*(p0.delta_t);
+        }
+    }
+}
