@@ -77,11 +77,7 @@ typedef struct{
 
 void init_modulo_space();
 void next_pos();
-void debug_print_constants();
-void debug_print_bodies();
-void debug_print_positions();
 void border_control();
-void termina_modulo_space();
 
 /********************************************/
 void addObjLista(Corpo *obj);
@@ -89,5 +85,7 @@ void addProjeteis(double pos_x, double pos_y, double vel_x, double vel_y);
 void mostrarLista();
 void borderControl();
 void nextPos();
+void termina_modulo_space();
+void limparLista(Corpo *obj);
 
 /**********************************************/

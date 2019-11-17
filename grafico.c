@@ -69,8 +69,8 @@ extern WINDOW *w;
 extern constants p0;
 extern corpo *body_list;
 tela t0;
-static PIC P1, P2, Ms, Aux, fundo1, fundo2, planeta;
-static Color player1, misseis;
+static PIC Ms, Aux, fundo1, fundo2, planeta;
+static Color player1, player2, misseis;
 static int indice;
 static int Be(double p);
 static void GeraFundo();
@@ -79,8 +79,8 @@ static char palavra[30];
 /****************************************************/
 static int Sprite_x(Corpo *obj);
 
-MASK masc1, masc2, mascX1,  masc_missiles, masc_planet, mascAux, mascAux2; /*ADICIONEI UMA MASCARA AUXILIAR*/
-static PIC P1x;
+MASK masc1, masc2,  masc_missiles, masc_planet, mascAux1,  mascAux2; /*ADICIONEI UMA MASCARA AUXILIAR*/
+static PIC P1x, P2x;
 extern Corpo *cabecaBodyList;
 extern Corpo *player01;
 extern Corpo *player02;
@@ -90,34 +90,32 @@ extern Corpo *player02;
 init_modulo_grafico():
 Aloca as estruturas e inicializa as variaveis necessárias
 */
-void init_modulo_grafico(){
-    indice = 0;
+void init_modulo_grafico()
+{
     w = InitGraph( t0.SCR_larg, t0.SCR_alt, "SpaceWar");
     Aux = NewPic( w , t0.SCR_larg,t0.SCR_alt );
     masc1 = NewMask( w , 50,50 );
     masc2 = NewMask( w , 50,50 );
 
-    mascX1 = NewMask(w, 50, 50); /* MASCARA PARA A FIGURA DE LISTA LIGADA */
-
-    mascAux = NewMask( w , 1200, 50 ); /*INICIALIZEI COM O TAMANHO DA IMAGEM ORIGINAL*/
+    mascAux1 =  NewMask( w , 1200, 50 ); /*INICIALIZEI COM O TAMANHO DA IMAGEM ORIGINAL*/
     mascAux2 = NewMask( w , 1200, 50 );
+
     masc_missiles = NewMask( w , 50 , 50 );
     masc_planet = NewMask( w , t0.SCR_larg , t0.SCR_alt );
     fundo1 = NewPic( w , t0.SCR_larg,t0.SCR_alt );
     fundo2 = NewPic( w , t0.SCR_larg,t0.SCR_alt );
     planeta = ReadPic( w , "planeta1.xpm" , masc_planet );
     GeraFundo();
-    P1 = ReadPic( w, "spaceshuttle_bw1.xpm", mascAux);
+    P1x = ReadPic( w, "spaceshuttle_bw2.xpm", mascAux2); /*JOGUEI OS DADOS DA MASCARA DA IMAGEM EM "mascAux1*/
+    P2x = ReadPic( w, "spaceshuttle_bw1.xpm", mascAux1) ;
 
-    P1x = ReadPic( w, "spaceshuttle_bw2.xpm", mascAux2); /*JOGUEI OS DADOS DA MASCARA DA IMAGEM EM "MASCAUX" */
-
-    P2 = ReadPic( w, "teste1.xpm" , masc2 );
     Ms = MountPic( w, samp_xpm , masc_missiles );
     t0.planeta_w =(int) ( (p0.planet_radius/p0.L) *(double)t0.SCR_larg ) ;
     t0.planeta_h = t0.planeta_w;
     t0.planeta_x = t0.SCR_larg/2 - t0.planeta_w/2;
     t0.planeta_y = t0.SCR_alt/2 - t0.planeta_w/2;
     player1 = WNamedColor("red");
+    player2 = WNamedColor("yellow");
     misseis = WNamedColor("gold");
     InitKBD(w);
 }
@@ -144,35 +142,32 @@ void graficos_iteracao()
     while(corpoAux != NULL)
     {
         corpoAux->SCR_pos_x = Tx(corpoAux->pos_x);
-        corpoAux->SCR_pos_y = Tx(corpoAux->pos_y);
+        corpoAux->SCR_pos_y = Ty(corpoAux->pos_y);
         corpoAux = corpoAux->prox;
     }
 
 
 /**************************************************************************/
 
-    /*WFillArc( Aux , t0.planeta_x,t0.planeta_y  , 0,23040 , t0.planeta_w,t0.planeta_h , 0x5050FF );*/
     SetMask( Aux , masc_planet );
     PutPic( Aux , planeta ,0,0 , t0.planeta_w,t0.planeta_h , t0.planeta_x,t0.planeta_y );
-    SetMask( Aux , masc2 );
-    PutPic( Aux , P2 ,0,0 , 50,40, body_list[1].SCR_pos_x,body_list[1].SCR_pos_y);
 
-    PutPic(masc1 , mascAux ,sprite_x(),0 , 50,50, 0,0); /*IMPRIMI SOMENTE O TAMANHO NECESSARIO DA MASCARA ORIGINAL NA MASC1*/
+    PutPic(masc1 , mascAux1, Sprite_x(player01),0 , 50,50, 0,0); /*IMPRIMI SOMENTE O TAMANHO NECESSARIO DA MASCARA ORIGINAL NA MASC1*/
+    PutPic(masc2 , mascAux2, Sprite_x(player02),0 , 50,50, 0,0);
 
-
-    PutPic(mascX1 , mascAux2, Sprite_x(player01), 0, 50, 50, 0, 0);
-    SetMask(Aux , mascX1);
-    PutPic(Aux, P1x, Sprite_x(player01), 0, 50, 50, player01->SCR_pos_x-25, player01->SCR_pos_y-100);
+    SetMask(Aux , masc1);
+    PutPic(Aux, P1x, Sprite_x(player01), 0, 50, 50, player01->SCR_pos_x-25, player01->SCR_pos_y-25);
     UnSetMask(Aux);
 
+    SetMask(Aux , masc2);
+    PutPic( Aux , P2x, Sprite_x(player02),0 , 50,50, player02->SCR_pos_x-25, player02->SCR_pos_y-25);
 
-    SetMask(Aux , masc1 );
-    PutPic( Aux , P1 ,sprite_x(),0 , 50,50, body_list[0].SCR_pos_x-25,body_list[0].SCR_pos_y-25);
     SetMask( Aux , masc_missiles );
-
     for( i=0 ; i<n ; i++ )
         PutPic( Aux , Ms ,0,0 , 40,40, body_list[i+2].SCR_pos_x-5,body_list[i+2].SCR_pos_y-5);
     UnSetMask( Aux );
+
+
     WCor( Aux , 0xFF0000 );
     sprintf(palavra, "%d", indice);
     WPrint( Aux , 20 , 180 , palavra );
@@ -185,25 +180,6 @@ void graficos_iteracao()
     else
         PutPic( Aux , fundo2 ,0,0 , t0.SCR_larg,t0.SCR_alt , 0,0 );
     indice++;
-}
-
-static int sprite_x(){
-    double a;
-    int b;
-
-    a = body_list[0].angulo;
-    if( a < 0 ){
-        a *= -57.296;
-        a -= 7.5;
-        b = (int) a / 15;
-        return 50*b;
-    }
-    else{
-        a *= 57.296;
-        a -= 7.5;
-        b = (int) a / 15;
-        return (23-b)*50;
-    }
 }
 
 /*
@@ -237,9 +213,16 @@ termina_modulo_grafico():
 Libera as estruturas alocadas
 */
 void termina_modulo_grafico(){
-    FreePic( P1 );
-    FreePic( P2 );
-    FreePic( Ms );
+    FreePic( P2x);
+    FreePic( P1x );
+    FreePic(Ms);
+    FreePic(masc1);
+    FreePic(masc2);
+    FreePic(mascAux1);
+    FreePic(mascAux2);
+    FreePic(Aux);
+    FreePic(fundo1);
+    FreePic(fundo2);
     WDestroy( w );
     CloseGraph();
 }
@@ -276,7 +259,7 @@ static int Ty(double pos_y){
     return transf_y;
 }
 
-
+/* Calcula as cordenadas do pedaco da imagem que ira' aparecer na tela */
 static int Sprite_x(Corpo *obj)
 {
     double a;

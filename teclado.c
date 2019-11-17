@@ -25,7 +25,7 @@ extern unsigned int Teclas[5];
 
 
 
-extern Corpo *player01;
+extern Corpo *player01, *player02;
 
 void interacao_teclado()
 {
@@ -39,17 +39,17 @@ void interacao_teclado()
 
         if( valor == 0xFF51 ) /*seta esquerda*/
         {
-            body_list[0].angulo += 1.0e-1;
+            player02->angulo += 1.0e-1;
         }
         else
         if( valor == 0xFF53 ) /*seta direita*/
         {
-            body_list[0].angulo -= 1.0e-1;
+            player02->angulo -= 1.0e-1;
         }
         else
         if( valor == 0xFF52 ) /*seta cima*/
         {
-            body_list[0].acelera = 1;
+            player02->acelera = 1;
         }
         else
         if( valor == 0x71 ) /*letra q*/
@@ -78,16 +78,13 @@ void interacao_teclado()
     if (player01->angulo < -6.2832)
         player01->angulo += 6.2832;
 
+    if (player02->angulo > 6.2832)
+        player02->angulo -= 6.2832;
+    if (player02->angulo < -6.2832)
+        player02->angulo += 6.2832;
+
     if( body_list[0].angulo > 6.2832 )
 	    body_list[0].angulo -= 6.2832;
     if( body_list[0].angulo < -6.2832 )
 	    body_list[0].angulo += 6.2832;
-}
-
-
-
-void acaoTeclado(unsigned int valor)
-{
-    printf("OK\n");
-
 }

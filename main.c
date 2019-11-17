@@ -21,7 +21,7 @@ constants p0;
 corpo *body_list;
 WINDOW *w;
 
-Corpo *cabecaBodyList = NULL, *player01 = NULL, *player02 = NULL;
+Corpo *cabecaBodyList, *player01 = NULL, *player02 = NULL;
 
 unsigned int Teclas[5];
 int posicaoLivre;
@@ -29,7 +29,8 @@ int posicaoLivre;
 Programa fase3.c
 <DESCRIÇÃO>
 */
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[])
+{
     unsigned int tecla;
 
     /* tratar argumentos */
@@ -50,18 +51,24 @@ int main(int argc, char *argv[]){
     init_modulo_grafico();
     while(1){
 	graficos_iteracao();
+
+	interacao_teclado();
+
 	next_pos();
+
+	nextPos();
+
 
 	borderControl();
 	border_control();
 
 	usleep(2000);
-	interacao_teclado();
     }
 
     WCor(w, WNamedColor("gold") );
+
     while( !WCheckKBD(w) )
-	WPrint( w , 20 , 200 , "Pressione uma tecla para terminar:" );
+	    WPrint( w , 20 , 200 , "Pressione uma tecla para terminar:" );
     /*fim Execucao*/
 
     termina_modulo_grafico();
