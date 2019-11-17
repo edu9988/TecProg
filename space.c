@@ -389,8 +389,8 @@ void limparLista(Corpo *obj)
 void atirarProjetil(Corpo *objAtirador)
 {
     if(objAtirador->numProjeteis > 0)
-        addProjeteis(objAtirador->pos_x * 1.2, objAtirador->pos_y * 1.2, cos(objAtirador->angulo)*(objAtirador->vel_x + 25*(1.0e+6)),
-                 cos(objAtirador->angulo)*objAtirador->vel_y + 25*(1.0e+5));
+    addProjeteis(objAtirador->pos_x * 1.2, objAtirador->pos_y * 1.2, objAtirador->vel_x + cos(objAtirador->angulo)*(0.3e8),
+                 objAtirador->vel_y + sin(objAtirador->angulo) * (0.3e8));
 }
 
 void interacaoProjeteis()
