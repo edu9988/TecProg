@@ -21,7 +21,10 @@ corpo:
 armazena os dados de cada objeto que terá suas posições atualizadas
 a cada iteração do programa fase3.c
 */
-typedef struct{
+
+typedef struct corpox Corpo;
+struct corpox
+{
     double mass;
     double size;
     int alive;
@@ -35,7 +38,12 @@ typedef struct{
     int SCR_pos_y;
     double angulo;
     int acelera;
-}corpo;
+    int tipo;
+    int tempo;
+    int numProjeteis;
+    Corpo *prox;
+};
+
 
 /*
 constants:
@@ -54,10 +62,16 @@ typedef struct{
     double H;/*altura do universo*/
 }constants;
 
-void init_modulo_space();
-void next_pos();
-void debug_print_constants();
-void debug_print_bodies();
-void debug_print_positions();
-void border_control();
+/********************************************/
+void addObjLista(Corpo *obj);
+void addProjeteis(double pos_x, double pos_y, double vel_x, double vel_y);
+void mostrarLista();
+void borderControl();
+void nextPos();
 void termina_modulo_space();
+void limparLista(Corpo *obj);
+void init_modulo_space();
+void atirarProjetil(Corpo *objAtirador);
+void interacaoProjeteis();
+void deletaObjeto(Corpo *obj);
+/**********************************************/
