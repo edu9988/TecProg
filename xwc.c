@@ -2,14 +2,12 @@
 #include <string.h>
 #include "xwc.h"
 #include <stdio.h>
-
+#include "teclado.h"
 
 static Display *display = NULL;
 static Colormap cmap;
 
-extern int posicaoLivre;
-extern unsigned int Teclas[];
-
+extern int verificador;
 void WCor(WINDOW *w, Color c)
 {
     XSetForeground(display, w->gc, c);
@@ -312,7 +310,7 @@ PIC MountPic(WINDOW *w, char **data, MASK m)
 
 void InitKBD(WINDOW *w)
 {
-    XSelectInput (display, w->ptr.window, KeyPressMask | KeyReleaseMask);
+    XSelectInput (display, w->ptr.window, KeyPressMask);
     /*XSelectInput (display, w->ptr.window, KeyPressMask);*/
 }
 
@@ -321,10 +319,13 @@ KeySym key;
 int WCheckKBD(WINDOW *w)
 {
     int r;
+
     XEvent xev;
 
-    r = XCheckWindowEvent(display,w->ptr.window, KeyPressMask|KeyReleaseMask, &xev);
+    r = XCheckWindowEvent(display,w->ptr.window, KeyPressMask, &xev);
+
     if (r) XPutBackEvent(display, &xev);
+
     return r;
 }
 
@@ -333,8 +334,9 @@ KeyCode WGetKey(WINDOW *w)
     XEvent xev;
 
     XWindowEvent(display,w->ptr.window, KeyPressMask | KeyReleaseMask, &xev);
-    key = XkbKeycodeToKeysym(display, xev.xkey.keycode,
-                             0, xev.xkey.state & ShiftMask ? 1 : 0);
+
+    key = XkbKeycodeToKeysym(display, xev.xkey.keycode, 0, xev.xkey.state & ShiftMask ? 1 : 0);
+
     return xev.xkey.keycode;
 }
 

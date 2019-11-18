@@ -18,21 +18,16 @@
 #include "teclado.h"
 
 constants p0;
-corpo *body_list;
 WINDOW *w;
 
 Corpo *cabecaBodyList, *player01 = NULL, *player02 = NULL;
 
-unsigned int Teclas[5];
-int posicaoLivre;
 /*
 Programa fase3.c
 <DESCRIÇÃO>
 */
 int main(int argc, char *argv[])
 {
-    unsigned int tecla;
-
     /* tratar argumentos */
     if( argc == 1 ){/*sem argumentos, o programa recebe delta_t por scanf*/
 	printf("Specify step length\n>>>");
@@ -49,20 +44,19 @@ int main(int argc, char *argv[])
     /*Execucao*/
     init_modulo_space();
     init_modulo_grafico();
-    while(1){
-	graficos_iteracao();
+    while(1)
+    {
+        interacaoProjeteis();
 
-	interacao_teclado();
+        graficos_iteracao();
 
-	next_pos();
+	    interacao_teclado();
 
-	nextPos();
+	    nextPos();
 
+	    borderControl();
 
-	borderControl();
-	border_control();
-
-	usleep(2000);
+	    usleep(2000);
     }
 
     WCor(w, WNamedColor("gold") );

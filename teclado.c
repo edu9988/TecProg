@@ -19,10 +19,6 @@
 
 extern WINDOW *w;
 extern constants p0;
-extern corpo *body_list;
-
-extern unsigned int Teclas[5];
-
 
 
 extern Corpo *player01, *player02;
@@ -30,9 +26,8 @@ extern Corpo *player01, *player02;
 void interacao_teclado()
 {
     unsigned int valor;
-    int i = 0;
 
-    if( WCheckKBD(w) )
+    if( WCheckKBD(w))
     {
         valor = WGetKey(w);
         valor = WLastKeySym();
@@ -47,7 +42,7 @@ void interacao_teclado()
             player02->angulo -= 1.0e-1;
         }
         else
-        if( valor == 0xFF52 ) /*seta cima*/
+        if( valor == 0xFF54 ) /* Liga os motores */
         {
             player02->acelera = 1;
         }
@@ -67,9 +62,21 @@ void interacao_teclado()
             player01->angulo -= 1.0e-1;
         }
         else
-        if( valor == 0x0077 )
+        if( valor == 0x0073 )
         {
             player01->acelera = 1;
+        }
+        else
+        if(valor == 0xff52)
+        {
+            atirarProjetil(player02);
+            player02->numProjeteis--;
+        }
+        else
+        if(valor == 0x77)
+        {
+            atirarProjetil(player01);
+            player01->numProjeteis--;
         }
     }
 
@@ -83,8 +90,4 @@ void interacao_teclado()
     if (player02->angulo < -6.2832)
         player02->angulo += 6.2832;
 
-    if( body_list[0].angulo > 6.2832 )
-	    body_list[0].angulo -= 6.2832;
-    if( body_list[0].angulo < -6.2832 )
-	    body_list[0].angulo += 6.2832;
 }

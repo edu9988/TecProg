@@ -67,7 +67,6 @@ static int sprite_x();
 
 extern WINDOW *w;
 extern constants p0;
-extern corpo *body_list;
 tela t0;
 static PIC Ms, Aux, fundo1, fundo2, planeta;
 static Color player1, player2, misseis;
@@ -128,13 +127,6 @@ posicoes.
 void graficos_iteracao()
 {
     Corpo *corpoAux = NULL;
-    int i, n;
-    n = p0.projectiles_quantity;
-
-    for( i=0 ; i<n+2 ; i++ ){
-        body_list[i].SCR_pos_x = Tx( body_list[i].pos_x );
-        body_list[i].SCR_pos_y = Ty( body_list[i].pos_y );
-    }
 
 /***********************************************************************/
     corpoAux = cabecaBodyList->prox;
@@ -163,8 +155,17 @@ void graficos_iteracao()
     PutPic( Aux , P2x, Sprite_x(player02),0 , 50,50, player02->SCR_pos_x-25, player02->SCR_pos_y-25);
 
     SetMask( Aux , masc_missiles );
-    for( i=0 ; i<n ; i++ )
-        PutPic( Aux , Ms ,0,0 , 40,40, body_list[i+2].SCR_pos_x-5,body_list[i+2].SCR_pos_y-5);
+
+    corpoAux = cabecaBodyList->prox;
+
+    while (corpoAux != NULL)
+    {
+        if(corpoAux->tipo == 2)
+            PutPic( Aux , Ms ,0,0 , 40,40, corpoAux->SCR_pos_x-5, corpoAux->SCR_pos_y-5);
+
+        corpoAux = corpoAux->prox;
+    }
+
     UnSetMask( Aux );
 
 

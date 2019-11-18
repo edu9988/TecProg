@@ -39,24 +39,11 @@ struct corpox
     double angulo;
     int acelera;
     int tipo;
+    int tempo;
+    int numProjeteis;
     Corpo *prox;
 };
 
-typedef struct{
-    double mass;
-    double size;
-    int alive;
-    double pos_x;
-    double pos_y;
-    double vel_x;
-    double vel_y;
-    double a_x;
-    double a_y;
-    int SCR_pos_x;
-    int SCR_pos_y;
-    double angulo;
-    int acelera;
-}corpo;
 
 /*
 constants:
@@ -75,10 +62,6 @@ typedef struct{
     double H;/*altura do universo*/
 }constants;
 
-void init_modulo_space();
-void next_pos();
-void border_control();
-
 /********************************************/
 void addObjLista(Corpo *obj);
 void addProjeteis(double pos_x, double pos_y, double vel_x, double vel_y);
@@ -87,5 +70,8 @@ void borderControl();
 void nextPos();
 void termina_modulo_space();
 void limparLista(Corpo *obj);
-
+void init_modulo_space();
+void atirarProjetil(Corpo *objAtirador);
+void interacaoProjeteis();
+void deletaObjeto(Corpo *obj);
 /**********************************************/
