@@ -12,18 +12,59 @@
 #include <string.h>
 #include <math.h>
 #include "space.h"
+#include "xwc.h"
 #include "grafico.h"
 #include "lista.h"
 
-#define PI_meios 1.57079632679490
-#define f180_PI 57.2957795130823
-#define PI 3.14159265358979
+/* XPM */
+/* figura qualquer para tentar implementar transparencia*/
+static char *samp_xpm[] = {
+/* nose pixmap
+ width height ncolors chars_per_pixel */
+"32 32 5 1",
+" 	c None",
+".	c blue",
+"X	c white",
+"o	c gold",
+"O	c yellow",
+/* pixels */
+"           ..XXX..              ",
+"        ..XXXoXXXXX..           ",
+"       .XooOOOooooXXX.          ",
+"      XooOOOOOOOooooXXX         ",
+"     XoOOOOOOOOOOOoooXXX        ",
+"    .ooOOOOOOOOOOOooooXX.       ",
+"   .XoOOOOOOOOOOOOOoooXXX.      ",
+"  ..ooOOOOOOOOOOOOOooooXX..     ",
+"  .XoOOOOOOOOOOOOOOOoooXXX.     ",
+"  .XoOOOOOOOOOOOOOOOoooXXX.     ",
+" ..XoOOOOOOOOOOOOOOOoooXXX..    ",
+" .XoooOOOOOOOOOOOOOoooooXXX.    ",
+" .XXooOOOOOOOOOOOOOooooXXXX.    ",
+" .XXoooOOOOOOOOOOOoooooXXXX.    ",
+" ..XoooOOOOOOOOOOOoooooXXX..    ",
+" ..XoooooOOOOOOOoooooooXXX..    ",
+" ..XXooooooOOOooooooooXXXX..    ",
+"  ..XoooooooooooooooooXXX..     ",
+"  ..XXoooooooooooooooXXXX..     ",
+"  ...XXoooooooooooooXXXX...     ",
+"   ..XXXXoooooooooXXXXXX..      ",
+"    ..XXXXXXXoXXXXXXXXX..       ",
+"     ...XXXXXXXXXXXXX...        ",
+"      ....XXXXXXXXX....         ",
+"         .....X.....            ",
+"          .........             ",
+"           .......              ",
+"                                ",
+"                                ",
+"                                ",
+"                                ",
+"                                "
+};
 
 static int Tx(double);
 static int Ty(double);
-static int sprX_nave( double );
-static int sprX_mis( double );
-static void set_angle( Cel* );
+static int sprite_x( double );
 
 WINDOW *w;
 tela t0;
@@ -45,7 +86,7 @@ void init_modulo_grafico(){
     Aux = NewPic( w , t0.SCR_larg,t0.SCR_alt );
     masc1 = NewMask( w , 50,50 );
     masc2 = NewMask( w , 50,50 );
-    masc_missiles = NewMask( w , 26 , 26 );
+    masc_missiles = NewMask( w , 50 , 50 );
     masc_planet = NewMask( w , t0.SCR_larg , t0.SCR_alt );
     limpa = NewMask( w , 50 , 50 );
     fundo1 = NewPic( w , t0.SCR_larg,t0.SCR_alt );
@@ -54,7 +95,7 @@ void init_modulo_grafico(){
     GeraFundo();
     P1 = ReadPic( w, "spaceshuttle_bw2.xpm", masc1 );
     P2 = ReadPic( w, "spaceshuttle_bw3.xpm", masc2 );
-    Ms = ReadPic( w, "missiles02.xpm" , masc_missiles );
+    Ms = MountPic( w, samp_xpm , masc_missiles );
     t0.planeta_w =(int) ( (p0.planet_radius/p0.L) *(double)t0.SCR_larg ) ;
     t0.planeta_h = t0.planeta_w;
     t0.planeta_x = t0.SCR_larg/2 - t0.planeta_w/2;
@@ -76,22 +117,17 @@ void graficos_iteracao(){
 	ptr->SCR_pos_x = Tx( ptr->pos_x );
 	ptr->SCR_pos_y = Ty( ptr->pos_y );
     }
-    for( i=0 , ptr=fim->ant ; i<p0.n_proj ; i++ , ptr=ptr->ant ){
-	set_angle( ptr );
-    }
 
     /*WFillArc( Aux , t0.planeta_x,t0.planeta_y  , 0,23040 , t0.planeta_w,t0.planeta_h , 0x5050FF );*/
     SetMask( Aux , masc_planet );
     PutPic( Aux , planeta ,0,0 , t0.planeta_w,t0.planeta_h , t0.planeta_x,t0.planeta_y );
     SetMask( Aux , masc2 );
-    PutPic( Aux , P2 , sprX_nave( jog2->angulo ),0 , 50,50, jog2->SCR_pos_x-25,jog2->SCR_pos_y-25);
+    PutPic( Aux , P2 , sprite_x( jog2->angulo ),0 , 50,50, jog2->SCR_pos_x-25,jog2->SCR_pos_y-25);
     SetMask( Aux , masc1 );
-    PutPic( Aux , P1 , sprX_nave( jog1->angulo ) ,0 , 50,50, jog1->SCR_pos_x-25,jog1->SCR_pos_y-25);
+    PutPic( Aux , P1 , sprite_x( jog1->angulo ) ,0 , 50,50, jog1->SCR_pos_x-25,jog1->SCR_pos_y-25);
     SetMask( Aux , masc_missiles );
-    for( i=0 , ptr=fim->ant ; i<p0.n_proj ; i++ , ptr=ptr->ant ){
-    	PutPic( Aux , Ms ,sprX_mis( ptr->angulo),0 , 26,26, ptr->SCR_pos_x-13,ptr->SCR_pos_y-13);
-	WFillRect( masc_missiles , 0,0 , 26,26 , WNamedColor( "None" ) );
-    }
+    for( i=0 , ptr=fim->ant ; i<p0.n_proj ; i++ , ptr=ptr->ant )
+    	PutPic( Aux , Ms ,0,0 , 40,40, ptr->SCR_pos_x-5,ptr->SCR_pos_y-5);
     UnSetMask( Aux );
 
     /*WCor( Aux , 0xFF0000 ); (parece desnecessario a partir de agora)
@@ -110,48 +146,19 @@ void graficos_iteracao(){
     indice++;
 }
 
-static void set_angle( Cel *ptr ){
-    if( ptr->vel_x > 0 )
-	ptr->angulo = atan( ptr->vel_y / ptr->vel_x );
-    else if( ptr->vel_x == 0){
-	if( ptr->vel_y >= 0 )
-	    ptr->angulo = PI_meios;
-	else
-	    ptr->angulo = -PI_meios;
-    }
-    else
-	ptr->angulo = PI+atan( ptr->vel_y / ptr->vel_x );
-}
-
-static int sprX_nave( double ang ){
+static int sprite_x( double ang ){
     int b;
     if( ang < 0 ){
-	ang *= -f180_PI;
+	ang *= -57.296;
 	ang -= 7.5;
-	b = (int) (ang / 15);
+	b = (int) ang / 15;
 	return 50*b;
     }
     else{
-	ang *= f180_PI;
+	ang *= 57.296;
 	ang -= 7.5;
-	b = (int) (ang / 15);
+	b = (int) ang / 15;
 	return (23-b)*50;
-    }
-}
-
-static int sprX_mis( double ang ){
-    int b;
-    if( ang < 0 ){
-	ang *= -f180_PI;
-	ang -= 7.5;
-	b = (int) (ang / 15);
-	return 26*b;
-    }
-    else{
-	ang *= f180_PI;
-	ang -= 7.5;
-	b = (int) (ang / 15);
-	return (23-b)*26;
     }
 }
 

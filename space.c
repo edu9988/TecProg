@@ -3,7 +3,7 @@
 /* Marcelo Nascimento dos Santos Junior	  No. USP:11222012    */
 /* Gilvane da Silva Sousa		  No. USP:10258726    */
 /*							      */
-/* Projeto - Primeira fase - 22 nov 2019                      */
+/* Projeto - Quarta fase - 02 dez 2019                        */
 /* Curso MAC0216  - Prof. Marco Dimas Gubitoso		      */
 /**************************************************************/
 #include <stdio.h>
@@ -12,35 +12,26 @@
 #include <math.h>
 #include "space.h"
 #include "grafico.h"
+#include "lista.h"
 
-extern constants p0;
-extern tela t0;
+constants p0;
 
-static void string_copy(char *, char *);
-static void *mallocSafe(unsigned int);
+static void corpo_copy( Cel *origem , Cel *destino );
+static void init_border_check();
+static void *mallocSafe( size_t );
 
-
-/*******************************/
-static void border_check();
-extern Corpo *cabecaBodyList;
-extern Corpo *player01;
-extern Corpo *player02;
-
-/********************************/
-
-/*init_modulo_space():
+/*
+init_modulo_space():
 lê do arquivo "entry.dat" os dados do programa fase1.c, conforme
-        especificado em enunciado, e os armazena nas structs p0 e
-body_list
+especificado em enunciado, e os armazena nas structs p0 e
+head
 */
-void init_modulo_space()
-{
-    Corpo *corpoAux = NULL;
-
+void init_modulo_space(){
     double Aspect_Ratio;
     int i;
-
+    Cel *ptr;
     /*	Planet		*/
+    init_lista();
     p0.planet_radius = 5.0e+6;
     p0.planet_mass = 6.0e+30;
     /* Calculos de escala */
@@ -49,76 +40,63 @@ void init_modulo_space()
     Aspect_Ratio = (double)t0.SCR_alt/(double)t0.SCR_larg;
     p0.L = 6*p0.planet_radius;
     p0.H = p0.L*Aspect_Ratio;
+    p0.jogando = 1;
     /*	Spacecraft 1	*/
-    p0.name1 = mallocSafe( (4)*sizeof(char) );
-    string_copy( "Foo" , p0.name1 );
+    jog1 = lista_insere();
+    jog1->mass = 2.0e+4;
+    jog1->size = 5.0e+5;
+    jog1->alive = 1;
+    jog1->pos_x = -1.0e+7;
+    jog1->pos_y = 0.0;
+    jog1->vel_x = 0.0;
+    jog1->vel_y = 1.0e+7;
+    jog1->angulo = 0.0;
+    jog1->acelera = 0;
     /*	Spacecraft 2	*/
-    p0.name2 = mallocSafe( (4)*sizeof(char) );
-    string_copy( "Bar" , p0.name2 );
-
-/*****************************************************************************/
-    cabecaBodyList = mallocSafe(sizeof(Corpo));
-    cabecaBodyList->tipo = 0;
-    cabecaBodyList->prox = NULL;
-    player01 = mallocSafe(sizeof(Corpo));
-    player02 = mallocSafe(sizeof(Corpo));
-
-    player01->mass = 2.0e+4;
-    player01->size = 10.0;
-    player01->alive = 1;
-    player01->pos_x = -1.0e+7;
-    player01->pos_y = 0.0;
-    player01->vel_x = 0.0;
-    player01->vel_y = 1.0e+7;
-    player01->tipo = 1;
-    player01->angulo = 0.0;
-    player01->acelera = 0;
-    player01->prox = NULL;
-    player01->numProjeteis = 10;
-    player01->tempo = 1000;
-
-
-    player02->mass = 2.0e+4;
-    player02->size = 10.0;
-    player02->alive = 1;
-    player02->pos_x = 1.0e+7;
-    player02->pos_y = 1.0e+7;
-    player02->vel_x = 2.0e+6;
-    player02->vel_y = -4.0e+6;
-    player02->tipo = 1;
-    player02->angulo = 0.0;
-    player02->acelera = 0;
-    player02->prox = NULL;
-    player02->numProjeteis = 10;
-    player02->tempo = 1000;
-
-    player01->prox = cabecaBodyList->prox;
-    cabecaBodyList->prox = player01;
-
-    player02->prox = cabecaBodyList->prox;
-    cabecaBodyList->prox = player02;
-
-    for(i=0; i<4; i++)
-        addProjeteis((-8+5*i)*(1.0e+7), (-8+4*i)*(1.0e+6), (8-5*i)*(-1.0e+6), (8 + 4*i)*(-1.0e+5));
-
-    corpoAux = cabecaBodyList->prox;
-
-    while(corpoAux != NULL)
-    {
-        corpoAux->a_x = 0;
-        corpoAux->a_y = 0;
-        corpoAux->angulo = 0.0;
-
-        corpoAux = corpoAux->prox;
+    jog2 = lista_insere();
+    jog2->mass = 2.0e+4;
+    jog2->size = 5.0e+5;
+    jog2->alive = 1;
+    jog2->pos_x = 1.0e+7;
+    jog2->pos_y = 1.0e+7;
+    jog2->vel_x = 2.0e+6;
+    jog2->vel_y = -4.0e+6;
+    jog2->angulo = 0.0;
+    jog2->acelera = 0;
+    /*	Projectiles	*/
+    p0.n_proj = 4;
+    for( i=0; i<p0.n_proj ; i++ ){
+	ptr = lista_insere();
+	ptr->mass = 2.0e+3;
+	ptr->size = 3.0e+5;
+	ptr->alive = 1;
+	ptr->pos_x = -8 + 5*i;
+	ptr->pos_x *= 1.0e+7;
+	ptr->pos_y = -8 + 4*i;
+	ptr->pos_y *= 1.0e+6;
+	ptr->vel_x = 8 - 5*i;
+	ptr->vel_x *= -1.0e+6;
+	ptr->vel_y = 8 + 4*i;
+	ptr->vel_y *= -1.0e+5;
+	ptr->angulo = 0.0;
+	ptr->acelera = 0;
     }
+    init_border_check();
+}
 
-    corpoAux = NULL;
-
-/*****************************************************************************/
-
-    p0.projectiles_lifespan = 0.25;
-
-    border_check();
+/*
+corpo_copy():
+recebe por valor um corpo a e por endereço o corpo b;
+copia no corpo b os valores do corpo a
+*/
+static void corpo_copy( Cel *origem , Cel *destino ){
+    destino->mass = origem->mass;
+    destino->size = origem->size;
+    destino->alive = origem->alive;
+    destino->pos_x = origem->pos_x;
+    destino->pos_y = origem->pos_y;
+    destino->vel_x = origem->vel_x;
+    destino->vel_y = origem->vel_y;
 }
 
 /*
@@ -129,27 +107,189 @@ de tamanho nbytes;
 se malloc retornar NULL, a função imprime mensagem
 de erro e encerra o programa devolvendo valor -1
 */
-static void *mallocSafe(unsigned int nbytes){
+static void *mallocSafe( size_t nbytes ){
     void *pointer;
     pointer = malloc(nbytes);
     if( pointer == NULL ){
-	fprintf(stderr, "Failed to malloc %u bytes\n", nbytes);
+	fprintf(stderr, "Failed to malloc %lu bytes\n", nbytes);
 	exit(-1);
     }
     return pointer;
 }
 
 /*
-string_copy():
-recebe dois ponteiros para char, a e b;
-copia em b, os valores armazenados em a, e por fim
-escreve \0 no final de b
+next_pos():
+realiza os cálculos das próximas posições e velocidades dos n corpos;
+primeiro é calculada a aceleração de todos os corpos devido à força
+gravitacional dos demais e do planeta
+em seguida, é atualizada a posição e velocidade de cada corpo;
+ao calcular as acelerações, se a distância entre dois corpos ou entre
+um corpo e o planeta é menor que o respectivo tamanho (do corpo ou
+do planeta), as acelerações e velocidades desse corpo são zeradas,
+e também o campo alive do corpo recebe valor 0, o que faz com que
+suas posições e velocidades não sejam mais calculadas nem atualizadas
 */
-static void string_copy(char *a, char *b){
-    int i;
-    for( i=0 ; i<strlen(a) ; i++ )
-	b[i] = a[i];
-    b[i] = '\0';
+void next_pos(){
+    double r;
+    Cel *ptr, *aux;
+    for( ptr=fim->ant ; ptr ; ptr=ptr->ant ){/*zera a_x e a_y*/
+	ptr->a_x = 0.0;
+	ptr->a_y = 0.0;
+    }
+    for( ptr=fim->ant ; ptr ; ptr=ptr->ant ){/*calcula aceleracoes*/
+	if( ptr->alive ){/*se alive==0, pula essa iteracao*/
+	    r = pow( ptr->pos_x , 2 ) + pow( ptr->pos_y , 2 );
+	    r = sqrt( r );
+	    if( r <= p0.planet_radius + ptr->size ){
+		ptr->vel_x = 0.0;
+		ptr->vel_y = 0.0;
+		ptr->alive = 0;
+		continue;
+	    }
+	    r = pow( r , 3);
+	    ptr->a_x -= (p0.planet_mass) * ptr->pos_x  / r;
+	    ptr->a_y -= (p0.planet_mass) * ptr->pos_y  / r;
+	    for( aux=ptr->ant ; aux ; aux=aux->ant ){
+		r = pow(aux->pos_x-ptr->pos_x,2)+pow(aux->pos_y-ptr->pos_y , 2);
+		r = sqrt( r );
+		if( r <= ptr->size + aux->size ){
+		    ptr->a_x = 0.0;
+		    ptr->a_y = 0.0;
+		    ptr->vel_x = 0.0;
+		    ptr->vel_y = 0.0;
+		    ptr->alive = 0;
+		    break;
+		}
+		r = pow( r , 3 );
+		ptr->a_x += (aux->mass) * ((aux->pos_x) - (ptr->pos_x)) / r;
+		ptr->a_y += (aux->mass) * ((aux->pos_y) - (ptr->pos_y)) / r;
+	    }
+	    for( aux=ptr->prox ; aux ; aux=aux->prox ){
+		r = pow(aux->pos_x-ptr->pos_x,2)+pow(aux->pos_y-ptr->pos_y , 2);
+		r = sqrt( r );
+		if( r <= ptr->size +aux->size ){
+		    ptr->a_x = 0.0;
+		    ptr->a_y = 0.0;
+		    ptr->vel_x = 0.0;
+		    ptr->vel_y = 0.0;
+		    ptr->alive = 0;
+		    break;
+		}
+		r = pow( r , 3 ) ;
+		ptr->a_x += (aux->mass) * ((aux->pos_x) - (ptr->pos_x)) / r;
+		ptr->a_y += (aux->mass) * ((aux->pos_y) - (ptr->pos_y)) / r;
+	    }
+	    ptr->a_x *= G;
+	    ptr->a_y *= G;
+	}
+    }/* fim de calcula aceleracoes */
+
+    ptr = jog1;
+    if( ptr->acelera ){
+	ptr->a_x += 1.0e+9*cos( ptr->angulo );
+	ptr->a_y += 1.0e+9*sin( ptr->angulo );
+	ptr->acelera = 0;
+    }
+    ptr = jog2;
+    if( ptr->acelera ){
+	ptr->a_x += 1.0e+9*cos( ptr->angulo );
+	ptr->a_y += 1.0e+9*sin( ptr->angulo );
+	ptr->acelera = 0;
+    }
+    for( ptr=fim->ant ; ptr ; ptr=ptr->ant ){	/*atualiza pos, vel*/
+	if( ptr->alive ){/*se alive==0, pula essa etapa*/
+	    ptr->pos_x += (ptr->vel_x)*(p0.delta_t) + ptr->a_x*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_x*/
+	    ptr->pos_y += (ptr->vel_y)*(p0.delta_t) + ptr->a_y*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_y*/
+	    ptr->vel_x += ptr->a_x*(p0.delta_t);
+	    ptr->vel_y += ptr->a_y*(p0.delta_t);
+	}
+    }
+}
+
+/*
+debug_print_constants():
+função para depuração; imprime
+os valores armazenados na constants p0
+*/
+void debug_print_constants(){
+    printf("%f %f %d\n", p0.planet_mass, p0.planet_radius, p0.n_proj);
+}
+
+/*
+debug_print_bodies():
+função para depuração; imprime
+valores armazenados no vetor de corpos bodies
+*/
+void debug_print_bodies(){
+    Cel *ptr;
+    for( ptr=fim->ant ; ptr ; ptr=ptr->ant )
+	printf("%e %e %e %e %e\n", ptr->mass, ptr->pos_x, ptr->pos_y, ptr->vel_x, ptr->vel_y);
+}
+
+/*
+debug_print_positions():
+funcao para depuracao;
+imprime a coordenada x e y da posição de cada um
+dos corpos do vetor head
+*/
+void debug_print_positions(){
+    Cel *ptr;
+    for( ptr=fim->ant ; ptr ; ptr=ptr->ant )
+	printf("%.2e %.2e  ", ptr->pos_x, ptr->pos_y);
+    printf("\n");
+}
+
+/*
+border_control():
+Verifica se há algum corpo fora da tela;
+caso positivo, coloca o corpo de volta na borda oposta,
+a fim de se obter um espaço "toroidal"
+*/
+void border_control(){
+    Cel *ptr;
+    for( ptr=fim->ant ; ptr ; ptr=ptr->ant ){
+	if( ptr->pos_x > p0.L )  /*passou da borda da direita?*/
+	    ptr->pos_x = -p0.L;
+	if( ptr->pos_x < -p0.L ) /*passou da borda da esquerda?*/
+	    ptr->pos_x = p0.L;
+	if( ptr->pos_y > p0.H )  /*passou da borda de cima?*/
+	    ptr->pos_y = -p0.H;
+	if( ptr->pos_y < -p0.H ) /*passou da borda de baixo?*/
+	    ptr->pos_y = p0.H;
+    }
+}
+
+/*
+init_border_check():
+Verifica se há algum corpo fora da tela;
+caso positivo, coloca o corpo de volta, na borda do mesmo lado,
+e verifica se o corpo está "virado" pra fora; se estiver
+virado pra fora, é virado pra dentro;
+*/
+static void init_border_check(){
+    Cel *ptr;
+    for( ptr=fim->ant ; ptr ; ptr=ptr->ant ){
+	if( ptr->pos_x > p0.L ){ /*passou da borda da direita?*/
+	    ptr->pos_x = p0.L;
+	    if( ptr->vel_x > 0 ) /*está virado pra fora?*/
+		ptr->vel_x *= -1;
+	}
+	if( ptr->pos_x < -p0.L ){ /*passou da borda da esquerda?*/
+	    ptr->pos_x = -p0.L;
+	    if( ptr->vel_x < 0 )/*está virado pra fora?*/
+		ptr->vel_x *= -1;
+	}
+	if( ptr->pos_y > p0.H ){ /*passou da borda de cima?*/
+	    ptr->pos_y = p0.H;
+	    if( ptr->vel_y > 0 )/*está virado pra fora?*/
+		ptr->vel_y *= -1;
+	}
+	if( ptr->pos_y < -p0.H ){ /*passou da borda de baixo?*/
+	    ptr->pos_y = -p0.H;
+	    if( ptr->vel_y < 0 )/*está virado pra fora?*/
+		ptr->vel_y *= -1;
+	}
+    }
 }
 
 /*
@@ -157,295 +297,5 @@ termina_modulo_space():
 Libera a memoria alocada pelo modulo atraves de malloc.
 */
 void termina_modulo_space(){
-    free( p0.name1 );
-    p0.name1 = NULL;
-    free( p0.name2 );
-    p0.name2 = NULL;
-    limparLista(cabecaBodyList);
-}
-
-
-
-/************************************************************/
-
-void addObjLista(Corpo *obj)
-{
-    if(cabecaBodyList != NULL)
-    {
-        obj->prox = cabecaBodyList->prox;
-        cabecaBodyList->prox = obj;
-    }
-}
-
-void addProjeteis(double pos_x, double pos_y, double vel_x, double vel_y)
-{
-    Corpo *projetil = mallocSafe(sizeof(Corpo));
-
-    projetil->tipo = 2;
-    projetil->mass = 2.0e+3;
-    projetil->a_x = 0;
-    projetil->a_y = 0;
-    projetil->alive = 1;
-    projetil->size = 3.0;
-    projetil->vel_x = vel_x;
-    projetil->vel_y = vel_y;
-    projetil->pos_x = pos_x;
-    projetil->pos_y = pos_y;
-    projetil->tempo = 2000;
-
-    if(cabecaBodyList != NULL)
-    {
-        projetil->prox = cabecaBodyList->prox;
-        cabecaBodyList->prox = projetil;
-    }
-    else
-        fprintf(stderr, "Erro ao adicionar o projetil!");
-}
-
-void mostrarLista()
-{
-    Corpo *p = cabecaBodyList->prox;
-    int i = 0;
-
-    while(p != NULL)
-    {
-        printf("%d\n", i++);
-        p = p->prox;
-    }
-}
-
-static void border_check()
-{
-    Corpo *obj = cabecaBodyList->prox;
-
-    while(obj != NULL)
-    {
-        if( obj->pos_x > p0.L ) /*passou da borda da direita?*/
-        {
-            obj->pos_x = p0.L;
-            if( obj->vel_x > 0 ) /*está virado pra fora?*/
-                obj->vel_x *= -1;
-        }
-
-        if( obj->pos_x < -p0.L ) /*passou da borda da esquerda?*/
-        {
-            obj->pos_x = -p0.L;
-            if( obj->vel_x < 0 ) /*está virado pra fora?*/
-                obj->vel_x *= -1;
-        }
-        if( obj->pos_y > p0.H ) /*passou da borda de cima?*/
-        {
-            obj->pos_y = p0.H;
-            if( obj->vel_y > 0 )/*está virado pra fora?*/
-                obj->vel_y *= -1;
-        }
-        if( obj->pos_y < -p0.H ) /*passou da borda de baixo?*/
-        {
-            obj->pos_y = -p0.H;
-            if( obj->vel_y < 0 )/*está virado pra fora?*/
-                obj->vel_y *= -1;
-        }
-
-        obj = obj->prox;
-    }
-
-    obj = NULL;
-
-}
-
-void borderControl()
-{
-    Corpo *obj = cabecaBodyList->prox;
-
-    while (obj != NULL)
-    {
-        if(obj->pos_x > p0.L )  /*passou da borda da direita?*/
-            obj->pos_x = -p0.L;
-        if(obj->pos_x < -p0.L ) /*passou da borda da esquerda?*/
-            obj->pos_x = p0.L;
-        if(obj->pos_y > p0.H )  /*passou da borda de cima?*/
-            obj->pos_y = -p0.H;
-        if(obj->pos_y < -p0.H ) /*passou da borda de baixo?*/
-            obj->pos_y = p0.H;
-
-        obj = obj->prox;
-    }
-}
-
-void nextPos()
-{
-    double r;
-    int i = 0;
-
-    Corpo *obj = NULL;
-    Corpo *aux = NULL;
-    obj = cabecaBodyList->prox;
-
-
-    while (obj != NULL) /*zera a_x e a_y*/
-    {
-        obj->a_x = 0.0;
-        obj->a_y = 0.0;
-        obj = obj->prox;
-    }
-
-    obj = cabecaBodyList->prox;
-
-    while (obj != NULL ) /*calcula aceleracoes*/
-    {
-        i= 0;
-        if(obj->alive) /*se alive==0, pula essa iteracao*/
-        {
-
-            r = pow(obj->pos_x, 2) + pow(obj->pos_y , 2);
-
-            if( r <= pow( p0.planet_radius ,2 ) )
-            {
-                obj->vel_x = 0.0;
-                obj->vel_y = 0.0;
-                obj->alive = 0;
-                continue;
-            }
-
-            r = pow( r , 1.5);
-            obj->a_x -= (p0.planet_mass) * obj->pos_x  / r;
-            obj->a_y -= (p0.planet_mass) * obj->pos_y  / r;
-
-            aux = cabecaBodyList->prox;
-
-            while (aux != NULL)
-            {
-                if(aux == obj)
-                {
-                }
-                else
-                {
-                    r = pow(aux->pos_x - obj->pos_x,2)+pow(aux->pos_y - obj->pos_y , 2);
-
-                    if( r <= pow(obj->size, 2) )
-                    {
-                        obj->a_x = 0.0;
-                        obj->a_y = 0.0;
-                        obj->vel_x = 0.0;
-                        obj->vel_y = 0.0;
-                        obj->alive = 0;
-                        break;
-                    }
-
-                    r = pow( r , 1.5) ;
-
-                    obj->a_x += (aux->mass) * ((aux->pos_x) - (obj->pos_x)) / r;
-                    obj->a_y += (aux->mass) * ((aux->pos_y) - (obj->pos_y)) / r;
-
-                }
-                aux = aux->prox;
-            }
-
-            obj->a_x *= G;
-            obj->a_y *= G;
-        }
-        obj = obj->prox;
-    } /* fim de calcula aceleracoes gravitacionais*/
-
-
-    if( player01->acelera)
-    {
-        player01->a_x += 1.0e+9*cos( player01->angulo );
-        player01->a_y += 1.0e+9*sin( player01->angulo );
-        player01->acelera = 0;
-    }
-
-    if( player02->acelera)
-    {
-        player02->a_x += 1.0e+9*cos( player02->angulo );
-        player02->a_y += 1.0e+9*sin( player02->angulo );
-        player02->acelera = 0;
-    }
-
-    obj = cabecaBodyList->prox;
-
-    while(obj != NULL) /*atualiza pos, vel*/
-    {
-        if( obj->alive)
-        {/*se alive==0, pula essa etapa*/
-            obj->pos_x += (obj->vel_x)*(p0.delta_t) + obj->a_x*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_x*/
-            obj->pos_y += (obj->vel_y)*(p0.delta_t) + obj->a_y*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_y*/
-            obj->vel_x += obj->a_x*(p0.delta_t);
-            obj->vel_y += obj->a_y*(p0.delta_t);
-        }
-        obj = obj->prox;
-    }
-}
-
-void limparLista(Corpo *obj)
-{
-    if(obj->prox != NULL)
-        limparLista(obj->prox);
-
-    if(obj != NULL)
-        free(obj);
-}
-
-void atirarProjetil(Corpo *objAtirador)
-{
-    if(objAtirador->numProjeteis > 0)
-    addProjeteis(objAtirador->pos_x * 1.2, objAtirador->pos_y * 1.2, objAtirador->vel_x + cos(objAtirador->angulo)*(0.3e8),
-                 objAtirador->vel_y + sin(objAtirador->angulo) * (0.3e8));
-}
-
-void interacaoProjeteis()
-{
-    Corpo *projetil = cabecaBodyList->prox;
-    Corpo *aux = NULL;
-
-    while (projetil != NULL)
-    {
-        if(projetil->tipo == 2)
-        {
-            projetil->tempo--;
-
-            if(projetil->tempo <= 0)
-            {
-                aux = projetil;
-            }
-
-        }
-        projetil = projetil->prox;
-
-        if(aux != NULL)
-            deletaObjeto(aux);
-
-        aux = NULL;
-    }
-
-
-    if(player01->numProjeteis <= 0)
-        player01->tempo--;
-    if(player02->numProjeteis <= 0)
-        player02->tempo--;
-    if(player01->tempo <= 0)
-    {
-        player01->tempo = 1000;
-        player01->numProjeteis = 10;
-    }
-    if(player02->tempo <= 0)
-    {
-        player02->tempo = 1000;
-        player02->numProjeteis = 10;
-    }
-}
-
-void deletaObjeto(Corpo *obj)
-{
-    Corpo *p = NULL;
-
-    p = cabecaBodyList;
-
-    while(p->prox != obj)
-    {
-        p = p->prox;
-    }
-
-    p->prox = obj->prox;
-    free(obj);
+    lista_Destroy();
 }

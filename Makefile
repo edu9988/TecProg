@@ -7,7 +7,7 @@ CLIBS = -lm -lXpm -lX11
 run: $(EXECUTABLE)
 	./$^ 0.001
 
-$(EXECUTABLE): main.o space.o xwc.o grafico.o teclado.o
+$(EXECUTABLE): fase4.o space.o xwc.o grafico.o teclado.o lista.o
 	$(CC) $(CFLAGS) $^ -o $@ $(CLIBS)
 
 clean:

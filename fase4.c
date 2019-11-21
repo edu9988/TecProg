@@ -3,7 +3,7 @@
 /* Marcelo Nascimento dos Santos Junior	  No. USP:11222012    */
 /* Gilvane da Silva Sousa		  No. USP:10258726    */
 /*							      */
-/* Projeto - Terceira fase - 22 nov 2019                      */
+/* Projeto - Quarta fase - 02 dez 2019			      */
 /* Curso MAC0216  - Prof. Marco Dimas Gubitoso		      */
 /**************************************************************/
 #include <unistd.h>
@@ -12,21 +12,16 @@
 #include <string.h>
 #include <math.h>
 #include "space.h"
-#include "xwc.h"
 #include "grafico.h"
 #include "/usr/include/X11/keysym.h"
 #include "teclado.h"
-
-constants p0;
-corpo *body_list;
-WINDOW *w;
+#include "lista.h"
 
 /*
-Programa fase3.c
+Programa fase4.c
 <DESCRIÇÃO>
 */
 int main(int argc, char *argv[]){
-    unsigned int tecla;
 
     /* tratar argumentos */
     if( argc == 1 ){/*sem argumentos, o programa recebe delta_t por scanf*/
@@ -44,16 +39,14 @@ int main(int argc, char *argv[]){
     /*Execucao*/
     init_modulo_space();
     init_modulo_grafico();
-    while(1){
+
+    while( p0.jogando ){
 	graficos_iteracao();
 	next_pos();
 	border_control();
 	usleep(2000);
 	interacao_teclado();
     }
-    WCor(w, WNamedColor("gold") );
-    while( !WCheckKBD(w) )
-	WPrint( w , 20 , 200 , "Pressione uma tecla para terminar:" );
     /*fim Execucao*/
 
     termina_modulo_grafico();
