@@ -33,39 +33,43 @@ void interacao_teclado(){
 		vetor[botao] = 1;
 	}
     }
-    if( vetor[0] ){ /* letra a */
-	jog2->angulo += 1.0e-1;
+    if( jog2 ){
+	if( vetor[0] ){ /* letra a */
+	    jog2->angulo += 1.0e-1;
+	}
+	if( vetor[18] ){ /* letra s */
+	    disparo( jog2 );
+	}
+	if( vetor[3] ){ /* letra d */
+	    jog2->angulo -= 1.0e-1;
+	}
+	if( vetor[22] ){ /* letra w */
+	    jog2->acelera = 1;
+	}
+	if( jog2->angulo > 6.2832 )
+	    jog2->angulo -= 6.2832;
+	if( jog2->angulo < -6.2832 )
+	    jog2->angulo += 6.2832;
     }
-    if( vetor[18] ){ /* letra s */
-	disparo( jog2 );
-    }
-    if( vetor[3] ){ /* letra d */
-	jog2->angulo -= 1.0e-1;
-    }
-    if( vetor[22] ){ /* letra w */
-	jog2->acelera = 1;
-    }
-    if( vetor[9] ){ /* letra j */
-	jog1->angulo += 1.0e-1;
-    }
-    if( vetor[10] ){ /* letra k */
-	disparo( jog1 );
-    }
-    if( vetor[11] ){ /* letra l */
-	jog1->angulo -= 1.0e-1;
-    }
-    if( vetor[8] ){ /* letra i */
-	jog1->acelera = 1;
+    if( jog1 ){
+	if( vetor[9] ){ /* letra j */
+	    jog1->angulo += 1.0e-1;
+	}
+	if( vetor[10] ){ /* letra k */
+	    disparo( jog1 );
+	}
+	if( vetor[11] ){ /* letra l */
+	    jog1->angulo -= 1.0e-1;
+	}
+	if( vetor[8] ){ /* letra i */
+	    jog1->acelera = 1;
+	}
+	if( jog1->angulo > 6.2832 )
+	    jog1->angulo -= 6.2832;
+	if( jog1->angulo < -6.2832 )
+	    jog1->angulo += 6.2832;
     }
     if( vetor[16] ){ /* letra q */
-	p0.jogando = 0;
+        p0.jogando = 0;
     }
-    if( jog1->angulo > 6.2832 )
-	jog1->angulo -= 6.2832;
-    if( jog1->angulo < -6.2832 )
-	jog1->angulo += 6.2832;
-    if( jog2->angulo > 6.2832 )
-	jog2->angulo -= 6.2832;
-    if( jog2->angulo < -6.2832 )
-	jog2->angulo += 6.2832;
 }

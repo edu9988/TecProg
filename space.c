@@ -19,6 +19,7 @@ constants p0;
 static void corpo_copy( Cel *origem , Cel *destino );
 static void init_border_check();
 static void *mallocSafe( size_t );
+static void explode( Cel *vitima );
 
 /*
 init_modulo_space():
@@ -137,18 +138,17 @@ void next_pos(){
 		r = pow(aux->pos_x-ptr->pos_x,2)+pow(aux->pos_y-ptr->pos_y , 2);
 		r = sqrt( r );
 		if( r <= ptr->size + aux->size ){
-		    ptr->a_x = 0.0;
-		    ptr->a_y = 0.0;
-		    ptr->vel_x = 0.0;
-		    ptr->vel_y = 0.0;
 		    ptr->alive = 0;
+		    aux->alive = 0;
 		    break;
 		}
 		r = pow( r , 3 );
 		ptr->a_x += (aux->mass) * ((aux->pos_x) - (ptr->pos_x)) / r;
 		ptr->a_y += (aux->mass) * ((aux->pos_y) - (ptr->pos_y)) / r;
+		aux->a_x += (ptr->mass) * ((ptr->pos_x) - (aux->pos_x)) / r;
+		aux->a_y += (ptr->mass) * ((ptr->pos_y) - (aux->pos_y)) / r;
 	    }
-	    for( aux=ptr->prox ; aux ; aux=aux->prox ){
+	    /*for( aux=ptr->prox ; aux ; aux=aux->prox ){
 		r = pow(aux->pos_x-ptr->pos_x,2)+pow(aux->pos_y-ptr->pos_y , 2);
 		r = sqrt( r );
 		if( r <= ptr->size +aux->size ){
@@ -162,20 +162,20 @@ void next_pos(){
 		r = pow( r , 3 ) ;
 		ptr->a_x += (aux->mass) * ((aux->pos_x) - (ptr->pos_x)) / r;
 		ptr->a_y += (aux->mass) * ((aux->pos_y) - (ptr->pos_y)) / r;
-	    }
+	    }*/
 	    ptr->a_x *= G;
 	    ptr->a_y *= G;
 	}
     }/* fim de calcula aceleracoes */
 
     ptr = jog1;
-    if( ptr->acelera ){
+    if( ptr && ptr->acelera ){
 	ptr->a_x += 1.0e+9*cos( ptr->angulo );
 	ptr->a_y += 1.0e+9*sin( ptr->angulo );
 	ptr->acelera = 0;
     }
     ptr = jog2;
-    if( ptr->acelera ){
+    if( ptr && ptr->acelera ){
 	ptr->a_x += 1.0e+9*cos( ptr->angulo );
 	ptr->a_y += 1.0e+9*sin( ptr->angulo );
 	ptr->acelera = 0;
@@ -187,6 +187,8 @@ void next_pos(){
 	    ptr->vel_x += ptr->a_x*(p0.delta_t);
 	    ptr->vel_y += ptr->a_y*(p0.delta_t);
 	}
+	else
+	    explode( ptr );
     }
 }
 
@@ -301,4 +303,14 @@ void disparo( Cel *origem ){
     new->vel_y += 3.0e+7*sin( new->angulo );
     new->acelera = 0;
     p0.n_proj++;
+}
+
+static void explode( Cel *vitima ){
+    if( vitima == jog1 )
+	jog1 = NULL;
+    else if( vitima == jog2 )
+	jog2 = NULL;
+    else
+	p0.n_proj--;
+    lista_remove( vitima );
 }

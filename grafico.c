@@ -23,7 +23,7 @@ static int Tx(double);
 static int Ty(double);
 static int sprX_nave( double );
 static int sprX_mis( double );
-static void set_angle( Cel* );
+/*static void set_angle( Cel* );*/
 
 WINDOW *w;
 tela t0;
@@ -50,7 +50,7 @@ void init_modulo_grafico(){
     limpa = NewMask( w , 50 , 50 );
     fundo1 = NewPic( w , t0.SCR_larg,t0.SCR_alt );
     fundo2 = NewPic( w , t0.SCR_larg,t0.SCR_alt );
-    planeta = ReadPic( w , "deathstar.xpm" , masc_planet );
+    planeta = ReadPic( w , "planeta1.xpm" , masc_planet );
     GeraFundo();
     P1 = ReadPic( w, "spaceshuttle_bw2.xpm", masc1 );
     P2 = ReadPic( w, "spaceshuttle_bw3.xpm", masc2 );
@@ -76,17 +76,21 @@ void graficos_iteracao(){
 	ptr->SCR_pos_x = Tx( ptr->pos_x );
 	ptr->SCR_pos_y = Ty( ptr->pos_y );
     }
-    for( i=0 , ptr=fim->ant ; i<p0.n_proj ; i++ , ptr=ptr->ant ){
+    /*for( i=0 , ptr=fim->ant ; i<p0.n_proj ; i++ , ptr=ptr->ant ){
 	set_angle( ptr );
-    }
+    }*/
 
     /*WFillArc( Aux , t0.planeta_x,t0.planeta_y  , 0,23040 , t0.planeta_w,t0.planeta_h , 0x5050FF );*/
     SetMask( Aux , masc_planet );
     PutPic( Aux , planeta ,0,0 , t0.planeta_w,t0.planeta_h , t0.planeta_x,t0.planeta_y );
-    SetMask( Aux , masc2 );
-    PutPic( Aux , P2 , sprX_nave( jog2->angulo ),0 , 50,50, jog2->SCR_pos_x-25,jog2->SCR_pos_y-25);
-    SetMask( Aux , masc1 );
-    PutPic( Aux , P1 , sprX_nave( jog1->angulo ) ,0 , 50,50, jog1->SCR_pos_x-25,jog1->SCR_pos_y-25);
+    if( jog2 ){
+	SetMask( Aux , masc2 );
+	PutPic( Aux , P2 , sprX_nave( jog2->angulo ),0 , 50,50, jog2->SCR_pos_x-25,jog2->SCR_pos_y-25);
+    }
+    if( jog1 ){
+	SetMask( Aux , masc1 );
+	PutPic( Aux , P1 , sprX_nave( jog1->angulo ) ,0 , 50,50, jog1->SCR_pos_x-25,jog1->SCR_pos_y-25);
+    }
     SetMask( Aux , masc_missiles );
     for( i=0 , ptr=fim->ant ; i<p0.n_proj ; i++ , ptr=ptr->ant ){
     	PutPic( Aux , Ms ,sprX_mis( ptr->angulo),0 , 26,26, ptr->SCR_pos_x-13,ptr->SCR_pos_y-13);
@@ -110,7 +114,7 @@ void graficos_iteracao(){
     indice++;
 }
 
-static void set_angle( Cel *ptr ){
+/*static void set_angle( Cel *ptr ){
     if( ptr->vel_x > 0 )
 	ptr->angulo = atan( ptr->vel_y / ptr->vel_x );
     else if( ptr->vel_x == 0){
@@ -121,7 +125,7 @@ static void set_angle( Cel *ptr ){
     }
     else
 	ptr->angulo = PI+atan( ptr->vel_y / ptr->vel_x );
-}
+}*/
 
 static int sprX_nave( double ang ){
     int b;
