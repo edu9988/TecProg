@@ -36,7 +36,9 @@ void interacao_teclado(){
     if( vetor[0] ){ /* letra a */
 	jog2->angulo += 1.0e-1;
     }
-    /*if( vetor[18] ){  letra s */
+    if( vetor[18] ){ /* letra s */
+	disparo( jog2 );
+    }
     if( vetor[3] ){ /* letra d */
 	jog2->angulo -= 1.0e-1;
     }
@@ -46,7 +48,9 @@ void interacao_teclado(){
     if( vetor[9] ){ /* letra j */
 	jog1->angulo += 1.0e-1;
     }
-    /*if( vetor[10] ){  letra k */
+    if( vetor[10] ){ /* letra k */
+	disparo( jog1 );
+    }
     if( vetor[11] ){ /* letra l */
 	jog1->angulo -= 1.0e-1;
     }

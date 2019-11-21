@@ -64,23 +64,7 @@ void init_modulo_space(){
     jog2->angulo = 0.0;
     jog2->acelera = 0;
     /*	Projectiles	*/
-    p0.n_proj = 4;
-    for( i=0; i<p0.n_proj ; i++ ){
-	ptr = lista_insere();
-	ptr->mass = 2.0e+3;
-	ptr->size = 3.0e+5;
-	ptr->alive = 1;
-	ptr->pos_x = -8 + 5*i;
-	ptr->pos_x *= 1.0e+7;
-	ptr->pos_y = -8 + 4*i;
-	ptr->pos_y *= 1.0e+6;
-	ptr->vel_x = 8 - 5*i;
-	ptr->vel_x *= -1.0e+6;
-	ptr->vel_y = 8 + 4*i;
-	ptr->vel_y *= -1.0e+5;
-	ptr->angulo = 0.0;
-	ptr->acelera = 0;
-    }
+    p0.n_proj = 0;
     init_border_check();
 }
 
@@ -298,4 +282,23 @@ Libera a memoria alocada pelo modulo atraves de malloc.
 */
 void termina_modulo_space(){
     lista_Destroy();
+}
+
+void disparo( Cel *origem ){
+    Cel *new;
+    new = lista_insere();
+    new->mass = 2.0e+3;
+    new->size = 3.0e+5;
+    new->alive = 1;
+    new->pos_x = origem->pos_x;
+    new->pos_x += (origem->size)*2.0*cos(origem->angulo);
+    new->pos_y = origem->pos_y;
+    new->pos_y += (origem->size)*2.0*sin(origem->angulo);
+    new->vel_x = origem->vel_x;
+    new->vel_y = origem->vel_y;
+    new->angulo = origem->angulo;
+    new->vel_x += 3.0e+7*cos( new->angulo );
+    new->vel_y += 3.0e+7*sin( new->angulo );
+    new->acelera = 0;
+    p0.n_proj++;
 }
