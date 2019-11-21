@@ -50,7 +50,7 @@ void init_modulo_grafico(){
     limpa = NewMask( w , 50 , 50 );
     fundo1 = NewPic( w , t0.SCR_larg,t0.SCR_alt );
     fundo2 = NewPic( w , t0.SCR_larg,t0.SCR_alt );
-    planeta = ReadPic( w , "planeta1.xpm" , masc_planet );
+    planeta = ReadPic( w , "deathstar.xpm" , masc_planet );
     GeraFundo();
     P1 = ReadPic( w, "spaceshuttle_bw2.xpm", masc1 );
     P2 = ReadPic( w, "spaceshuttle_bw3.xpm", masc2 );
