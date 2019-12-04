@@ -45,9 +45,9 @@ int main(){
     WPrint( w , 200 , 300 , "Pressione uma tecla nao-alfabetica para terminar:" );
     while( jogando ){
 	kb_press( w );
+	kb_release( w );
 	for( i=0 ; i<26 ; i++)
 	    PintaTecla( w , i , pressionadas[i] );
-	kb_release( w );
     }
 
     /*finalizacao*/
@@ -59,14 +59,10 @@ int main(){
 void kb_scan( WINDOW *jan ){
     int i;
     unsigned int botao;
-    for( i=0 ; i<26 ; i++){
-	if( pressionadas[i] )
-	    pressionadas[i] -= 1;
-    }
     for( i=0 ; leitor( jan , &botao ) && i<8 ; i++ ){ /*se digitaram algo */
         if( botao >= 0x61 && botao <= 0x7a ){ /*a-z*/
 	    botao -= 97;
-	    pressionadas[botao] = 1600;
+	    pressionadas[botao] = 1;
 	}
 	else
 	    jogando = 0;
@@ -80,6 +76,7 @@ void kb_release( WINDOW *jan ){
         if( botao >= 0x61 && botao <= 0x7a ){ /*a-z*/
 	    botao -= 97;
 	    pressionadas[botao] = 0;
+	    printf( "tecla %d solta\n" , botao );
 	}
     }
 }
@@ -87,14 +84,11 @@ void kb_release( WINDOW *jan ){
 void kb_press( WINDOW *jan ){
     int i;
     unsigned int botao;
-    for( i=0 ; i<26 ; i++){
-	if( pressionadas[i] )
-	    pressionadas[i] -= 1;
-    }
     for( i=0 ; aperta( jan , &botao ) && i<8 ; i++ ){ /*se digitaram algo */
         if( botao >= 0x61 && botao <= 0x7a ){ /*a-z*/
 	    botao -= 97;
-	    pressionadas[botao] = 2048;
+	    pressionadas[botao] = 1;
+	    printf( "tecla %d pressionada\n" , botao );
 	}
 	else
 	    jogando = 0;
