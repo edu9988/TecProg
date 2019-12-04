@@ -41,7 +41,7 @@ header file com a interface usada pelo programa fase4.c
         double angulo;
         int acelera;
         Cel *ant;
-        Cel *prox;
+	Cel *prox;
     };
 
     /*

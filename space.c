@@ -166,7 +166,7 @@ void next_pos(){
 	    ptr->a_x *= G;
 	    ptr->a_y *= G;
 	}
-    }/* fim de calcula aceleracoes */
+    }/* fim de calcula aceleracoes gravitacionais */
 
     ptr = jog1;
     if( ptr && ptr->acelera ){
@@ -179,7 +179,8 @@ void next_pos(){
 	ptr->a_x += 1.0e+9*cos( ptr->angulo );
 	ptr->a_y += 1.0e+9*sin( ptr->angulo );
 	ptr->acelera = 0;
-    }
+    } /*fim de calcula aceleracoes*/
+
     for( ptr=fim->ant ; ptr ; ptr=ptr->ant ){	/*atualiza pos, vel*/
 	if( ptr->alive ){/*se alive==0, pula essa etapa*/
 	    ptr->pos_x += (ptr->vel_x)*(p0.delta_t) + ptr->a_x*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_x*/

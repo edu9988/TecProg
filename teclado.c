@@ -18,15 +18,15 @@
 
 extern WINDOW *w;
 
-unsigned int tecla, botao, vetor[26];
+unsigned int /*tecla,*/ botao, vetor[26];
 
 void interacao_teclado(){
     int i;
     for( i=0 ; i<26 ; i++ )
 	vetor[i] = 0;
-    for( i=0 ; WCheckKBD(w) && i<8 ; i++ ){ /*se digitaram algo */
-        tecla = WGetKey(w);
-        botao = WLastKeySym();
+    for( i=0 ; leitor( w , &botao) && i<8 ; i++ ){ /*se digitaram algo */
+        /*tecla = WGetKey(w);
+        botao = WLastKeySym();*/
         if( botao >= 0x61 && botao <= 0x7a ){ /*a-z*/
 	    botao -= 97;
 	    if( !vetor[botao] )

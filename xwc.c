@@ -329,11 +329,56 @@ KeyCode WGetKey(WINDOW *w)
 
   XWindowEvent(display,w->ptr.window, KeyPressMask|KeyReleaseMask, &xev);
   key = XkbKeycodeToKeysym(display, xev.xkey.keycode,
-						   0, xev.xkey.state & ShiftMask ? 1 : 0);
+			    0, xev.xkey.state & ShiftMask ? 1 : 0);
   return xev.xkey.keycode;
 }
 
 KeySym WLastKeySym()
 {
   return key;
+}
+
+int leitor( WINDOW *w , unsigned int *botao ){
+    int r;
+    XEvent xev;
+
+    r = XCheckWindowEvent( display, w->ptr.window, KeyPressMask|KeyReleaseMask, &xev );
+    if( r ){
+	XPutBackEvent( display , &xev );
+	XWindowEvent(display,w->ptr.window, KeyPressMask|KeyReleaseMask, &xev);
+	key = XkbKeycodeToKeysym(display, xev.xkey.keycode,
+			    0, xev.xkey.state & ShiftMask ? 1 : 0);
+	*botao = key;
+    }
+    return r;;
+}
+
+int aperta( WINDOW *w , unsigned int *botao ){
+    int r;
+    XEvent xev;
+
+    r = XCheckWindowEvent( display, w->ptr.window, KeyPressMask, &xev );
+    if( r ){
+	XPutBackEvent( display , &xev );
+	XWindowEvent(display,w->ptr.window, KeyPressMask, &xev);
+	key = XkbKeycodeToKeysym(display, xev.xkey.keycode,
+			    0, xev.xkey.state & ShiftMask ? 1 : 0);
+    }
+    *botao = key;
+    return r;;
+}
+
+int solta( WINDOW *w , unsigned int *botao ){
+    int r;
+    XEvent xev;
+
+    r = XCheckWindowEvent( display, w->ptr.window, KeyReleaseMask, &xev );
+    if( r ){
+	XPutBackEvent( display , &xev );
+	XWindowEvent(display,w->ptr.window, KeyReleaseMask, &xev);
+	key = XkbKeycodeToKeysym(display, xev.xkey.keycode,
+			    0, xev.xkey.state & ShiftMask ? 1 : 0);
+    }
+    *botao = key;
+    return r;;
 }

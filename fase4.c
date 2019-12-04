@@ -44,8 +44,8 @@ int main(int argc, char *argv[]){
 	graficos_iteracao();
 	next_pos();
 	border_control();
-	usleep(2000);
 	interacao_teclado();
+	usleep(2000);
     }
     /*fim Execucao*/
 

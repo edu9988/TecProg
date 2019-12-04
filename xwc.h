@@ -139,3 +139,7 @@ KeyCode WGetKey(WINDOW *w);
 
 /* Retorna o KeySym da última tecla lida */
 KeySym WLastKeySym();
+
+int leitor( WINDOW *w , unsigned int *botao );
+int aperta( WINDOW *w , unsigned int *botao );
+int solta( WINDOW *w , unsigned int *botao );
