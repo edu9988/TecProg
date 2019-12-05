@@ -47,7 +47,7 @@ void init_modulo_space(){
     jog1 = lista_insere();
     jog1->mass = 2.0e+4;
     jog1->size = 5.0e+5;
-    jog1->alive = 1;
+    jog1->alive = 100;
     jog1->pos_x = -1.0e+7;
     jog1->pos_y = 0.0;
     jog1->vel_x = 0.0;
@@ -58,7 +58,7 @@ void init_modulo_space(){
     jog2 = lista_insere();
     jog2->mass = 2.0e+4;
     jog2->size = 5.0e+5;
-    jog2->alive = 1;
+    jog2->alive = 100;
     jog2->pos_x = 1.0e+7;
     jog2->pos_y = 1.0e+7;
     jog2->vel_x = 2.0e+6;
@@ -123,13 +123,11 @@ void next_pos(){
 	ptr->a_y = 0.0;
     }
     for( ptr=fim->ant ; ptr ; ptr=ptr->ant ){/*calcula aceleracoes*/
-	if( ptr->alive ){/*se alive==0, pula essa iteracao*/
+	if( ptr->alive == 100 ){/*se alive!=100, pula essa iteracao*/
 	    r = pow( ptr->pos_x , 2 ) + pow( ptr->pos_y , 2 );
 	    r = sqrt( r );
 	    if( r <= p0.planet_radius + ptr->size ){
-		ptr->vel_x = 0.0;
-		ptr->vel_y = 0.0;
-		ptr->alive = 0;
+		ptr->alive -= 1;
 		continue;
 	    }
 	    r = pow( r , 3);
@@ -139,8 +137,8 @@ void next_pos(){
 		r = pow(aux->pos_x-ptr->pos_x,2)+pow(aux->pos_y-ptr->pos_y , 2);
 		r = sqrt( r );
 		if( r <= ptr->size + aux->size ){
-		    ptr->alive = 0;
-		    aux->alive = 0;
+		    ptr->alive -= 1;
+		    aux->alive -= 1;
 		    break;
 		}
 		r = pow( r , 3 );
@@ -151,17 +149,19 @@ void next_pos(){
 	    }
 	    ptr->a_x *= G;
 	    ptr->a_y *= G;
-	}/* end if( ptr->alive) */
+	}/* end if( ptr->alive == 100 ) */
+	else
+	    ptr->alive -= 1;
     }/* fim de calcula aceleracoes gravitacionais */
 
     ptr = jog1;
-    if( ptr && ptr->acelera ){
+    if( ptr && ptr->alive == 100 && ptr->acelera ){
 	ptr->a_x += 1.0e+9*cos( ptr->angulo );
 	ptr->a_y += 1.0e+9*sin( ptr->angulo );
 	ptr->acelera = 0;
     }
     ptr = jog2;
-    if( ptr && ptr->acelera ){
+    if( ptr && ptr->alive == 100 && ptr->acelera ){
 	ptr->a_x += 1.0e+9*cos( ptr->angulo );
 	ptr->a_y += 1.0e+9*sin( ptr->angulo );
 	ptr->acelera = 0;
@@ -278,7 +278,7 @@ void disparo( Cel *origem ){
     new = lista_insere();
     new->mass = 2.0e+3;
     new->size = 3.0e+5;
-    new->alive = 1;
+    new->alive = 100;
     new->pos_x = origem->pos_x;
     new->pos_x += (origem->size)*2.0*cos(origem->angulo);
     new->pos_y = origem->pos_y;
