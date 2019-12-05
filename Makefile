@@ -5,7 +5,7 @@ CLIBS = -lm -lXpm -lX11
 ###########################################################################
 
 run: $(EXECUTABLE)
-	./$^ 0.001
+	./$^
 
 $(EXECUTABLE): fase4.o space.o xwc.o grafico.o teclado.o lista.o
 	$(CC) $(CFLAGS) $^ -o $@ $(CLIBS)
