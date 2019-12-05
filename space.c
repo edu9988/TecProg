@@ -33,6 +33,7 @@ void init_modulo_space(){
     Cel *ptr;
     /*	Planet		*/
     init_lista();
+    p0.delta_t = 0.001;
     p0.planet_radius = 5.0e+6;
     p0.planet_mass = 6.0e+30;
     /* Calculos de escala */
@@ -148,24 +149,9 @@ void next_pos(){
 		aux->a_x += (ptr->mass) * ((ptr->pos_x) - (aux->pos_x)) / r;
 		aux->a_y += (ptr->mass) * ((ptr->pos_y) - (aux->pos_y)) / r;
 	    }
-	    /*for( aux=ptr->prox ; aux ; aux=aux->prox ){
-		r = pow(aux->pos_x-ptr->pos_x,2)+pow(aux->pos_y-ptr->pos_y , 2);
-		r = sqrt( r );
-		if( r <= ptr->size +aux->size ){
-		    ptr->a_x = 0.0;
-		    ptr->a_y = 0.0;
-		    ptr->vel_x = 0.0;
-		    ptr->vel_y = 0.0;
-		    ptr->alive = 0;
-		    break;
-		}
-		r = pow( r , 3 ) ;
-		ptr->a_x += (aux->mass) * ((aux->pos_x) - (ptr->pos_x)) / r;
-		ptr->a_y += (aux->mass) * ((aux->pos_y) - (ptr->pos_y)) / r;
-	    }*/
 	    ptr->a_x *= G;
 	    ptr->a_y *= G;
-	}
+	}/* end if( ptr->alive) */
     }/* fim de calcula aceleracoes gravitacionais */
 
     ptr = jog1;

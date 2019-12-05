@@ -312,6 +312,7 @@ void InitKBD(WINDOW *w)
 }
 
 KeySym key;
+XEvent xeva;
 
 int WCheckKBD(WINDOW *w)
 {
@@ -353,30 +354,39 @@ int leitor( WINDOW *w , unsigned int *botao ){
     return r;;
 }
 
-int aperta( WINDOW *w , unsigned int *botao ){
+int Waperta( WINDOW *w , unsigned int *botao ){
     int r;
-    XEvent xev;
-
-    r = XCheckWindowEvent( display, w->ptr.window, KeyPressMask, &xev );
+    r = XCheckWindowEvent( display, w->ptr.window, KeyPressMask, &xeva );
     if( r ){
-	/*XPutBackEvent( display , &xev );
-	XWindowEvent(display,w->ptr.window, KeyPressMask, &xev);*/
-	*botao = XkbKeycodeToKeysym(display, xev.xkey.keycode,
-			    0, xev.xkey.state & ShiftMask ? 1 : 0);
+	*botao = XkbKeycodeToKeysym(display, xeva.xkey.keycode,
+			    0, xeva.xkey.state & ShiftMask ? 1 : 0);
     }
-    return r;;
+    return r;
 }
 
-int solta( WINDOW *w , unsigned int *botao ){
+int Wsolta( WINDOW *w , unsigned int *botao ){
     int r;
-    XEvent xev;
-
-    r = XCheckWindowEvent( display, w->ptr.window, KeyReleaseMask, &xev );
+    r = XCheckWindowEvent( display, w->ptr.window, KeyReleaseMask, &xeva );
     if( r ){
-	/*XPutBackEvent( display , &xev );
-	XWindowEvent(display,w->ptr.window, KeyReleaseMask, &xev);*/
-	*botao = XkbKeycodeToKeysym(display, xev.xkey.keycode,
-			    0, xev.xkey.state & ShiftMask ? 1 : 0);
+	*botao = XkbKeycodeToKeysym(display, xeva.xkey.keycode,
+			    0, xeva.xkey.state & ShiftMask ? 1 : 0);
     }
-    return r;;
+    return r;
+}
+
+int WChecaKBD( WINDOW *w ){
+    int r;
+    if( XCheckWindowEvent( display,w->ptr.window, KeyPressMask, &xeva ) )
+	return 1;
+    else if( XCheckWindowEvent( display,w->ptr.window, KeyReleaseMask, &xeva ) )
+	return 2;
+    else
+	return 0;
+}
+
+KeySym WRetorna( WINDOW *w ){
+    KeySym botao;
+    botao = XkbKeycodeToKeysym( display , xeva.xkey.keycode , 0 ,
+			    xeva.xkey.state & ShiftMask ? 1 : 0 );
+    return botao;
 }

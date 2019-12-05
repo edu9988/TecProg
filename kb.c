@@ -44,10 +44,10 @@ int main(){
     WCor( w , WNamedColor("gold") );
     WPrint( w , 200 , 300 , "Pressione uma tecla nao-alfabetica para terminar:" );
     while( jogando ){
-	kb_press( w );
-	kb_release( w );
+	kb_scan( w );
 	for( i=0 ; i<26 ; i++)
 	    PintaTecla( w , i , pressionadas[i] );
+	kb_scan( w );
     }
 
     /*finalizacao*/
@@ -57,26 +57,40 @@ int main(){
 }
 
 void kb_scan( WINDOW *jan ){
-    int i;
+    int i, r;
     unsigned int botao;
-    for( i=0 ; leitor( jan , &botao ) && i<8 ; i++ ){ /*se digitaram algo */
-        if( botao >= 0x61 && botao <= 0x7a ){ /*a-z*/
-	    botao -= 97;
-	    pressionadas[botao] = 1;
+    for( i=0 ; i<8 ; i++ ){ /*se digitaram algo */
+	if( ( r = WChecaKBD( jan ) ) == 1){
+	    botao = WRetorna( jan );
+	    if( botao >= 0x61 && botao <= 0x7a ){ /*a-z*/
+		botao -= 97;
+		pressionadas[botao] = 1;
+	    }
+	    else
+		jogando = 0;
+	}
+	else if( r == 2 ){
+	    botao = WRetorna( jan );
+	    if( botao >= 0x61 && botao <= 0x7a ){ /*a-z*/
+		botao -= 97;
+		pressionadas[botao] = 0;
+	    }
 	}
 	else
-	    jogando = 0;
+	    continue;
     }
 }
 
 void kb_release( WINDOW *jan ){
     int i;
     unsigned int botao;
-    for( i=0 ; solta( jan , &botao ) && i<8 ; i++ ){ /*se digitaram algo */
-        if( botao >= 0x61 && botao <= 0x7a ){ /*a-z*/
-	    botao -= 97;
-	    pressionadas[botao] = 0;
-	    printf( "tecla %d solta\n" , botao );
+    for( i=0 ; i<8 ; i++ ){ /*se digitaram algo */
+	if( Wsolta( jan , &botao ) ){
+	    if( botao >= 0x61 && botao <= 0x7a ){ /*a-z*/
+		botao -= 97;
+		pressionadas[botao] = 0;
+		printf( "tecla %d solta\n" , botao );
+	    }
 	}
     }
 }
@@ -84,7 +98,7 @@ void kb_release( WINDOW *jan ){
 void kb_press( WINDOW *jan ){
     int i;
     unsigned int botao;
-    for( i=0 ; aperta( jan , &botao ) && i<8 ; i++ ){ /*se digitaram algo */
+    for( i=0 ; Waperta( jan , &botao ) && i<8 ; i++ ){ /*se digitaram algo */
         if( botao >= 0x61 && botao <= 0x7a ){ /*a-z*/
 	    botao -= 97;
 	    pressionadas[botao] = 1;

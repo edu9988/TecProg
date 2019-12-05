@@ -24,17 +24,6 @@ Programa fase4.c
 int main(int argc, char *argv[]){
 
     /* tratar argumentos */
-    if( argc == 1 ){/*sem argumentos, o programa recebe delta_t por scanf*/
-	printf("Specify step length\n>>>");
-	scanf("%lf", &(p0.delta_t));
-    }
-    else if( argc == 2 )/*se o programa recebeu um argumento, o valor é convertido para float e armazenado em delta_t*/
-	p0.delta_t = atof( argv[1] );
-    else{/*se recebe mais de um argumento, recebe por scanf*/
-	printf("Expected fewer arguments\n");
-	printf("Specify step length\n>>>");
-	scanf("%lf", &(p0.delta_t));
-    }
 
     /*Execucao*/
     init_modulo_space();

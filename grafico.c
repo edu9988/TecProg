@@ -74,7 +74,7 @@ posicoes.
 void graficos_iteracao(){
     int i;
     Cel *ptr;
-    for( ptr=fim->ant ; ptr ; ptr=ptr->ant ){
+    for( ptr=fim->ant ; ptr ; ptr=ptr->ant ){	/*conversao de valores*/
 	ptr->SCR_pos_x = Tx( ptr->pos_x );
 	ptr->SCR_pos_y = Ty( ptr->pos_y );
     }
