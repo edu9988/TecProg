@@ -42,6 +42,7 @@ Aloca as estruturas e inicializa as variaveis necessárias
 void init_modulo_grafico(){
     indice = 0;
     w = InitGraph( t0.SCR_larg, t0.SCR_alt, "SpaceWar");
+    WFillRect( w , 0,0 , t0.SCR_larg,t0.SCR_alt , 0x000010 );
     Aux = NewPic( w , t0.SCR_larg,t0.SCR_alt );
     masc1 = NewMask( w , 50,50 );
     aux1 = NewMask( w , 1200,50 );
@@ -78,19 +79,13 @@ void graficos_iteracao(){
 	ptr->SCR_pos_x = Tx( ptr->pos_x );
 	ptr->SCR_pos_y = Ty( ptr->pos_y );
     }
-    /*for( i=0 , ptr=fim->ant ; i<p0.n_proj ; i++ , ptr=ptr->ant ){
-	set_angle( ptr );
-    }*/
 
     /*WFillArc( Aux , t0.planeta_x,t0.planeta_y  , 0,23040 , t0.planeta_w,t0.planeta_h , 0x5050FF );*/
 
 
 
-
-
     SetMask( Aux , masc_planet );
     PutPic( Aux , planeta ,0,0 , t0.planeta_w,t0.planeta_h , t0.planeta_x,t0.planeta_y );
-
 
 
     if( jog2 ){
@@ -105,8 +100,6 @@ void graficos_iteracao(){
     }
 
 
-
-
     if( jog1 ){
 	if( jog1->alive == 100 ){
 	    PutPic( masc1 , aux1 , sprX_nave( jog1->angulo ) ,0 , 50,50, 0,0 );
@@ -117,8 +110,6 @@ void graficos_iteracao(){
 	else
 	    WFillArc( Aux , jog1->SCR_pos_x-20,jog1->SCR_pos_y-20  , 0,23040 , 40,40 , 0xFF0000-jog1->alive*0x008080 );
     }
-
-
 
 
 
@@ -136,9 +127,6 @@ void graficos_iteracao(){
     UnSetMask( Aux );
 
 
-
-
-
     /*WCor( Aux , 0xFF0000 ); (parece desnecessario a partir de agora)
     sprintf(palavra, "%d", indice);
     WPrint( Aux , 20 , 180 , palavra );*/
@@ -146,8 +134,6 @@ void graficos_iteracao(){
     PutPic( w , Aux ,0,0 , t0.SCR_larg,t0.SCR_alt , 0,0 );
     WFillRect( masc1 , 0,0 , 50,50 , WNamedColor( "None" ) );
     WFillRect( masc2 , 0,0 , 50,50 , WNamedColor( "None" ) );
-
-
 
 
     /* Refaz fundo */
@@ -274,4 +260,27 @@ static int Ty(double pos_y){
     ty *= t0.SCR_alt/2;
     transf_y = (int) ty;
     return transf_y;
+}
+
+void menu_plot(){
+    if( p0.menu == 1 )
+	WCor( w , WNamedColor( "gold" ) );
+    else
+	WCor( w , 0xAFAFAF );
+    WPrint( w , 500 , 400 , "Start" );
+    if( p0.menu == 2 )
+	WCor( w , WNamedColor( "gold" ) );
+    else
+	WCor( w , 0xAFAFAF );
+    WPrint( w , 500 , 425 , "Option 1" );
+    if( p0.menu == 3 )
+	WCor( w , WNamedColor( "gold" ) );
+    else
+	WCor( w , 0xAFAFAF );
+    WPrint( w , 500 , 450 , "Option 2" );
+    if( p0.menu == 4 )
+	WCor( w , WNamedColor( "gold" ) );
+    else
+	WCor( w , 0xAFAFAF );
+    WPrint( w , 500 , 475 , "Quit" );
 }

@@ -57,6 +57,7 @@ header file com a interface usada pelo programa fase4.c
         double L;/*largura do universo*/
         double H;/*altura do universo*/
 	int jogando;
+	int menu;
     }constants;
 
     extern constants p0;

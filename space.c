@@ -43,6 +43,7 @@ void init_modulo_space(){
     p0.L = 6*p0.planet_radius;
     p0.H = p0.L*Aspect_Ratio;
     p0.jogando = 1;
+    p0.menu = 1;
     /*	Spacecraft 1	*/
     jog1 = lista_insere();
     jog1->mass = 2.0e+4;

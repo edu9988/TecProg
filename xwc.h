@@ -141,5 +141,7 @@ KeyCode WGetKey(WINDOW *w);
 KeySym WLastKeySym();
 
 int leitor( WINDOW *w , unsigned int *botao );
-int aperta( WINDOW *w , unsigned int *botao );
-int solta( WINDOW *w , unsigned int *botao );
+int Waperta( WINDOW *w , unsigned int *botao );
+int Wsolta( WINDOW *w , unsigned int *botao );
+KeySym WRetorna( WINDOW *w );
+int WChecaKBD( WINDOW* );

@@ -30,6 +30,10 @@ int main(int argc, char *argv[]){
     init_modulo_grafico();
 
     while( p0.jogando ){
+	while( p0.menu ){
+	    menu_plot();
+	    menu_kb();
+	}
 	graficos_iteracao();
 	next_pos();
 	border_control();

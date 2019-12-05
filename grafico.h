@@ -29,3 +29,4 @@ extern WINDOW *w;
 void init_modulo_grafico();
 void graficos_iteracao();
 void termina_modulo_grafico();
+void menu_plot();

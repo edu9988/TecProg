@@ -20,6 +20,35 @@ extern WINDOW *w;
 
 unsigned int /*tecla,*/ botao, vetor[26];
 
+void menu_kb(){
+    if( leitor( w , &botao) ){ /*se digitaram algo */
+        if( botao == 0x00FF0D ){ /*Enter*/
+	    if( p0.menu == 1 )
+		p0.menu = 0;
+	    else if( p0.menu == 2 )
+		p0.menu = 0;
+	    else if( p0.menu == 3 )
+		p0.menu = 0;
+	    else{
+		p0.menu = 0;
+		p0.jogando = 0;
+	    }
+	}
+        if( botao == 0x00FF52 ){ /*Pra cima*/
+	    if( p0.menu > 1 )
+		p0.menu--;
+	    else
+		p0.menu = 1;
+	}
+        if( botao == 0x00FF54 ){ /*Pra baixo*/
+	    if( p0.menu < 4 )
+		p0.menu++;
+	    else
+		p0.menu = 4;
+	}
+    }
+}
+
 void interacao_teclado(){
     int i;
     for( i=0 ; i<26 ; i++ )
