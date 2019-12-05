@@ -220,12 +220,20 @@ termina_modulo_grafico():
 Libera as estruturas alocadas
 */
 void termina_modulo_grafico(){
-    WCor( w , WNamedColor("gold") );
-    while( !WCheckKBD(w) )
-	WPrint( w , 20 , 200 , "Pressione uma tecla para terminar:" );
     FreePic( P1 );
     FreePic( P2 );
     FreePic( Ms );
+    FreePic( Aux );
+    FreePic( fundo1 );
+    FreePic( fundo2 );
+    FreePic( planeta );
+    FreePic( masc1 );
+    FreePic( masc2 );
+    FreePic( masc_mis );
+    FreePic( masc_planet );
+    FreePic( aux1 );
+    FreePic( aux2 );
+    FreePic( aux_mis );
     WDestroy( w );
     CloseGraph();
 }
@@ -260,6 +268,10 @@ static int Ty(double pos_y){
     ty *= t0.SCR_alt/2;
     transf_y = (int) ty;
     return transf_y;
+}
+
+void enter_menu(){
+    WFillRect( w , 0,0 , t0.SCR_larg,t0.SCR_alt , 0x000010 );
 }
 
 void menu_plot(){

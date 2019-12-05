@@ -99,6 +99,6 @@ void interacao_teclado(){
 	    jog1->angulo += 6.2832;
     }
     if( vetor[16] ){ /* letra q */
-        p0.jogando = 0;
+        p0.menu = 1;
     }
 }
