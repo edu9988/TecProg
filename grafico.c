@@ -94,20 +94,28 @@ void graficos_iteracao(){
 
 
     if( jog2 ){
-	PutPic( masc2 , aux2 , sprX_nave( jog2->angulo ),0 , 50,50, 0,0 );
-	SetMask( Aux , masc2 );
-	PutPic( Aux , P2 , sprX_nave( jog2->angulo ),0 , 50,50, jog2->SCR_pos_x-25,jog2->SCR_pos_y-25);
-	UnSetMask( Aux );
+	if( jog2->alive == 100 ){
+	    PutPic( masc2 , aux2 , sprX_nave( jog2->angulo ),0 , 50,50, 0,0 );
+	    SetMask( Aux , masc2 );
+	    PutPic( Aux , P2 , sprX_nave( jog2->angulo ),0 , 50,50, jog2->SCR_pos_x-25,jog2->SCR_pos_y-25);
+	    UnSetMask( Aux );
+	}
+	else
+	    WFillArc( Aux , jog2->SCR_pos_x-20,jog2->SCR_pos_y-20  , 0,23040 , 40,40 , 0xFF0000-jog2->alive*0x008080 );
     }
 
 
 
 
     if( jog1 ){
-	PutPic( masc1 , aux1 , sprX_nave( jog1->angulo ) ,0 , 50,50, 0,0 );
-	SetMask( Aux , masc1 );
-	PutPic( Aux , P1 , sprX_nave( jog1->angulo ) ,0 , 50,50, jog1->SCR_pos_x-25,jog1->SCR_pos_y-25);
-	UnSetMask( Aux );
+	if( jog1->alive == 100 ){
+	    PutPic( masc1 , aux1 , sprX_nave( jog1->angulo ) ,0 , 50,50, 0,0 );
+	    SetMask( Aux , masc1 );
+	    PutPic( Aux , P1 , sprX_nave( jog1->angulo ) ,0 , 50,50, jog1->SCR_pos_x-25,jog1->SCR_pos_y-25);
+	    UnSetMask( Aux );
+	}
+	else
+	    WFillArc( Aux , jog1->SCR_pos_x-20,jog1->SCR_pos_y-20  , 0,23040 , 40,40 , 0xFF0000-jog1->alive*0x008080 );
     }
 
 
@@ -115,9 +123,15 @@ void graficos_iteracao(){
 
 
     for( i=0 , ptr=fim->ant ; i<p0.n_proj ; i++ , ptr=ptr->ant ){
-    	PutPic( masc_mis , aux_mis ,sprX_mis( ptr->angulo),0 , 26,26, 0,0 );
-	SetMask( Aux , masc_mis );
-    	PutPic( Aux , Ms ,sprX_mis( ptr->angulo),0 , 26,26, ptr->SCR_pos_x-13,ptr->SCR_pos_y-13);
+	if( ptr->alive == 100 ){
+	    PutPic( masc_mis , aux_mis ,sprX_mis( ptr->angulo),0 , 26,26, 0,0 );
+	    SetMask( Aux , masc_mis );
+	    PutPic( Aux , Ms ,sprX_mis( ptr->angulo),0 , 26,26, ptr->SCR_pos_x-13,ptr->SCR_pos_y-13);
+	}
+	else{
+	    UnSetMask( Aux );
+	    WFillArc( Aux , ptr->SCR_pos_x-10,ptr->SCR_pos_y-10  , 0,23040 , 20,20 , 0xFF0000-ptr->alive*0x008080 );
+	}
     }
     UnSetMask( Aux );
 

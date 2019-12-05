@@ -168,7 +168,7 @@ void next_pos(){
     } /*fim de calcula aceleracoes*/
 
     for( ptr=fim->ant ; ptr ; ptr=ptr->ant ){	/*atualiza pos, vel*/
-	if( ptr->alive ){/*se alive==0, pula essa etapa*/
+	if( ptr->alive ){/*se alive==0, explode*/
 	    ptr->pos_x += (ptr->vel_x)*(p0.delta_t) + ptr->a_x*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_x*/
 	    ptr->pos_y += (ptr->vel_y)*(p0.delta_t) + ptr->a_y*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_y*/
 	    ptr->vel_x += ptr->a_x*(p0.delta_t);
