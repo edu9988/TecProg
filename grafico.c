@@ -275,24 +275,48 @@ void enter_menu(){
 }
 
 void menu_plot(){
-    if( p0.menu == 1 )
-	WCor( w , WNamedColor( "gold" ) );
-    else
-	WCor( w , 0xAFAFAF );
-    WPrint( w , 500 , 400 , "Start" );
-    if( p0.menu == 2 )
-	WCor( w , WNamedColor( "gold" ) );
-    else
-	WCor( w , 0xAFAFAF );
-    WPrint( w , 500 , 425 , "Option 1" );
-    if( p0.menu == 3 )
-	WCor( w , WNamedColor( "gold" ) );
-    else
-	WCor( w , 0xAFAFAF );
-    WPrint( w , 500 , 450 , "Option 2" );
-    if( p0.menu == 4 )
-	WCor( w , WNamedColor( "gold" ) );
-    else
-	WCor( w , 0xAFAFAF );
-    WPrint( w , 500 , 475 , "Quit" );
+    if( p0.jogando == 1 ){
+	if( p0.menu == 1 )
+	    WCor( w , WNamedColor( "gold" ) );
+	else
+	    WCor( w , 0xAFAFAF );
+	WPrint( w , 500 , 400 , "Start" );
+	if( p0.menu == 2 )
+	    WCor( w , WNamedColor( "gold" ) );
+	else
+	    WCor( w , 0xAFAFAF );
+	WPrint( w , 500 , 425 , "Option 1" );
+	if( p0.menu == 3 )
+	    WCor( w , WNamedColor( "gold" ) );
+	else
+	    WCor( w , 0xAFAFAF );
+	WPrint( w , 500 , 450 , "Option 2" );
+	if( p0.menu == 4 )
+	    WCor( w , WNamedColor( "gold" ) );
+	else
+	    WCor( w , 0xAFAFAF );
+	WPrint( w , 500 , 475 , "Quit" );
+    }
+    else if( p0.jogando == 2 ){
+	if( p0.menu == 1 )
+	    WCor( w , WNamedColor( "gold" ) );
+	else
+	    WCor( w , 0xAFAFAF );
+	WPrint( w , 500 , 400 , "Continue" );
+	if( p0.menu == 2 )
+	    WCor( w , WNamedColor( "gold" ) );
+	else
+	    WCor( w , 0xAFAFAF );
+	WPrint( w , 500 , 425 , "Restart" );
+	if( p0.menu == 3 )
+	    WCor( w , WNamedColor( "gold" ) );
+	else
+	    WCor( w , 0xAFAFAF );
+	WPrint( w , 500 , 450 , "Option 2" );
+	if( p0.menu == 4 )
+	    WCor( w , WNamedColor( "gold" ) );
+	else
+	    WCor( w , 0xAFAFAF );
+	WPrint( w , 500 , 475 , "Quit" );
+    }
 }
