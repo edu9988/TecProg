@@ -78,6 +78,10 @@ posicoes.
 void graficos_iteracao()
 {
     int i;
+    char placar[100];
+
+    i = sprintf(placar, "[JOGADOR 1]   %d   X   %d   [JOGADOR 2]", vitoriasJog1, vitoriasJog2);
+
     Cel *ptr;
     for( ptr=fim->ant ; ptr ; ptr=ptr->ant ){	/*conversao de valores*/
 	ptr->SCR_pos_x = Tx( ptr->pos_x );
@@ -130,6 +134,7 @@ void graficos_iteracao()
     }
     UnSetMask( Aux );
 
+    WPrint( Aux , t0.SCR_larg/2 -105, 50 , placar );
 
     /*WCor( Aux , 0xFF0000 ); (parece desnecessario a partir de agora)
     sprintf(palavra, "%d", indice);
@@ -342,7 +347,7 @@ void statusJogo()
         if(!leitor(w, &botao, &opcao))
         {
             PutPic(w, fundo2, 0, 0, p0.L, p0.H, p0.L, p0.H);
-            WPrint(w , 500 , 475 , "VITORIA: JOGADOR 1" );
+            WPrint(w , (t0.SCR_larg/2) -50, 100 , "VITORIA: JOGADOR 1" );
 
             while(!leitor(w, &botao, &opcao));
         }
@@ -376,7 +381,7 @@ void statusJogo()
         if(!leitor(w, &botao, &opcao))
         {
             PutPic(w, fundo2, 0, 0, p0.L, p0.H, p0.L, p0.H);
-            WPrint(w , 500 , 475 , "VITORIA: JOGADOR 2" );
+            WPrint(w , t0.SCR_larg/2 -50, 100 , "VITORIA: JOGADOR 2" );
 
             while(!leitor(w, &botao, &opcao));
         }
@@ -403,4 +408,3 @@ void statusJogo()
     }
 
 }
-/**/
