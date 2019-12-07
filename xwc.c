@@ -345,8 +345,6 @@ int leitor( WINDOW *w , unsigned int *botao, int *opcao ){
     XEvent xev;
     XEvent nev;
 
-    XAutoRepeatOn(display);
-
     r = XCheckWindowEvent( display, w->ptr.window, KeyPressMask | KeyReleaseMask, &xev );
 
     if(r)
