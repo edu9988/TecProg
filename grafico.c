@@ -35,6 +35,9 @@ static int Be(double p);
 static void GeraFundo();
 /*static char palavra[30];*/
 
+
+int vitoriasJog1 = 0, vitoriasJog2 = 0;
+
 /*
 init_modulo_grafico():
 Aloca as estruturas e inicializa as variaveis necessárias 
@@ -72,7 +75,8 @@ graficos_iteracao():
 Desenha na tela todos os corpos em suas respectivas
 posicoes.
 */
-void graficos_iteracao(){
+void graficos_iteracao()
+{
     int i;
     Cel *ptr;
     for( ptr=fim->ant ; ptr ; ptr=ptr->ant ){	/*conversao de valores*/
@@ -88,7 +92,7 @@ void graficos_iteracao(){
     PutPic( Aux , planeta ,0,0 , t0.planeta_w,t0.planeta_h , t0.planeta_x,t0.planeta_y );
 
 
-    if( jog2 ){
+    if( jog2 != NULL){
 	if( jog2->alive == 100 ){
 	    PutPic( masc2 , aux2 , sprX_nave( jog2->angulo ),0 , 50,50, 0,0 );
 	    SetMask( Aux , masc2 );
@@ -100,7 +104,7 @@ void graficos_iteracao(){
     }
 
 
-    if( jog1 ){
+    if( jog1 != NULL){
 	if( jog1->alive == 100 ){
 	    PutPic( masc1 , aux1 , sprX_nave( jog1->angulo ) ,0 , 50,50, 0,0 );
 	    SetMask( Aux , masc1 );
@@ -319,4 +323,83 @@ void menu_plot(){
 	    WCor( w , 0xAFAFAF );
 	WPrint( w , 500 , 475 , "Quit" );
     }
+}
+
+void statusJogo()
+{
+    unsigned int botao = 0;
+    int opcao = 0;
+
+    if(jog1 == NULL && jog2 == NULL)
+    {
+        WPrint( w , 500 , 475 , "Empate" );
+    }
+
+    if(jog1 != NULL && jog2 == NULL)
+    {
+        vitoriasJog1++;
+
+        if(!leitor(w, &botao, &opcao))
+        {
+            PutPic(w, fundo2, 0, 0, p0.L, p0.H, p0.L, p0.H);
+            WPrint(w , 500 , 475 , "VITORIA: JOGADOR 1" );
+
+            while(!leitor(w, &botao, &opcao));
+        }
+
+        jog1->mass = 2.0e+4;
+        jog1->size = 5.0e+5;
+        jog1->alive = 100;
+        jog1->pos_x = -1.0e+7;
+        jog1->pos_y = 0.0;
+        jog1->vel_x = 0.0;
+        jog1->vel_y = 1.0e+7;
+        jog1->angulo = 0.0;
+        jog1->acelera = 0;
+
+        jog2 = lista_insere();
+        jog2->mass = 2.0e+4;
+        jog2->size = 5.0e+5;
+        jog2->alive = 100;
+        jog2->pos_x = 1.0e+7;
+        jog2->pos_y = 1.0e+7;
+        jog2->vel_x = 2.0e+6;
+        jog2->vel_y = -4.0e+6;
+        jog2->angulo = 0.0;
+        jog2->acelera = 0;
+    }
+
+    if(jog1 == NULL && jog2 != NULL)
+    {
+        vitoriasJog2++;
+
+        if(!leitor(w, &botao, &opcao))
+        {
+            PutPic(w, fundo2, 0, 0, p0.L, p0.H, p0.L, p0.H);
+            WPrint(w , 500 , 475 , "VITORIA: JOGADOR 2" );
+
+            while(!leitor(w, &botao, &opcao));
+        }
+        jog1 = lista_insere();
+        jog1->mass = 2.0e+4;
+        jog1->size = 5.0e+5;
+        jog1->alive = 100;
+        jog1->pos_x = -1.0e+7;
+        jog1->pos_y = 0.0;
+        jog1->vel_x = 0.0;
+        jog1->vel_y = 1.0e+7;
+        jog1->angulo = 0.0;
+        jog1->acelera = 0;
+
+        jog2->mass = 2.0e+4;
+        jog2->size = 5.0e+5;
+        jog2->alive = 100;
+        jog2->pos_x = 1.0e+7;
+        jog2->pos_y = 1.0e+7;
+        jog2->vel_x = 2.0e+6;
+        jog2->vel_y = -4.0e+6;
+        jog2->angulo = 0.0;
+        jog2->acelera = 0;
+    }
+
 }

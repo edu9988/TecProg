@@ -39,6 +39,7 @@ int main(int argc, char *argv[]){
 	}
 	else{
 	    graficos_iteracao();
+        statusJogo();
 	    next_pos();
 	    border_control();
 	    interacao_teclado();

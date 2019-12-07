@@ -22,6 +22,8 @@ Arquivo com implementacao de lista ligada para struct corpo.
 Cel *fim;
 Cel *jog1;
 Cel *jog2;
+Cel *jog1Aux;
+Cel *jog2Aux;
 
 static Cel *mallocCel();
 
@@ -44,9 +46,11 @@ Cel *lista_insere(){
 
 void lista_remove( Cel *a ){
     a->prox->ant= a->ant;
-    if( a->ant )
-	a->ant->prox = a->prox;
-    free( a );
+    if( a->ant)
+	    a->ant->prox = a->prox;
+
+    if(a != NULL)
+        free( a );
 }
 
 void lista_Destroy(){

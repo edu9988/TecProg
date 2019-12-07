@@ -43,7 +43,8 @@ int main(){
     WFillRect( w , 0,0 , 800,350 , WNamedColor( "gray1" ) );
     WCor( w , WNamedColor("gold") );
     WPrint( w , 200 , 300 , "Pressione uma tecla nao-alfabetica para terminar:" );
-    while( jogando ){
+    while( jogando )
+    {
 	kb_scan( w );
 	for( i=0 ; i<26 ; i++)
 	    PintaTecla( w , i , pressionadas[i] );

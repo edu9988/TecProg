@@ -156,7 +156,7 @@ void next_pos(){
     }/* fim de calcula aceleracoes gravitacionais */
 
     ptr = jog1;
-    if( ptr && ptr->alive == 100 && ptr->acelera ){
+    if( ptr && ptr->alive == 100 && ptr->acelera){
 	ptr->a_x += 1.0e+9*cos( ptr->angulo );
 	ptr->a_y += 1.0e+9*sin( ptr->angulo );
 	ptr->acelera = 0;
@@ -169,14 +169,16 @@ void next_pos(){
     } /*fim de calcula aceleracoes*/
 
     for( ptr=fim->ant ; ptr ; ptr=ptr->ant ){	/*atualiza pos, vel*/
-	if( ptr->alive ){/*se alive==0, explode*/
+	if(ptr->alive ){/*se alive==0, explode*/
 	    ptr->pos_x += (ptr->vel_x)*(p0.delta_t) + ptr->a_x*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_x*/
 	    ptr->pos_y += (ptr->vel_y)*(p0.delta_t) + ptr->a_y*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_y*/
 	    ptr->vel_x += ptr->a_x*(p0.delta_t);
 	    ptr->vel_y += ptr->a_y*(p0.delta_t);
 	}
 	else
-	    explode( ptr );
+    {
+        explode( ptr );
+    }
     }
 }
 
@@ -293,12 +295,22 @@ void disparo( Cel *origem ){
     p0.n_proj++;
 }
 
-static void explode( Cel *vitima ){
+static void explode( Cel *vitima )
+{
     if( vitima == jog1 )
-	jog1 = NULL;
+    {
+        lista_remove(jog1);
+        jog1 = NULL;
+    }
     else if( vitima == jog2 )
-	jog2 = NULL;
+    {
+        lista_remove(jog2);
+        jog2 = NULL;
+    }
     else
-	p0.n_proj--;
-    lista_remove( vitima );
+    {
+        p0.n_proj--;
+        lista_remove( vitima );
+    }
+
 }

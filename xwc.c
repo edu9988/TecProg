@@ -340,7 +340,8 @@ KeySym WLastKeySym()
   return key;
 }
 
-int leitor( WINDOW *w , unsigned int *botao, int *opcao ){
+int leitor( WINDOW *w , unsigned int *botao, int *opcao )
+{
     int r;
     XEvent xev;
     XEvent nev;

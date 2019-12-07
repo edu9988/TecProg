@@ -24,6 +24,7 @@ void menu_kb(){
     int opcao;
 
     if( leitor( w , &botao, &opcao) ){ /*se digitaram algo */
+
         if( botao == 0x00FF0D ){ /*Enter*/
 	    if( p0.jogando == 1 ){
 		if( p0.menu == 1 )
@@ -52,13 +53,15 @@ void menu_kb(){
 		}
 	    }
 	}
-        if( botao == 0x00FF52 ){ /*Pra cima*/
-	    if( p0.menu > 1 )
-		p0.menu--;
+        if( botao == 0x00FF52 && opcao == 1){ /*Pra cima*/
+	    if( p0.menu > 1)
+        {
+            p0.menu--;
+        }
 	    else
 		p0.menu = 4;
 	}
-        if( botao == 0x00FF54 ){ /*Pra baixo*/
+        if( botao == 0x00FF54 && opcao == 1 ){ /*Pra baixo*/
 	    if( p0.menu < 4 )
 		p0.menu++;
 	    else
@@ -75,12 +78,12 @@ void interacao_teclado(){
 
     vetor[10] = 0;
     vetor[8] = 0;
-    
+
     for( i=0 ; leitor( w , &botao, &opcao) && i<8 ; i++ ){ /*se digitaram algo */
         /*tecla = WGetKey(w);
         botao = WLastKeySym();*/
         if( botao >= 0x61 && botao <= 0x7a ){ /*a-z*/
-	    botao -= 97;
+	        botao -= 97;
 
 	    vetor[botao] = opcao;
 

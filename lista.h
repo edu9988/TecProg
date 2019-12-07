@@ -14,8 +14,8 @@ Arquivo com interface de lista ligada para struct corpo.
 #include "space.h"
 
 extern Cel *fim;
-extern Cel *jog1;
-extern Cel *jog2;
+extern Cel *jog1, *jog1Aux;
+extern Cel *jog2, *jog2Aux;
 
 void init_lista();
 Cel *lista_insere();
