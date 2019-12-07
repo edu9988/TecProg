@@ -19,7 +19,6 @@ clean:
 	rm -f *.o $(EXECUTABLE) kb
 
 pack:
-	mkdir fase4 2> /dev/null
 	cp *.c fase4;\
 	cp *.h fase4;\
 	cp Makefile fase4;\
