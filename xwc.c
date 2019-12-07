@@ -354,6 +354,8 @@ int leitor( WINDOW *w , unsigned int *botao, int *opcao ){
             *opcao = 1;
         }
 
+        /* Codigo baseado de: https://stackoverflow.com/questions/2100654/ignore-auto-repeat-in-x11-applications */
+
         if(xev.type == KeyRelease)
         {
             if (XEventsQueued(display, QueuedAfterReading))
@@ -365,6 +367,7 @@ int leitor( WINDOW *w , unsigned int *botao, int *opcao ){
                     return 0;
                 }
             }
+        /* Fim do codigo */
             *opcao = 0;
         }
 
