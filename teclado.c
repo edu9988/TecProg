@@ -3,7 +3,7 @@
 /* Marcelo Nascimento dos Santos Junior	  No. USP:11222012    */
 /* Gilvane da Silva Sousa		  No. USP:10258726    */
 /*							      */
-/* Projeto - Quarta fase - 02 dez 2019			      */
+/* Projeto - Quarta fase - 07 dez 2019			      */
 /* Curso MAC0216  - Prof. Marco Dimas Gubitoso		      */
 /**************************************************************/
 #include <unistd.h>
@@ -16,10 +16,20 @@
 #include "/usr/include/X11/keysym.h"
 #include "lista.h"
 
-extern WINDOW *w;
+/*
+teclado.c:
+Modulo do jogo responsavel pela interacao do usuario com o
+teclado.
+*/
 
-unsigned int /*tecla,*/ botao, vetor[26];
+unsigned int botao, vetor[26];
 
+/*
+menu_kb():
+Faz leituras do teclado atraves do modulo xwc.c,
+e realiza as acoes convenientes.
+Essa funcao e' especifica para o menu.
+*/
 void menu_kb(){
     if( leitor( w , &botao ) ){ /*se digitaram algo */
         if( botao == 0x00FF0D ){ /*Enter*/
@@ -68,6 +78,12 @@ void menu_kb(){
     }
 }
 
+/*
+interacao_teclado():
+Faz a leitura de teclas chamando o modulo xwc.c, e executa
+as acoes pertinentes referentes ao jogo.
+Essa funcao e' especifica para a interacao durante as partidas.
+*/
 void interacao_teclado(){
     int i;
     for( i=0 ; leitor( w , &botao) && i<8 ; i++ ){ /*se digitaram algo */

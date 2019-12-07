@@ -7,6 +7,24 @@
 /* Curso MAC0216  - Prof. Marco Dimas Gubitoso		      */
 /**************************************************************/
 
+Jogo SpaceWar
+
+instrucoes de instalacao:
+    Para compilar e rodar, basta digitar make.
+    Para apenas compilar, digitar make spacewar.
+    Para compilar e rodar kb, um programa para teste do teclado,
+    digite make kbtest.
+    Para remover os objetos e executaveis, make clean.
+
+instrucoes para jogar:
+as setas do teclado navegam pelo menu, "enter" para escolher;
+durante as partidas, o jogador1 (vermelho) gira a nave com
+as teclas "a" e "d" (esquerda e direita), acelera com a tecla
+"w", e dispara com a tecla "s";
+mesma coisa para o jogador 2, usando as teclas "j", "k", "l"
+e "i";
+para voltar ao menu, apertar "q";
+
 space.c:
 biblioteca com funções que fazem os principais calculos do jogo
 
@@ -23,12 +41,19 @@ fase4.c:
 contem o main do jogo; chama funções dos outros modulos
 
 lista.c
-biblioteca com implementaçao da uma lista ligada
+biblioteca com implementaçao da uma lista ligada (com cabeca)
 para as estruturas que armazenam os dados das naves e
 projeteis do jogo
 
 lista.h
 interface da biblioteca lista.c
+
+teclado.c
+modulo com as funcoes responsaveis pela interacao do usuario
+com o teclado
+
+teclado.h
+contem a interface do modulo teclado.c
 
 Makefile
 compila o programa e roda o executavel.

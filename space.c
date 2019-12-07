@@ -3,7 +3,7 @@
 /* Marcelo Nascimento dos Santos Junior	  No. USP:11222012    */
 /* Gilvane da Silva Sousa		  No. USP:10258726    */
 /*							      */
-/* Projeto - Quarta fase - 02 dez 2019                        */
+/* Projeto - Quarta fase - 07 dez 2019                        */
 /* Curso MAC0216  - Prof. Marco Dimas Gubitoso		      */
 /**************************************************************/
 #include <stdio.h>
@@ -14,18 +14,25 @@
 #include "grafico.h"
 #include "lista.h"
 
+/*
+space.c:
+Implementacao do modulo space, que faz os principais calculos do
+jogo SpaceWar, como calcular aceleracoes, verificar se houve
+colisoes, entre outros.
+Esse modulo tambem armazena os valores da principais variaveis
+do jogo atraves da estrutura constants p0.
+*/
+
 constants p0;
 
-static void corpo_copy( Cel *origem , Cel *destino );
 static void init_border_check();
-static void *mallocSafe( size_t );
 static void explode( Cel *vitima );
 
 /*
 init_modulo_space():
-lê do arquivo "entry.dat" os dados do programa fase1.c, conforme
-especificado em enunciado, e os armazena nas structs p0 e
-head
+Cria a lista que armazena as informacoes das
+naves e projeteis; inicializa as principais
+variaveis do modulo.
 */
 void init_modulo_space(){
     double Aspect_Ratio;
@@ -69,6 +76,11 @@ void init_modulo_space(){
     init_border_check();
 }
 
+/*
+reset_modulo_space():
+Carrega novamente os valores iniciais das variaveis
+e da lista, a fim de reiniciar a partida.
+*/
 void reset_modulo_space(){
     lista_Destroy();
     init_lista();
@@ -104,7 +116,7 @@ corpo_copy():
 recebe por valor um corpo a e por endereço o corpo b;
 copia no corpo b os valores do corpo a
 */
-static void corpo_copy( Cel *origem , Cel *destino ){
+void corpo_copy( Cel *origem , Cel *destino ){
     destino->mass = origem->mass;
     destino->size = origem->size;
     destino->alive = origem->alive;
@@ -114,35 +126,18 @@ static void corpo_copy( Cel *origem , Cel *destino ){
     destino->vel_y = origem->vel_y;
 }
 
-/*
-mallocSafe():
-recebe um int nbytes;
-devolve um ponteiro para um bloco de mémoria alocada
-de tamanho nbytes;
-se malloc retornar NULL, a função imprime mensagem
-de erro e encerra o programa devolvendo valor -1
-*/
-static void *mallocSafe( size_t nbytes ){
-    void *pointer;
-    pointer = malloc(nbytes);
-    if( pointer == NULL ){
-	fprintf(stderr, "Failed to malloc %lu bytes\n", nbytes);
-	exit(-1);
-    }
-    return pointer;
-}
 
 /*
 next_pos():
 realiza os cálculos das próximas posições e velocidades dos n corpos;
 primeiro é calculada a aceleração de todos os corpos devido à força
-gravitacional dos demais e do planeta
+gravitacional dos demais e do planeta;
 em seguida, é atualizada a posição e velocidade de cada corpo;
 ao calcular as acelerações, se a distância entre dois corpos ou entre
 um corpo e o planeta é menor que o respectivo tamanho (do corpo ou
-do planeta), as acelerações e velocidades desse corpo são zeradas,
-e também o campo alive do corpo recebe valor 0, o que faz com que
-suas posições e velocidades não sejam mais calculadas nem atualizadas
+do planeta), inicia-se o processo de "explosao" do corpo.
+O processo de explosao inicia reduzindo a velocidade do corpo;
+nas proximas iteracoes, aceleracoes nao sao mais calculadas.
 */
 void next_pos(){
     double r;
@@ -302,12 +297,19 @@ static void init_border_check(){
 
 /*
 termina_modulo_space():
-Libera a memoria alocada pelo modulo atraves de malloc.
+libera toda a memoria da lista ligada.
 */
 void termina_modulo_space(){
     lista_Destroy();
 }
 
+/*
+disparo():
+Recebe um apontador para celula origem.
+Insere uma nova celula na lista, que 
+corresponde a um projetil disparado
+do corpo origem.
+*/
 void disparo( Cel *origem ){
     Cel *new;
     new = lista_insere();
@@ -327,6 +329,11 @@ void disparo( Cel *origem ){
     p0.n_proj++;
 }
 
+/*
+explode():
+Recebe um apontador para celula vitima.
+Remove a celula da lista ligada.
+*/
 static void explode( Cel *vitima ){
     if( vitima == jog1 )
 	jog1 = NULL;

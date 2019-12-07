@@ -3,7 +3,7 @@
 /* Marcelo Nascimento dos Santos Junior	  No. USP:11222012    */
 /* Gilvane da Silva Sousa		  No. USP:10258726    */
 /*							      */
-/* Projeto - Quarta fase - 02 dez 2019			      */
+/* Projeto - Quarta fase - 07 dez 2019			      */
 /* Curso MAC0216  - Prof. Marco Dimas Gubitoso		      */
 /**************************************************************/
 #include <unistd.h>
@@ -23,17 +23,15 @@ static int Tx(double);
 static int Ty(double);
 static int sprX_nave( double );
 static int sprX_mis( double );
-/*static void set_angle( Cel* );*/
+static int Be(double p);
+static void GeraFundo();
 
 WINDOW *w;
 tela t0;
 static PIC P1, P2, Ms, Aux, fundo1, fundo2, planeta;
 static Color player1, misseis;
 static int indice;
-MASK masc1, masc2, masc_mis, masc_planet, aux1, aux2, aux_mis;
-static int Be(double p);
-static void GeraFundo();
-/*static char palavra[30];*/
+static MASK masc1, masc2, masc_mis, masc_planet, aux1, aux2, aux_mis;
 
 /*
 init_modulo_grafico():
@@ -144,19 +142,13 @@ void graficos_iteracao(){
     indice++;
 }
 
-/*static void set_angle( Cel *ptr ){
-    if( ptr->vel_x > 0 )
-	ptr->angulo = atan( ptr->vel_y / ptr->vel_x );
-    else if( ptr->vel_x == 0){
-	if( ptr->vel_y >= 0 )
-	    ptr->angulo = PI_meios;
-	else
-	    ptr->angulo = -PI_meios;
-    }
-    else
-	ptr->angulo = PI+atan( ptr->vel_y / ptr->vel_x );
-}*/
-
+/*
+sprX_nave():
+Recebe um valor double, ang.
+Retorna a coordenada x da figura das naves onde
+se encontra a nave com direcao mais aproximada
+possivel de ang.
+*/
 static int sprX_nave( double ang ){
     int b;
     if( ang < 0 ){
@@ -173,6 +165,13 @@ static int sprX_nave( double ang ){
     }
 }
 
+/*
+sprX_mis():
+Recebe um valor double, ang.
+Retorna a coordenada x da figura dos misseis onde
+se encontra o missel com direcao mais aproximada
+possivel de ang.
+*/
 static int sprX_mis( double ang ){
     int b;
     if( ang < 0 ){
@@ -192,6 +191,8 @@ static int sprX_mis( double ang ){
 /*
 GeraFundo():
 Preenche as PICs fundo1 e fundo2 com estrelas.
+A posicao das estrelas e' gerada aleatoriamente
+chamando a funcao Be().
 */
 static void GeraFundo(){
     int x,y;
@@ -270,10 +271,20 @@ static int Ty(double pos_y){
     return transf_y;
 }
 
+/*
+enter_menu():
+Pinta o fundo da janela w de azul, a fim de se plotar
+o menu do jogo.
+*/
 void enter_menu(){
     WFillRect( w , 0,0 , t0.SCR_larg,t0.SCR_alt , 0x000010 );
 }
 
+/*
+menu_plot():
+De acordo com o atual estado das variaveis de menu,
+plota as opcoes com as cores pertinentes.
+*/
 void menu_plot(){
     if( p0.jogando == 1 ){
 	if( p0.menu == 1 )
