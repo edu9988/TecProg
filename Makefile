@@ -17,3 +17,18 @@ kb: kb.o xwc.o
 	$(CC) $(CFLAGS) $^ -o $@ $(CLIBS)
 clean:
 	rm -f *.o $(EXECUTABLE) kb
+
+pack:
+	mkdir fase4 2> /dev/null
+	cp *.c fase4;\
+	cp *.h fase4;\
+	cp Makefile fase4;\
+	cp manual fase4;\
+	cp planeta1.xpm fase4;\
+	cp spaceshuttle_bw1.xpm fase4;\
+	cp spaceshuttle_bw3.xpm fase4;\
+	cp missiles02.xpm fase4;\
+	cd fase4;\
+	tar -cf fase4.tar *;\
+	cd ..;\
+	cp fase4/fase4.tar .

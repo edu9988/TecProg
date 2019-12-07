@@ -1,0 +1,34 @@
+/**************************************************************/
+/* José Eduardo R. M. Peres y Peres       No. USP:8945332     */
+/* Marcelo Nascimento dos Santos Junior	  No. USP:11222012    */
+/* Gilvane da Silva Sousa		  No. USP:10258726    */
+/*							      */
+/* Projeto - Primeira fase - 22 set 2019                      */
+/* Curso MAC0216  - Prof. Marco Dimas Gubitoso		      */
+/**************************************************************/
+
+space.c:
+biblioteca com funções que fazem os principais calculos do jogo
+
+space.h:
+interface da biblioteca space.c
+
+grafico.c
+biblioteca com funções que fazem os desenhos do jogo
+
+grafico.h:
+interface da biblioteca grafico.c
+
+fase4.c:
+contem o main do jogo; chama funções dos outros modulos
+
+lista.c
+biblioteca com implementaçao da uma lista ligada
+para as estruturas que armazenam os dados das naves e
+projeteis do jogo
+
+lista.h
+interface da biblioteca lista.c
+
+Makefile
+compila o programa e roda o executavel.
