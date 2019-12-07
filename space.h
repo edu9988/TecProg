@@ -70,5 +70,6 @@ header file com a interface usada pelo programa fase4.c
     void border_control();
     void termina_modulo_space();
     void disparo( Cel *origem );
+    void reset_modulo_space();
 
 #endif

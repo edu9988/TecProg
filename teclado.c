@@ -24,8 +24,10 @@ void menu_kb(){
     if( leitor( w , &botao) ){ /*se digitaram algo */
         if( botao == 0x00FF0D ){ /*Enter*/
 	    if( p0.jogando == 1 ){
-		if( p0.menu == 1 )
+		if( p0.menu == 1 ){
 		    p0.menu = 0;
+		    p0.jogando = 2;
+		}
 		else if( p0.menu == 2 )
 		    p0.menu = 0;
 		else if( p0.menu == 3 )
@@ -35,13 +37,14 @@ void menu_kb(){
 		    p0.jogando = 0;
 		}
 	    }
-	    if( p0.jogando == 2){
+	    if( p0.jogando == 2 ){
 		if( p0.menu == 1 ){
 		    p0.menu = 0;
-		    p0.jogando = 1;
 		}
-		else if( p0.menu == 2 )
+		else if( p0.menu == 2 ){
+		    reset_modulo_space();
 		    p0.menu = 0;
+		}
 		else if( p0.menu == 3 )
 		    p0.menu = 0;
 		else if( p0.menu == 4 ){
@@ -115,7 +118,6 @@ void interacao_teclado(){
 	    jog1->angulo += 6.2832;
     }
     if( vetor[16] ){ /* letra q */
-	p0.jogando = 2;
         p0.menu = 1;
     }
 }

@@ -29,10 +29,8 @@ head
 */
 void init_modulo_space(){
     double Aspect_Ratio;
-    int i;
-    Cel *ptr;
-    /*	Planet		*/
     init_lista();
+    /*	Planet		*/
     p0.delta_t = 0.001;
     p0.planet_radius = 5.0e+6;
     p0.planet_mass = 6.0e+30;
@@ -44,6 +42,36 @@ void init_modulo_space(){
     p0.H = p0.L*Aspect_Ratio;
     p0.jogando = 1;
     p0.menu = 1;
+    /*	Spacecraft 1	*/
+    jog1 = lista_insere();
+    jog1->mass = 2.0e+4;
+    jog1->size = 5.0e+5;
+    jog1->alive = 100;
+    jog1->pos_x = -1.0e+7;
+    jog1->pos_y = 0.0;
+    jog1->vel_x = 0.0;
+    jog1->vel_y = 1.0e+7;
+    jog1->angulo = 0.0;
+    jog1->acelera = 0;
+    /*	Spacecraft 2	*/
+    jog2 = lista_insere();
+    jog2->mass = 2.0e+4;
+    jog2->size = 5.0e+5;
+    jog2->alive = 100;
+    jog2->pos_x = 1.0e+7;
+    jog2->pos_y = 1.0e+7;
+    jog2->vel_x = 2.0e+6;
+    jog2->vel_y = -4.0e+6;
+    jog2->angulo = 0.0;
+    jog2->acelera = 0;
+    /*	Projectiles	*/
+    p0.n_proj = 0;
+    init_border_check();
+}
+
+void reset_modulo_space(){
+    lista_Destroy();
+    init_lista();
     /*	Spacecraft 1	*/
     jog1 = lista_insere();
     jog1->mass = 2.0e+4;
@@ -128,6 +156,8 @@ void next_pos(){
 	    r = pow( ptr->pos_x , 2 ) + pow( ptr->pos_y , 2 );
 	    r = sqrt( r );
 	    if( r <= p0.planet_radius + ptr->size ){
+		ptr->vel_x *= 0.2;
+		ptr->vel_y *= 0.2;
 		ptr->alive -= 1;
 		continue;
 	    }
@@ -138,6 +168,10 @@ void next_pos(){
 		r = pow(aux->pos_x-ptr->pos_x,2)+pow(aux->pos_y-ptr->pos_y , 2);
 		r = sqrt( r );
 		if( r <= ptr->size + aux->size ){
+		    ptr->vel_x *= 0.5;
+		    ptr->vel_y *= 0.5;
+		    aux->vel_x *= 0.5;
+		    aux->vel_y *= 0.5;
 		    ptr->alive -= 1;
 		    aux->alive -= 1;
 		    break;

@@ -375,7 +375,6 @@ int Wsolta( WINDOW *w , unsigned int *botao ){
 }
 
 int WChecaKBD( WINDOW *w ){
-    int r;
     if( XCheckWindowEvent( display,w->ptr.window, KeyPressMask, &xeva ) )
 	return 1;
     else if( XCheckWindowEvent( display,w->ptr.window, KeyReleaseMask, &xeva ) )
