@@ -21,7 +21,7 @@ extern WINDOW *w;
 unsigned int /*tecla,*/ botao, vetor[26];
 
 void menu_kb(){
-    if( leitor( w , &botao) ){ /*se digitaram algo */
+    if( leitor( w , &botao ) ){ /*se digitaram algo */
         if( botao == 0x00FF0D ){ /*Enter*/
 	    if( p0.jogando == 1 ){
 		if( p0.menu == 1 ){
@@ -70,11 +70,7 @@ void menu_kb(){
 
 void interacao_teclado(){
     int i;
-    for( i=0 ; i<26 ; i++ )
-	vetor[i] = 0;
     for( i=0 ; leitor( w , &botao) && i<8 ; i++ ){ /*se digitaram algo */
-        /*tecla = WGetKey(w);
-        botao = WLastKeySym();*/
         if( botao >= 0x61 && botao <= 0x7a ){ /*a-z*/
 	    botao -= 97;
 	    if( !vetor[botao] )

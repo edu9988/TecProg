@@ -307,8 +307,7 @@ PIC MountPic(WINDOW *w, char **data, MASK m)
 
 void InitKBD(WINDOW *w)
 {
-  /*  XSelectInput (display, w->ptr.window, KeyPressMask|KeyReleaseMask);*/
-  XSelectInput (display, w->ptr.window, KeyPressMask);
+  XSelectInput (display, w->ptr.window, KeyPressMask|KeyReleaseMask);
 }
 
 KeySym key;
@@ -339,19 +338,26 @@ KeySym WLastKeySym()
   return key;
 }
 
-int leitor( WINDOW *w , unsigned int *botao ){
+int leitor( WINDOW *w , unsigned int *botao , int *opcao ){
     int r;
     XEvent xev;
+    XEvent nev;
 
     r = XCheckWindowEvent( display, w->ptr.window, KeyPressMask|KeyReleaseMask, &xev );
     if( r ){
 	XPutBackEvent( display , &xev );
-	XWindowEvent(display,w->ptr.window, KeyPressMask|KeyReleaseMask, &xev);
-	key = XkbKeycodeToKeysym(display, xev.xkey.keycode,
-			    0, xev.xkey.state & ShiftMask ? 1 : 0);
+	XWindowEvent( display , w->ptr.window , KeyPressMask|KeyReleaseMask , &xev );
+	key = XkbKeycodeToKeysym( display , xev.xkey.keycode ,
+			    0, xev.xkey.state & ShiftMask ? 1 : 0 );
+	if( xev.type == KeyRelease && XEventsQueued( display , QueuedAfterReading ) && nev.xkey.keycode == xev.xkey.keycode)
+		return 0;
+	if( xev.type == KeyPress )
+	    *opcao = 1;
+	if( xev.type == KeyRelease )
+	    *opcao = 0;
 	*botao = key;
     }
-    return r;;
+    return r;
 }
 
 int Waperta( WINDOW *w , unsigned int *botao ){
