@@ -314,3 +314,5 @@ static void explode( Cel *vitima )
     }
 
 }
+
+/**/
