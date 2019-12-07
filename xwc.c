@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "xwc.h"
+#include "teclado.h"
 
 static Display *display = NULL;
 static Colormap cmap;
@@ -307,7 +308,8 @@ PIC MountPic(WINDOW *w, char **data, MASK m)
 
 void InitKBD(WINDOW *w)
 {
-  XSelectInput (display, w->ptr.window, KeyPressMask|KeyReleaseMask);
+  /*  XSelectInput (display, w->ptr.window, KeyPressMask|KeyReleaseMask);*/
+  XSelectInput (display, w->ptr.window,KeyReleaseMask | KeyPressMask);
 }
 
 KeySym key;
@@ -338,60 +340,43 @@ KeySym WLastKeySym()
   return key;
 }
 
-int leitor( WINDOW *w , unsigned int *botao , int *opcao ){
+int leitor( WINDOW *w , unsigned int *botao, int *opcao ){
     int r;
     XEvent xev;
     XEvent nev;
 
-    r = XCheckWindowEvent( display, w->ptr.window, KeyPressMask|KeyReleaseMask, &xev );
-    if( r ){
-	XPutBackEvent( display , &xev );
-	XWindowEvent( display , w->ptr.window , KeyPressMask|KeyReleaseMask , &xev );
-	key = XkbKeycodeToKeysym( display , xev.xkey.keycode ,
-			    0, xev.xkey.state & ShiftMask ? 1 : 0 );
-	if( xev.type == KeyRelease && XEventsQueued( display , QueuedAfterReading ) && nev.xkey.keycode == xev.xkey.keycode)
-		return 0;
-	if( xev.type == KeyPress )
-	    *opcao = 1;
-	if( xev.type == KeyRelease )
-	    *opcao = 0;
-	*botao = key;
+    r = XCheckWindowEvent( display, w->ptr.window, KeyPressMask | KeyReleaseMask, &xev );
+
+    if(r)
+    {
+        if(xev.type == KeyPress)
+        {
+            *opcao = 1;
+        }
+
+        /* Codigo baseado de: https://stackoverflow.com/questions/2100654/ignore-auto-repeat-in-x11-applications */
+
+        if(xev.type == KeyRelease)
+        {
+            if (XEventsQueued(display, QueuedAfterReading))
+            {
+                XPeekEvent(display, &nev);
+
+                if (nev.type == KeyPress && nev.xkey.time == xev.xkey.time && nev.xkey.keycode == xev.xkey.keycode)
+                {
+                    return 0;
+                }
+            }
+        /* Fim do codigo */
+            *opcao = 0;
+        }
+
+	    XPutBackEvent( display , &xev );
+
+	    XWindowEvent(display,w->ptr.window, KeyPressMask|KeyReleaseMask, &xev);
+	    key = XkbKeycodeToKeysym(display, xev.xkey.keycode, 0, 0);
+
+	    *botao = key;
     }
     return r;
-}
-
-int Waperta( WINDOW *w , unsigned int *botao ){
-    int r;
-    r = XCheckWindowEvent( display, w->ptr.window, KeyPressMask, &xeva );
-    if( r ){
-	*botao = XkbKeycodeToKeysym(display, xeva.xkey.keycode,
-			    0, xeva.xkey.state & ShiftMask ? 1 : 0);
-    }
-    return r;
-}
-
-int Wsolta( WINDOW *w , unsigned int *botao ){
-    int r;
-    r = XCheckWindowEvent( display, w->ptr.window, KeyReleaseMask, &xeva );
-    if( r ){
-	*botao = XkbKeycodeToKeysym(display, xeva.xkey.keycode,
-			    0, xeva.xkey.state & ShiftMask ? 1 : 0);
-    }
-    return r;
-}
-
-int WChecaKBD( WINDOW *w ){
-    if( XCheckWindowEvent( display,w->ptr.window, KeyPressMask, &xeva ) )
-	return 1;
-    else if( XCheckWindowEvent( display,w->ptr.window, KeyReleaseMask, &xeva ) )
-	return 2;
-    else
-	return 0;
-}
-
-KeySym WRetorna( WINDOW *w ){
-    KeySym botao;
-    botao = XkbKeycodeToKeysym( display , xeva.xkey.keycode , 0 ,
-			    xeva.xkey.state & ShiftMask ? 1 : 0 );
-    return botao;
 }
