@@ -44,6 +44,10 @@ int main(int argc, char *argv[]){
 	    border_control();
 	    interacao_teclado();
 	    usleep(2000);
+	    while( p0.jogando == 3 ){
+		vitoria_plot();
+		vitoria_kb();
+	    }
 	}
     }
     /*fim Execucao*/

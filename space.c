@@ -49,6 +49,8 @@ void init_modulo_space(){
     p0.H = p0.L*Aspect_Ratio;
     p0.jogando = 1;
     p0.menu = 1;
+    p0.placar1 = 0;
+    p0.placar2 = 0;
     /*	Spacecraft 1	*/
     jog1 = lista_insere();
     jog1->mass = 2.0e+4;
@@ -335,11 +337,25 @@ Recebe um apontador para celula vitima.
 Remove a celula da lista ligada.
 */
 static void explode( Cel *vitima ){
-    if( vitima == jog1 )
+    if( vitima == jog1 ){
 	jog1 = NULL;
-    else if( vitima == jog2 )
+	if( jog2->alive == 100 ){
+	    p0.placar2++;
+	    p0.vencedor = 2;
+	}
+	p0.jogando = 3;
+    }
+    else if( vitima == jog2 ){
 	jog2 = NULL;
-    else
+	if( jog1->alive == 100 ){
+	    p0.placar1++;
+	    p0.vencedor = 1;
+	}
+	p0.jogando = 3;
+    }
+    else{
 	p0.n_proj--;
+	p0.vencedor = 0;
+    }
     lista_remove( vitima );
 }

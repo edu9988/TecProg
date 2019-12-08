@@ -31,3 +31,4 @@ void graficos_iteracao();
 void termina_modulo_grafico();
 void enter_menu();
 void menu_plot();
+void vitoria_plot();

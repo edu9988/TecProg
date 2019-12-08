@@ -57,6 +57,8 @@ void menu_kb(){
 		}
 		else if( p0.menu == 2 ){
 		    reset_modulo_space();
+		    p0.placar1 = 0;
+		    p0.placar2 = 0;
 		    delay1 = 0;
 		    delay2 = 0;
 		    p0.menu = 0;
@@ -149,3 +151,11 @@ void interacao_teclado(){
 	vetor[16] = 0;
     }
 }
+
+void vitoria_kb(){
+    if( WCheckKBD( w ) ){
+	reset_modulo_space();
+	p0.jogando = 2;
+    }
+}
+	

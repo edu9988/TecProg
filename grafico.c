@@ -32,6 +32,7 @@ static PIC P1, P2, Ms, Aux, fundo1, fundo2, planeta;
 static Color player1, misseis;
 static int indice;
 static MASK masc1, masc2, masc_mis, masc_planet, aux1, aux2, aux_mis;
+static char placar[100];
 
 /*
 init_modulo_grafico():
@@ -77,6 +78,7 @@ void graficos_iteracao(){
 	ptr->SCR_pos_x = Tx( ptr->pos_x );
 	ptr->SCR_pos_y = Ty( ptr->pos_y );
     }
+    sprintf( placar, "[JOGADOR 1]   %d   X   %d   [JOGADOR 2]", p0.placar1, p0.placar2);
 
     /*WFillArc( Aux , t0.planeta_x,t0.planeta_y  , 0,23040 , t0.planeta_w,t0.planeta_h , 0x5050FF );*/
 
@@ -128,6 +130,7 @@ void graficos_iteracao(){
     /*WCor( Aux , 0xFF0000 ); (parece desnecessario a partir de agora)
     sprintf(palavra, "%d", indice);
     WPrint( Aux , 20 , 180 , palavra );*/
+    WPrint( Aux , t0.SCR_larg/2 -105, 50 , placar );
 
     PutPic( w , Aux ,0,0 , t0.SCR_larg,t0.SCR_alt , 0,0 );
     WFillRect( masc1 , 0,0 , 50,50 , WNamedColor( "None" ) );
@@ -330,4 +333,13 @@ void menu_plot(){
 	    WCor( w , 0xAFAFAF );
 	WPrint( w , 500 , 475 , "Quit" );
     }
+}
+
+void vitoria_plot(){
+    if( p0.vencedor == 1 )
+        WPrint( w , (t0.SCR_larg/2) -50, 100 , "VITORIA: JOGADOR 1" );
+    else if( p0.vencedor == 2 )
+        WPrint( w , t0.SCR_larg/2 -50, 100 , "VITORIA: JOGADOR 2" );
+    else
+        WPrint(w , (t0.SCR_larg/2) -50, 100 , "EMPATE" );
 }

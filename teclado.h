@@ -14,3 +14,4 @@ header file com a interface do modulo teclado.c
 
 void interacao_teclado();
 void menu_kb();
+void vitoria_kb();
