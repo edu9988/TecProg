@@ -3,7 +3,7 @@
 /* Marcelo Nascimento dos Santos Junior	  No. USP:11222012    */
 /* Gilvane da Silva Sousa		  No. USP:10258726    */
 /*							      */
-/* Projeto - Quarta fase - 07 dez 2019                        */
+/* Projeto - Quarta fase - 02 dez 2019                        */
 /* Curso MAC0216  - Prof. Marco Dimas Gubitoso		      */
 /**************************************************************/
 #include <stdio.h>
@@ -14,30 +14,25 @@
 #include "grafico.h"
 #include "lista.h"
 
-/*
-space.c:
-Implementacao do modulo space, que faz os principais calculos do
-jogo SpaceWar, como calcular aceleracoes, verificar se houve
-colisoes, entre outros.
-Esse modulo tambem armazena os valores da principais variaveis
-do jogo atraves da estrutura constants p0.
-*/
-
 constants p0;
 
+static void corpo_copy( Cel *origem , Cel *destino );
 static void init_border_check();
+static void *mallocSafe( size_t );
 static void explode( Cel *vitima );
 
 /*
 init_modulo_space():
-Cria a lista que armazena as informacoes das
-naves e projeteis; inicializa as principais
-variaveis do modulo.
+lê do arquivo "entry.dat" os dados do programa fase1.c, conforme
+especificado em enunciado, e os armazena nas structs p0 e
+head
 */
 void init_modulo_space(){
     double Aspect_Ratio;
-    init_lista();
+    int i;
+    Cel *ptr;
     /*	Planet		*/
+    init_lista();
     p0.delta_t = 0.001;
     p0.planet_radius = 5.0e+6;
     p0.planet_mass = 6.0e+30;
@@ -77,46 +72,11 @@ void init_modulo_space(){
 }
 
 /*
-reset_modulo_space():
-Carrega novamente os valores iniciais das variaveis
-e da lista, a fim de reiniciar a partida.
-*/
-void reset_modulo_space(){
-    lista_Destroy();
-    init_lista();
-    /*	Spacecraft 1	*/
-    jog1 = lista_insere();
-    jog1->mass = 2.0e+4;
-    jog1->size = 5.0e+5;
-    jog1->alive = 100;
-    jog1->pos_x = -1.0e+7;
-    jog1->pos_y = 0.0;
-    jog1->vel_x = 0.0;
-    jog1->vel_y = 1.0e+7;
-    jog1->angulo = 0.0;
-    jog1->acelera = 0;
-    /*	Spacecraft 2	*/
-    jog2 = lista_insere();
-    jog2->mass = 2.0e+4;
-    jog2->size = 5.0e+5;
-    jog2->alive = 100;
-    jog2->pos_x = 1.0e+7;
-    jog2->pos_y = 1.0e+7;
-    jog2->vel_x = 2.0e+6;
-    jog2->vel_y = -4.0e+6;
-    jog2->angulo = 0.0;
-    jog2->acelera = 0;
-    /*	Projectiles	*/
-    p0.n_proj = 0;
-    init_border_check();
-}
-
-/*
 corpo_copy():
 recebe por valor um corpo a e por endereço o corpo b;
 copia no corpo b os valores do corpo a
 */
-void corpo_copy( Cel *origem , Cel *destino ){
+static void corpo_copy( Cel *origem , Cel *destino ){
     destino->mass = origem->mass;
     destino->size = origem->size;
     destino->alive = origem->alive;
@@ -126,18 +86,35 @@ void corpo_copy( Cel *origem , Cel *destino ){
     destino->vel_y = origem->vel_y;
 }
 
+/*
+mallocSafe():
+recebe um int nbytes;
+devolve um ponteiro para um bloco de mémoria alocada
+de tamanho nbytes;
+se malloc retornar NULL, a função imprime mensagem
+de erro e encerra o programa devolvendo valor -1
+*/
+static void *mallocSafe( size_t nbytes ){
+    void *pointer;
+    pointer = malloc(nbytes);
+    if( pointer == NULL ){
+	fprintf(stderr, "Failed to malloc %lu bytes\n", nbytes);
+	exit(-1);
+    }
+    return pointer;
+}
 
 /*
 next_pos():
 realiza os cálculos das próximas posições e velocidades dos n corpos;
 primeiro é calculada a aceleração de todos os corpos devido à força
-gravitacional dos demais e do planeta;
+gravitacional dos demais e do planeta
 em seguida, é atualizada a posição e velocidade de cada corpo;
 ao calcular as acelerações, se a distância entre dois corpos ou entre
 um corpo e o planeta é menor que o respectivo tamanho (do corpo ou
-do planeta), inicia-se o processo de "explosao" do corpo.
-O processo de explosao inicia reduzindo a velocidade do corpo;
-nas proximas iteracoes, aceleracoes nao sao mais calculadas.
+do planeta), as acelerações e velocidades desse corpo são zeradas,
+e também o campo alive do corpo recebe valor 0, o que faz com que
+suas posições e velocidades não sejam mais calculadas nem atualizadas
 */
 void next_pos(){
     double r;
@@ -151,8 +128,6 @@ void next_pos(){
 	    r = pow( ptr->pos_x , 2 ) + pow( ptr->pos_y , 2 );
 	    r = sqrt( r );
 	    if( r <= p0.planet_radius + ptr->size ){
-		ptr->vel_x *= 0.2;
-		ptr->vel_y *= 0.2;
 		ptr->alive -= 1;
 		continue;
 	    }
@@ -163,10 +138,6 @@ void next_pos(){
 		r = pow(aux->pos_x-ptr->pos_x,2)+pow(aux->pos_y-ptr->pos_y , 2);
 		r = sqrt( r );
 		if( r <= ptr->size + aux->size ){
-		    ptr->vel_x *= 0.5;
-		    ptr->vel_y *= 0.5;
-		    aux->vel_x *= 0.5;
-		    aux->vel_y *= 0.5;
 		    ptr->alive -= 1;
 		    aux->alive -= 1;
 		    break;
@@ -185,27 +156,29 @@ void next_pos(){
     }/* fim de calcula aceleracoes gravitacionais */
 
     ptr = jog1;
-    if( ptr && ptr->alive == 100 && ptr->acelera ){
-	ptr->a_x += 5.0e+7*cos( ptr->angulo );
-	ptr->a_y += 5.0e+7*sin( ptr->angulo );
+    if( ptr && ptr->alive == 100 && ptr->acelera){
+	ptr->a_x += 1.0e+9*cos( ptr->angulo );
+	ptr->a_y += 1.0e+9*sin( ptr->angulo );
 	ptr->acelera = 0;
     }
     ptr = jog2;
     if( ptr && ptr->alive == 100 && ptr->acelera ){
-	ptr->a_x += 5.0e+7*cos( ptr->angulo );
-	ptr->a_y += 5.0e+7*sin( ptr->angulo );
+	ptr->a_x += 1.0e+9*cos( ptr->angulo );
+	ptr->a_y += 1.0e+9*sin( ptr->angulo );
 	ptr->acelera = 0;
     } /*fim de calcula aceleracoes*/
 
     for( ptr=fim->ant ; ptr ; ptr=ptr->ant ){	/*atualiza pos, vel*/
-	if( ptr->alive ){/*se alive==0, explode*/
+	if(ptr->alive ){/*se alive==0, explode*/
 	    ptr->pos_x += (ptr->vel_x)*(p0.delta_t) + ptr->a_x*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_x*/
 	    ptr->pos_y += (ptr->vel_y)*(p0.delta_t) + ptr->a_y*(p0.delta_t)*(p0.delta_t)/2;/*atualiza pos_y*/
 	    ptr->vel_x += ptr->a_x*(p0.delta_t);
 	    ptr->vel_y += ptr->a_y*(p0.delta_t);
 	}
 	else
-	    explode( ptr );
+    {
+        explode( ptr );
+    }
     }
 }
 
@@ -297,19 +270,12 @@ static void init_border_check(){
 
 /*
 termina_modulo_space():
-libera toda a memoria da lista ligada.
+Libera a memoria alocada pelo modulo atraves de malloc.
 */
 void termina_modulo_space(){
     lista_Destroy();
 }
 
-/*
-disparo():
-Recebe um apontador para celula origem.
-Insere uma nova celula na lista, que 
-corresponde a um projetil disparado
-do corpo origem.
-*/
 void disparo( Cel *origem ){
     Cel *new;
     new = lista_insere();
@@ -329,17 +295,22 @@ void disparo( Cel *origem ){
     p0.n_proj++;
 }
 
-/*
-explode():
-Recebe um apontador para celula vitima.
-Remove a celula da lista ligada.
-*/
-static void explode( Cel *vitima ){
+static void explode( Cel *vitima )
+{
     if( vitima == jog1 )
-	jog1 = NULL;
+    {
+        lista_remove(jog1);
+        jog1 = NULL;
+    }
     else if( vitima == jog2 )
-	jog2 = NULL;
+    {
+        lista_remove(jog2);
+        jog2 = NULL;
+    }
     else
-	p0.n_proj--;
-    lista_remove( vitima );
+    {
+        p0.n_proj--;
+        lista_remove( vitima );
+    }
+
 }

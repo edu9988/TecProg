@@ -3,21 +3,19 @@
 /* Marcelo Nascimento dos Santos Junior	  No. USP:11222012    */
 /* Gilvane da Silva Sousa		  No. USP:10258726    */
 /*							      */
-/* Projeto - Primeira fase - 07 dez 2019                      */
+/* Projeto - Primeira fase - 22 nov 2019                      */
 /* Curso MAC0216  - Prof. Marco Dimas Gubitoso		      */
 /**************************************************************/
 
 /*
 lista.h
-Arquivo com interface do modulo lista.c de lista ligada de celulas
-struct corpo.
+Arquivo com interface de lista ligada para struct corpo.
 */
-
 #include "space.h"
 
 extern Cel *fim;
-extern Cel *jog1;
-extern Cel *jog2;
+extern Cel *jog1, *jog1Aux;
+extern Cel *jog2, *jog2Aux;
 
 void init_lista();
 Cel *lista_insere();
