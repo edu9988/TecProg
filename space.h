@@ -3,7 +3,7 @@
 /* Marcelo Nascimento dos Santos Junior	  No. USP:11222012    */
 /* Gilvane da Silva Sousa		  No. USP:10258726    */
 /*							      */
-/* Projeto - Quarta fase - 02 dez 2019			      */
+/* Projeto - Quarta fase - 07 dez 2019			      */
 /* Curso MAC0216  - Prof. Marco Dimas Gubitoso		      */
 /**************************************************************/
 
@@ -70,5 +70,6 @@ header file com a interface usada pelo programa fase4.c
     void border_control();
     void termina_modulo_space();
     void disparo( Cel *origem );
+    void reset_modulo_space();
 
 #endif

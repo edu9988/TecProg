@@ -3,7 +3,7 @@
 /* Marcelo Nascimento dos Santos Junior	  No. USP:11222012    */
 /* Gilvane da Silva Sousa		  No. USP:10258726    */
 /*							      */
-/* Projeto - Quarta fase - 02 dez 2019			      */
+/* Projeto - Quarta fase - 07 dez 2019			      */
 /* Curso MAC0216  - Prof. Marco Dimas Gubitoso		      */
 /**************************************************************/
 #include <unistd.h>
@@ -14,7 +14,6 @@
 #include "space.h"
 #include "grafico.h"
 #include "lista.h"
-#include "teclado.h"
 
 #define PI_meios 1.57079632679490
 #define f180_PI 57.2957795130823
@@ -24,20 +23,15 @@ static int Tx(double);
 static int Ty(double);
 static int sprX_nave( double );
 static int sprX_mis( double );
-/*static void set_angle( Cel* );*/
+static int Be(double p);
+static void GeraFundo();
 
 WINDOW *w;
 tela t0;
 static PIC P1, P2, Ms, Aux, fundo1, fundo2, planeta;
 static Color player1, misseis;
 static int indice;
-MASK masc1, masc2, masc_mis, masc_planet, aux1, aux2, aux_mis;
-static int Be(double p);
-static void GeraFundo();
-/*static char palavra[30];*/
-
-
-int vitoriasJog1 = 0, vitoriasJog2 = 0;
+static MASK masc1, masc2, masc_mis, masc_planet, aux1, aux2, aux_mis;
 
 /*
 init_modulo_grafico():
@@ -76,13 +70,8 @@ graficos_iteracao():
 Desenha na tela todos os corpos em suas respectivas
 posicoes.
 */
-void graficos_iteracao()
-{
+void graficos_iteracao(){
     int i;
-    char placar[100];
-
-    i = sprintf(placar, "[JOGADOR 1]   %d   X   %d   [JOGADOR 2]", vitoriasJog1, vitoriasJog2);
-
     Cel *ptr;
     for( ptr=fim->ant ; ptr ; ptr=ptr->ant ){	/*conversao de valores*/
 	ptr->SCR_pos_x = Tx( ptr->pos_x );
@@ -97,7 +86,7 @@ void graficos_iteracao()
     PutPic( Aux , planeta ,0,0 , t0.planeta_w,t0.planeta_h , t0.planeta_x,t0.planeta_y );
 
 
-    if( jog2 != NULL){
+    if( jog2 ){
 	if( jog2->alive == 100 ){
 	    PutPic( masc2 , aux2 , sprX_nave( jog2->angulo ),0 , 50,50, 0,0 );
 	    SetMask( Aux , masc2 );
@@ -109,7 +98,7 @@ void graficos_iteracao()
     }
 
 
-    if( jog1 != NULL){
+    if( jog1 ){
 	if( jog1->alive == 100 ){
 	    PutPic( masc1 , aux1 , sprX_nave( jog1->angulo ) ,0 , 50,50, 0,0 );
 	    SetMask( Aux , masc1 );
@@ -135,7 +124,6 @@ void graficos_iteracao()
     }
     UnSetMask( Aux );
 
-    WPrint( Aux , t0.SCR_larg/2 -105, 50 , placar );
 
     /*WCor( Aux , 0xFF0000 ); (parece desnecessario a partir de agora)
     sprintf(palavra, "%d", indice);
@@ -154,19 +142,13 @@ void graficos_iteracao()
     indice++;
 }
 
-/*static void set_angle( Cel *ptr ){
-    if( ptr->vel_x > 0 )
-	ptr->angulo = atan( ptr->vel_y / ptr->vel_x );
-    else if( ptr->vel_x == 0){
-	if( ptr->vel_y >= 0 )
-	    ptr->angulo = PI_meios;
-	else
-	    ptr->angulo = -PI_meios;
-    }
-    else
-	ptr->angulo = PI+atan( ptr->vel_y / ptr->vel_x );
-}*/
-
+/*
+sprX_nave():
+Recebe um valor double, ang.
+Retorna a coordenada x da figura das naves onde
+se encontra a nave com direcao mais aproximada
+possivel de ang.
+*/
 static int sprX_nave( double ang ){
     int b;
     if( ang < 0 ){
@@ -183,6 +165,13 @@ static int sprX_nave( double ang ){
     }
 }
 
+/*
+sprX_mis():
+Recebe um valor double, ang.
+Retorna a coordenada x da figura dos misseis onde
+se encontra o missel com direcao mais aproximada
+possivel de ang.
+*/
 static int sprX_mis( double ang ){
     int b;
     if( ang < 0 ){
@@ -202,6 +191,8 @@ static int sprX_mis( double ang ){
 /*
 GeraFundo():
 Preenche as PICs fundo1 e fundo2 com estrelas.
+A posicao das estrelas e' gerada aleatoriamente
+chamando a funcao Be().
 */
 static void GeraFundo(){
     int x,y;
@@ -280,10 +271,20 @@ static int Ty(double pos_y){
     return transf_y;
 }
 
+/*
+enter_menu():
+Pinta o fundo da janela w de azul, a fim de se plotar
+o menu do jogo.
+*/
 void enter_menu(){
     WFillRect( w , 0,0 , t0.SCR_larg,t0.SCR_alt , 0x000010 );
 }
 
+/*
+menu_plot():
+De acordo com o atual estado das variaveis de menu,
+plota as opcoes com as cores pertinentes.
+*/
 void menu_plot(){
     if( p0.jogando == 1 ){
 	if( p0.menu == 1 )
@@ -329,75 +330,4 @@ void menu_plot(){
 	    WCor( w , 0xAFAFAF );
 	WPrint( w , 500 , 475 , "Quit" );
     }
-}
-
-void statusJogo()
-{
-    int verificador = 0, opcao = 0;
-    unsigned int botao = 0;
-
-    if(jog1 == NULL && jog2 == NULL)
-    {
-        WPrint(w , (t0.SCR_larg/2) -50, 100 , "EMPATE" );
-        verificador = 1;
-    }
-
-    if(jog1 != NULL && jog2 == NULL)
-    {
-        vitoriasJog1++;
-        verificador = 1;
-
-        if(!leitor(w, &botao, &opcao))
-        {
-            PutPic(w, fundo2, 0, 0, p0.L, p0.H, p0.L, p0.H);
-            WPrint(w , (t0.SCR_larg/2) -50, 100 , "VITORIA: JOGADOR 1" );
-
-            while(!leitor(w, &botao, &opcao));
-        }
-
-        jog2 = lista_insere();
-    }
-
-    if(jog1 == NULL && jog2 != NULL)
-    {
-        vitoriasJog2++;
-        verificador = 1;
-
-        if(!leitor(w, &botao, &opcao))
-        {
-            PutPic(w, fundo2, 0, 0, p0.L, p0.H, p0.L, p0.H);
-            WPrint(w , t0.SCR_larg/2 -50, 100 , "VITORIA: JOGADOR 2" );
-
-            while(!leitor(w, &botao, &opcao));
-        }
-        jog1 = lista_insere();
-    }
-
-    if(verificador)
-    {
-        jog1->mass = 2.0e+4;
-        jog1->size = 5.0e+5;
-        jog1->alive = 100;
-        jog1->pos_x = -1.0e+7;
-        jog1->pos_y = 0.0;
-        jog1->vel_x = 0.0;
-        jog1->vel_y = 1.0e+7;
-        jog1->angulo = 0.0;
-        jog1->acelera = 0;
-
-        jog2->mass = 2.0e+4;
-        jog2->size = 5.0e+5;
-        jog2->alive = 100;
-        jog2->pos_x = 1.0e+7;
-        jog2->pos_y = 1.0e+7;
-        jog2->vel_x = 2.0e+6;
-        jog2->vel_y = -4.0e+6;
-        jog2->angulo = 0.0;
-        jog2->acelera = 0;
-
-        limparTeclado();
-
-        verificador = 0;
-    }
-
 }

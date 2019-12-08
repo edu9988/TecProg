@@ -3,7 +3,7 @@
 /* Marcelo Nascimento dos Santos Junior	  No. USP:11222012    */
 /* Gilvane da Silva Sousa		  No. USP:10258726    */
 /*							      */
-/* Projeto - Quarta fase - 02 dez 2019			      */
+/* Projeto - Quarta fase - 07 dez 2019			      */
 /* Curso MAC0216  - Prof. Marco Dimas Gubitoso		      */
 /**************************************************************/
 #include <unistd.h>
@@ -19,7 +19,8 @@
 
 /*
 Programa fase4.c
-<DESCRIÇÃO>
+Programa principal do jogo SpaceWar. Chama as funções dos
+demais módulos.
 */
 int main(int argc, char *argv[]){
 
@@ -39,7 +40,6 @@ int main(int argc, char *argv[]){
 	}
 	else{
 	    graficos_iteracao();
-        statusJogo();
 	    next_pos();
 	    border_control();
 	    interacao_teclado();

@@ -24,9 +24,7 @@ static int pressionadas[26];
 static int jogando;
 void geraTeclas();
 void PintaTecla( WINDOW* , int , int );
-void kb_press( WINDOW* );
-void kb_release( WINDOW* );
-void kb_scan( WINDOW *jan );
+void kb_scan2( WINDOW *jan );
 
 int main(){
     /*declaracoes de variaveis*/
@@ -43,67 +41,26 @@ int main(){
     WFillRect( w , 0,0 , 800,350 , WNamedColor( "gray1" ) );
     WCor( w , WNamedColor("gold") );
     WPrint( w , 200 , 300 , "Pressione uma tecla nao-alfabetica para terminar:" );
-    while( jogando )
-    {
-	kb_scan( w );
+    while( jogando ){
+	kb_scan2( w );
 	for( i=0 ; i<26 ; i++)
 	    PintaTecla( w , i , pressionadas[i] );
-	kb_scan( w );
     }
 
     /*finalizacao*/
-    WDestroy( w );
-    CloseGraph();
     return 0;
 }
 
-void kb_scan( WINDOW *jan ){
+void kb_scan2( WINDOW *jan ){
     int i, r;
     unsigned int botao;
-    for( i=0 ; i<8 ; i++ ){ /*se digitaram algo */
-	if( ( r = WChecaKBD( jan ) ) == 1){
-	    botao = WRetorna( jan );
-	    if( botao >= 0x61 && botao <= 0x7a ){ /*a-z*/
-		botao -= 97;
-		pressionadas[botao] = 1;
-	    }
-	    else
-		jogando = 0;
-	}
-	else if( r == 2 ){
-	    botao = WRetorna( jan );
-	    if( botao >= 0x61 && botao <= 0x7a ){ /*a-z*/
-		botao -= 97;
-		pressionadas[botao] = 0;
-	    }
-	}
-	else
-	    continue;
-    }
-}
-
-void kb_release( WINDOW *jan ){
-    int i;
-    unsigned int botao;
-    for( i=0 ; i<8 ; i++ ){ /*se digitaram algo */
-	if( Wsolta( jan , &botao ) ){
-	    if( botao >= 0x61 && botao <= 0x7a ){ /*a-z*/
-		botao -= 97;
-		pressionadas[botao] = 0;
-		printf( "tecla %d solta\n" , botao );
-	    }
-	}
-    }
-}
-
-void kb_press( WINDOW *jan ){
-    int i;
-    unsigned int botao;
-    for( i=0 ; Waperta( jan , &botao ) && i<8 ; i++ ){ /*se digitaram algo */
-        if( botao >= 0x61 && botao <= 0x7a ){ /*a-z*/
+    for( i=0 ; leitor( jan , &botao , &r ) && i<32 ; i++ ){ /*se digitaram algo*/
+	if( botao >= 0x61 && botao <= 0x7a ){ /*a-z*/
 	    botao -= 97;
-	    pressionadas[botao] = 1;
-	    printf( "tecla %d pressionada\n" , botao );
+	    if( r )
+		pressionadas[botao] = 1;
+	    else
+		pressionadas[botao] = 0;
 	}
 	else
 	    jogando = 0;
