@@ -22,7 +22,8 @@ Modulo do jogo responsavel pela interacao do usuario com o
 teclado.
 */
 
-unsigned int botao, vetor[26];
+static unsigned int botao, vetor[26];
+static int delay1, delay2;
 
 /*
 menu_kb():
@@ -31,10 +32,13 @@ e realiza as acoes convenientes.
 Essa funcao e' especifica para o menu.
 */
 void menu_kb(){
-    if( leitor( w , &botao ) ){ /*se digitaram algo */
-        if( botao == 0x00FF0D ){ /*Enter*/
+    int opcao;
+    if( leitor( w , &botao , &opcao) ){ /*se digitaram algo */
+        if( botao == 0x00FF0D && opcao ){ /*Enter*/
 	    if( p0.jogando == 1 ){
 		if( p0.menu == 1 ){
+		    delay1 = 0;
+		    delay2 = 0;
 		    p0.menu = 0;
 		    p0.jogando = 2;
 		}
@@ -53,6 +57,8 @@ void menu_kb(){
 		}
 		else if( p0.menu == 2 ){
 		    reset_modulo_space();
+		    delay1 = 0;
+		    delay2 = 0;
 		    p0.menu = 0;
 		}
 		else if( p0.menu == 3 )
@@ -63,13 +69,13 @@ void menu_kb(){
 		}
 	    }
 	}
-        if( botao == 0x00FF52 ){ /*Pra cima*/
+        if( botao == 0x00FF52 && opcao ){ /*Pra cima*/
 	    if( p0.menu > 1 )
 		p0.menu--;
 	    else
 		p0.menu = 4;
 	}
-        if( botao == 0x00FF54 ){ /*Pra baixo*/
+        if( botao == 0x00FF54 && opcao ){ /*Pra baixo*/
 	    if( p0.menu < 4 )
 		p0.menu++;
 	    else
@@ -85,23 +91,27 @@ as acoes pertinentes referentes ao jogo.
 Essa funcao e' especifica para a interacao durante as partidas.
 */
 void interacao_teclado(){
-    int i;
-    for( i=0 ; leitor( w , &botao) && i<8 ; i++ ){ /*se digitaram algo */
+    int i, opcao;
+    for( i=0 ; leitor( w , &botao , &opcao ) && i<32 ; i++ ){ /*se digitaram algo */
         if( botao >= 0x61 && botao <= 0x7a ){ /*a-z*/
 	    botao -= 97;
-	    if( !vetor[botao] )
-		vetor[botao] = 1;
+	    vetor[botao] = opcao;
 	}
     }
     if( jog2 ){
 	if( vetor[0] ){ /* letra a */
-	    jog2->angulo += 1.0e-1;
+	    jog2->angulo += 1.3e-2;
 	}
 	if( vetor[18] ){ /* letra s */
-	    disparo( jog2 );
+	    if( delay2 )
+		delay2--;
+	    else{
+		delay2 = 100;
+		disparo( jog2 );
+	    }
 	}
 	if( vetor[3] ){ /* letra d */
-	    jog2->angulo -= 1.0e-1;
+	    jog2->angulo -= 1.3e-2;
 	}
 	if( vetor[22] ){ /* letra w */
 	    jog2->acelera = 1;
@@ -113,13 +123,18 @@ void interacao_teclado(){
     }
     if( jog1 ){
 	if( vetor[9] ){ /* letra j */
-	    jog1->angulo += 1.0e-1;
+	    jog1->angulo += 1.3e-2;
 	}
 	if( vetor[10] ){ /* letra k */
+	    if( delay1 )
+		delay1--;
+	    else{
+		delay1 = 100;
 	    disparo( jog1 );
+	    }
 	}
 	if( vetor[11] ){ /* letra l */
-	    jog1->angulo -= 1.0e-1;
+	    jog1->angulo -= 1.3e-2;
 	}
 	if( vetor[8] ){ /* letra i */
 	    jog1->acelera = 1;
@@ -131,5 +146,6 @@ void interacao_teclado(){
     }
     if( vetor[16] ){ /* letra q */
         p0.menu = 1;
+	vetor[16] = 0;
     }
 }

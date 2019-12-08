@@ -54,7 +54,7 @@ int main(){
 void kb_scan2( WINDOW *jan ){
     int i, r;
     unsigned int botao;
-    for( i=0 ; leitor( jan , &botao , &r ) && i<8 ; i++ ){ /*se digitaram algo*/
+    for( i=0 ; leitor( jan , &botao , &r ) && i<32 ; i++ ){ /*se digitaram algo*/
 	if( botao >= 0x61 && botao <= 0x7a ){ /*a-z*/
 	    botao -= 97;
 	    if( r )

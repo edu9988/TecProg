@@ -8,7 +8,8 @@
 /**************************************************************/
 #include <unistd.h>
 #include <stdio.h>
-#include <stdlib.h> #include <string.h>
+#include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include "space.h"
 #include "grafico.h"

@@ -186,14 +186,14 @@ void next_pos(){
 
     ptr = jog1;
     if( ptr && ptr->alive == 100 && ptr->acelera ){
-	ptr->a_x += 1.0e+9*cos( ptr->angulo );
-	ptr->a_y += 1.0e+9*sin( ptr->angulo );
+	ptr->a_x += 5.0e+7*cos( ptr->angulo );
+	ptr->a_y += 5.0e+7*sin( ptr->angulo );
 	ptr->acelera = 0;
     }
     ptr = jog2;
     if( ptr && ptr->alive == 100 && ptr->acelera ){
-	ptr->a_x += 1.0e+9*cos( ptr->angulo );
-	ptr->a_y += 1.0e+9*sin( ptr->angulo );
+	ptr->a_x += 5.0e+7*cos( ptr->angulo );
+	ptr->a_y += 5.0e+7*sin( ptr->angulo );
 	ptr->acelera = 0;
     } /*fim de calcula aceleracoes*/
 
