@@ -42,11 +42,7 @@ void menu_kb(){
 		    p0.menu = 0;
 		    p0.jogando = 2;
 		}
-		else if( p0.menu == 2 )
-		    p0.menu = 0;
-		else if( p0.menu == 3 )
-		    p0.menu = 0;
-		else if( p0.menu == 4 ){
+		else if( p0.menu == 2 ){
 		    p0.menu = 0;
 		    p0.jogando = 0;
 		}
@@ -63,9 +59,7 @@ void menu_kb(){
 		    delay2 = 0;
 		    p0.menu = 0;
 		}
-		else if( p0.menu == 3 )
-		    p0.menu = 0;
-		else if( p0.menu == 4 ){
+		else if( p0.menu == 3 ){
 		    p0.menu = 0;
 		    p0.jogando = 0;
 		}
@@ -74,11 +68,15 @@ void menu_kb(){
         if( botao == 0x00FF52 && opcao ){ /*Pra cima*/
 	    if( p0.menu > 1 )
 		p0.menu--;
-	    else
-		p0.menu = 4;
+	    else{
+		if( p0.jogando == 1 )
+		    p0.menu = 2;
+		else if( p0.jogando == 2)
+		    p0.menu = 3;
+	    }
 	}
         if( botao == 0x00FF54 && opcao ){ /*Pra baixo*/
-	    if( p0.menu < 4 )
+	    if( ( p0.jogando == 1 && p0.menu == 1 ) || ( p0.jogando == 2 && p0.menu <3 ) )
 		p0.menu++;
 	    else
 		p0.menu = 1;

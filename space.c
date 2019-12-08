@@ -51,6 +51,7 @@ void init_modulo_space(){
     p0.menu = 1;
     p0.placar1 = 0;
     p0.placar2 = 0;
+    p0.vencedor = 0;
     /*	Spacecraft 1	*/
     jog1 = lista_insere();
     jog1->mass = 2.0e+4;
@@ -86,6 +87,7 @@ e da lista, a fim de reiniciar a partida.
 void reset_modulo_space(){
     lista_Destroy();
     init_lista();
+    p0.vencedor = 0;
     /*	Spacecraft 1	*/
     jog1 = lista_insere();
     jog1->mass = 2.0e+4;
@@ -339,23 +341,25 @@ Remove a celula da lista ligada.
 static void explode( Cel *vitima ){
     if( vitima == jog1 ){
 	jog1 = NULL;
-	if( jog2->alive == 100 ){
+	if( jog2 && jog2->alive == 100 ){
 	    p0.placar2++;
 	    p0.vencedor = 2;
 	}
+	else
+	    p0.vencedor = 0;
 	p0.jogando = 3;
     }
     else if( vitima == jog2 ){
 	jog2 = NULL;
-	if( jog1->alive == 100 ){
+	if( jog1 && jog1->alive == 100 ){
 	    p0.placar1++;
 	    p0.vencedor = 1;
 	}
+	else
+	    p0.vencedor = 0;
 	p0.jogando = 3;
     }
-    else{
+    else
 	p0.n_proj--;
-	p0.vencedor = 0;
-    }
     lista_remove( vitima );
 }
