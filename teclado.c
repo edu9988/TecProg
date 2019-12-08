@@ -130,3 +130,11 @@ void interacao_teclado(){
         p0.menu = 1;
     }
 }
+
+void limparTeclado()
+{
+    int i;
+
+    for(i=0; i<26; i++)
+        vetor[i] = 0;
+}

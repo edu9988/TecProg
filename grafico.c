@@ -14,6 +14,7 @@
 #include "space.h"
 #include "grafico.h"
 #include "lista.h"
+#include "teclado.h"
 
 #define PI_meios 1.57079632679490
 #define f180_PI 57.2957795130823
@@ -332,17 +333,19 @@ void menu_plot(){
 
 void statusJogo()
 {
+    int verificador = 0, opcao = 0;
     unsigned int botao = 0;
-    int opcao = 0;
 
     if(jog1 == NULL && jog2 == NULL)
     {
-        WPrint( w , 500 , 475 , "Empate" );
+        WPrint(w , (t0.SCR_larg/2) -50, 100 , "EMPATE" );
+        verificador = 1;
     }
 
     if(jog1 != NULL && jog2 == NULL)
     {
         vitoriasJog1++;
+        verificador = 1;
 
         if(!leitor(w, &botao, &opcao))
         {
@@ -352,31 +355,13 @@ void statusJogo()
             while(!leitor(w, &botao, &opcao));
         }
 
-        jog1->mass = 2.0e+4;
-        jog1->size = 5.0e+5;
-        jog1->alive = 100;
-        jog1->pos_x = -1.0e+7;
-        jog1->pos_y = 0.0;
-        jog1->vel_x = 0.0;
-        jog1->vel_y = 1.0e+7;
-        jog1->angulo = 0.0;
-        jog1->acelera = 0;
-
         jog2 = lista_insere();
-        jog2->mass = 2.0e+4;
-        jog2->size = 5.0e+5;
-        jog2->alive = 100;
-        jog2->pos_x = 1.0e+7;
-        jog2->pos_y = 1.0e+7;
-        jog2->vel_x = 2.0e+6;
-        jog2->vel_y = -4.0e+6;
-        jog2->angulo = 0.0;
-        jog2->acelera = 0;
     }
 
     if(jog1 == NULL && jog2 != NULL)
     {
         vitoriasJog2++;
+        verificador = 1;
 
         if(!leitor(w, &botao, &opcao))
         {
@@ -386,6 +371,10 @@ void statusJogo()
             while(!leitor(w, &botao, &opcao));
         }
         jog1 = lista_insere();
+    }
+
+    if(verificador)
+    {
         jog1->mass = 2.0e+4;
         jog1->size = 5.0e+5;
         jog1->alive = 100;
@@ -405,6 +394,10 @@ void statusJogo()
         jog2->vel_y = -4.0e+6;
         jog2->angulo = 0.0;
         jog2->acelera = 0;
+
+        limparTeclado();
+
+        verificador = 0;
     }
 
 }

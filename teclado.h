@@ -10,6 +10,4 @@
 void interacao_teclado();
 void menu_kb();
 
-void adicionaTecla(long unsigned int tecla);
-
-void removeTecla(long unsigned int tecla);
+void limparTeclado();
