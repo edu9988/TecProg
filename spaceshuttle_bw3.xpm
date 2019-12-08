@@ -1,20 +1,3 @@
-/**************************************************************/
-/* José Eduardo R. M. Peres y Peres       No. USP:8945332     */
-/* Marcelo Nascimento dos Santos Junior	  No. USP:11222012    */
-/* Gilvane da Silva Sousa		  No. USP:10258726    */
-/*							      */
-/* Projeto - Quarta fase - 07 dez 2019			      */
-/* Curso MAC0216  - Prof. Marco Dimas Gubitoso		      */
-/**************************************************************/
-
-/*
-spaceshuttle_bw3.xpm:
-Figura da nave do jogador 2.
-A nave original (originalmente branca) foi baixada da internet,
-reduzida, rotacionada em varias direcoes no aplicativo GNU
-Gimp, e depois colorida (tambem no Gimp).
-*/
-
 /* XPM */
 static char * spaceshuttle_bw3_xpm[] = {
 "1200 50 219 2",
