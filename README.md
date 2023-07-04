@@ -20,4 +20,4 @@ Add gaming features later
 
 ##### July 3rd 2023 screenshot
 
-![Game screenshot](/assets/screenshot.jpg)
+![Game screenshot](/screenshot.jpg)
