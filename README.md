@@ -20,4 +20,4 @@ Add gaming features later
 
 ##### July 3rd 2023 screenshot
 
-![Game screenshot](edu9988.github.io/img/spacewar_ss.jpeg)
+![Game screenshot](edu9988.github.io/img/spacewar_ss.jpg)
