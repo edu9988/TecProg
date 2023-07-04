@@ -8,7 +8,7 @@ Currently, it needs a graphics library provided by the professor (Marco Dimas Gu
 
 Valgrind also picks up numerous errors, which were not noticed at the time by the authors, since they had not started using valgrind by then.
 
-##### Future goals
+#### Future goals
 
 - Use a different library for increased portability.
 
@@ -18,6 +18,6 @@ Valgrind also picks up numerous errors, which were not noticed at the time by th
 
 Add gaming features later
 
-##### July 3rd 2023 screenshot
+#### July 3rd 2023 screenshot
 
 ![Game screenshot](/screenshot.jpg)
