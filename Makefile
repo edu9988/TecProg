@@ -1,4 +1,4 @@
-CFLAGS = -Wall -ansi -pedantic -O2 -Wno-unused-result
+CFLAGS = -Wall -ansi -pedantic -O2 -Wno-unused-result -D_POSIX_C_SOURCE=199309L
 CLIBS = -lm -lXpm -lX11
  CC = gcc
  EXECUTABLE = spacewar
